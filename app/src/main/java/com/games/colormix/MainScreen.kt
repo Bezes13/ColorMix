@@ -1,23 +1,16 @@
 package com.games.colormix
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,18 +18,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
+
 const val FieldSize = 80
 
 @Composable
 fun MainScreen(mainViewModel: MainViewModel = viewModel()) {
     val viewState: MainViewState by mainViewModel.viewState.collectAsState()
     MainScreenContent(
-        viewState.gameField
+        viewState.gameField,
+        mainViewModel::sendEvent
     )
 }
 
 @Composable
-fun MainScreenContent(gameField: Array<Array<ColorField?>>) {
+fun MainScreenContent(gameField: List<List<ColorField?>>, eventListener: (MainViewEvent) -> Unit) {
     Column(
         verticalArrangement = Arrangement.spacedBy(30.dp),
         modifier = Modifier.fillMaxSize()
@@ -52,54 +47,23 @@ fun MainScreenContent(gameField: Array<Array<ColorField?>>) {
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
             for (i in 0..3) {
-                GameRow(gameField[i])
+                GameRow(gameField[i], eventListener)
             }
         }
     }
 }
 
 @Composable
-fun Field(content: ColorField?) {
-    Card(
-        shape = RoundedCornerShape(3.dp),
-        modifier = Modifier
-            .size(FieldSize.dp)
-            .border(
-                1.dp,
-                Color.Black,
-                RoundedCornerShape(3.dp)
-            )
-    ) {
-        if (content != null)
-            Card(
-                colors = CardDefaults.cardColors(containerColor = content.color),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(5.dp) // Fill the entire space inside the outer Card
-            ) {
-                // Optionally, you can add content inside the inner Card if needed
-            }
-    }
-}
+fun GameRow(
+    colorFields: List<ColorField?>, eventListener: (MainViewEvent) -> Unit
+) {
 
-@Composable
-@Preview
-fun FieldPreview() {
-    Field(content = ColorField())
-}
-
-@Composable
-fun GameRow(colorFields: Array<ColorField?>) {
     Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
         for (i in 0..3) {
-            Field(colorFields[i])
+            Field(colorFields[i], eventListener)
         }
     }
 }
-
-data class ColorField(
-    val color: Color = Color.Red
-)
 
 sealed class MainViewDialog {
     data class Dialog(val info: String) : MainViewDialog()
@@ -109,5 +73,7 @@ sealed class MainViewDialog {
 @Composable
 @Preview
 fun PreviewMainScreen() {
-    MainScreenContent(Array(4) { Array(4) { null } })
+    MainScreenContent(
+        (0 until 4).map { arrayOfNulls<ColorField?>(4).toList() },{}
+    )
 }

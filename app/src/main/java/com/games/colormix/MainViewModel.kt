@@ -17,6 +17,7 @@ class MainViewModel(
     private val _event = MutableSharedFlow<MainViewEvent>()
     private val _viewState = MutableStateFlow(MainViewState())
     val viewState = _viewState.asStateFlow()
+    private var colorFieldNextId = 0
 
     init {
         _viewState.update { it.copy(isLoading = true) }
@@ -42,12 +43,13 @@ class MainViewModel(
             val newGameField = _viewState.value.gameField.mapIndexed { rowIndex, column ->
                 column.mapIndexed { columnIndex, colorField ->
                     if (rowIndex == i && columnIndex == j) {
-                        ColorField()
+                        colorFieldNextId ++
+                        ColorField(colorFieldNextId)
                     } else {
                         colorField
                     }
-                }.toTypedArray()
-            }.toTypedArray()
+                }
+            }
 
             _viewState.update { it.copy(gameField = newGameField) }
         } else {
@@ -65,8 +67,104 @@ class MainViewModel(
         _event.collect { event ->
             when (event) {
                 is MainViewEvent.SetDialog -> updateDialog(event.dialog)
+                is MainViewEvent.Swipe -> updateGameField(event.direction)
             }
         }
+    }
+
+    private fun updateGameField(direction: Direction) {
+        val columns = mutableListOf<List<ColorField?>>()
+        when (direction) {
+            Direction.RIGHT -> {
+                for (i in 0..3){
+                    columns.add(orderLine(_viewState.value.gameField[i].toMutableList()))
+                }
+            }
+            Direction.LEFT -> {
+                for (i in 0..3){
+                    columns.add(orderLineReverse(_viewState.value.gameField[i].toMutableList()))
+                }
+            }
+            Direction.DOWN ->{
+                val rows = mutableListOf<List<ColorField?>>()
+                for (j in 0.. 3) {
+                    val mutList = mutableListOf<ColorField?>()
+                    for (i in 0..3) {
+                        mutList.add(_viewState.value.gameField[i][j])
+                    }
+                    rows.add(orderLine(mutList))
+                }
+                // Rotate
+                for (j in 0..3) {
+                    val row = mutableListOf<ColorField?>()
+                    for (i in 0..3) {
+                        row.add(rows[i][j])
+                    }
+                    columns.add(row)
+                }
+            }
+            Direction.UP ->{
+                val rows = mutableListOf<List<ColorField?>>()
+                for (j in 0.. 3) {
+                    val mutList = mutableListOf<ColorField?>()
+                    for (i in 0..3) {
+                        mutList.add(_viewState.value.gameField[i][j])
+                    }
+                    rows.add(orderLineReverse(mutList))
+                }
+                // Rotate
+                for (j in 0..3) {
+                    val row = mutableListOf<ColorField?>()
+                    for (i in 0..3) {
+                        row.add(rows[i][j])
+                    }
+                    columns.add(row)
+                }
+            }
+            Direction.NONE -> {}
+        }
+        _viewState.update { it.copy(gameField = columns) }
+        placeRandomColorField()
+    }
+
+    private fun orderLine(list:MutableList<ColorField?>): List<ColorField?> {
+        // [B, null, G, Null] -> [null, null, B, G]
+       var anyMove = true
+        while(anyMove){
+            anyMove = false
+            for (i in 0..2){
+                if(list[i] != null && list[i+1] == null){
+                    anyMove = true
+                    list[i+1] = list[i]
+                    list[i] = null
+                }
+                if(list[i].mergeAllowed(list[i+1])){
+                    list[i+1] = list[i+1]!!.merge(list[i]!!)
+                    list[i] = null
+                }
+            }
+        }
+        return list
+    }
+
+    private fun orderLineReverse(list:MutableList<ColorField?>): List<ColorField?> {
+        // [B, null, G, Null] -> [B, G, null, null]
+        var anyMove = true
+        while(anyMove){
+            anyMove = false
+            for (i in 3 downTo 1){
+                if(list[i] != null && list[i-1] == null){
+                    anyMove = true
+                    list[i-1] = list[i]
+                    list[i] = null
+                }
+                if(list[i].mergeAllowed(list[i-1])){
+                    list[i-1] = list[i-1]!!.merge(list[i]!!)
+                    list[i] = null
+                }
+            }
+        }
+        return list
     }
 
     private fun updateDialog(dialog: MainViewDialog) {
@@ -76,4 +174,5 @@ class MainViewModel(
 
 sealed class MainViewEvent {
     data class SetDialog(val dialog: MainViewDialog) : MainViewEvent()
+    data class Swipe(val direction: Direction) : MainViewEvent()
 }
