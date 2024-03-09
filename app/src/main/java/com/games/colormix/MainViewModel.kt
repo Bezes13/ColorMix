@@ -20,13 +20,39 @@ class MainViewModel(
 
     init {
         _viewState.update { it.copy(isLoading = true) }
-        initViewModel()
+        placeRandomColorField()
         listenToEvent()
         _viewState.update { it.copy(isLoading = false) }
     }
 
-    private fun initViewModel() {
+    private fun placeRandomColorField() {
+        val emptyFields = mutableListOf<Pair<Int, Int>>()
+        _viewState.value.gameField.forEachIndexed { i, column ->
+            column.forEachIndexed { j, row ->
+                if (row == null) {
+                    emptyFields.add(Pair(i, j))
+                }
+            }
+        }
+        // Check if there are empty fields available
+        if (emptyFields.isNotEmpty()) {
+            val (i, j) = emptyFields.random()
 
+            // Create a new ColorField and update the view state
+            val newGameField = _viewState.value.gameField.mapIndexed { rowIndex, column ->
+                column.mapIndexed { columnIndex, colorField ->
+                    if (rowIndex == i && columnIndex == j) {
+                        ColorField()
+                    } else {
+                        colorField
+                    }
+                }.toTypedArray()
+            }.toTypedArray()
+
+            _viewState.update { it.copy(gameField = newGameField) }
+        } else {
+            // GAME OVER
+        }
     }
 
     fun sendEvent(event: MainViewEvent) {
@@ -44,7 +70,7 @@ class MainViewModel(
     }
 
     private fun updateDialog(dialog: MainViewDialog) {
-        _viewState.update { it.copy( dialog = dialog) }
+        _viewState.update { it.copy(dialog = dialog) }
     }
 }
 

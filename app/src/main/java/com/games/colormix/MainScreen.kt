@@ -6,9 +6,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -29,56 +31,83 @@ const val FieldSize = 80
 fun MainScreen(mainViewModel: MainViewModel = viewModel()) {
     val viewState: MainViewState by mainViewModel.viewState.collectAsState()
     MainScreenContent(
-
+        viewState.gameField
     )
 }
 
 @Composable
-fun MainScreenContent(
-) {
-    Column (verticalArrangement = Arrangement.spacedBy(30.dp), modifier = Modifier.fillMaxSize()){
+fun MainScreenContent(gameField: Array<Array<ColorField?>>) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(30.dp),
+        modifier = Modifier.fillMaxSize()
+    ) {
         Text(
             text = stringResource(id = R.string.app_name),
             fontSize = 30.sp,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
-        Column(verticalArrangement = Arrangement.spacedBy(2.dp), modifier = Modifier.align(Alignment.CenterHorizontally)) {
-            GameRow()
-            GameRow()
-            GameRow()
-            GameRow()
+        Column(
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        ) {
+            for (i in 0..3) {
+                GameRow(gameField[i])
+            }
         }
     }
 }
 
 @Composable
-fun Field(){
-    Card (shape= RoundedCornerShape(3.dp),modifier = Modifier
-        .size(FieldSize.dp)
-        .border(1.dp, Color.Black, RoundedCornerShape(3.dp))) {}
+fun Field(content: ColorField?) {
+    Card(
+        shape = RoundedCornerShape(3.dp),
+        modifier = Modifier
+            .size(FieldSize.dp)
+            .border(
+                1.dp,
+                Color.Black,
+                RoundedCornerShape(3.dp)
+            )
+    ) {
+        if (content != null)
+            Card(
+                colors = CardDefaults.cardColors(containerColor = content.color),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(5.dp) // Fill the entire space inside the outer Card
+            ) {
+                // Optionally, you can add content inside the inner Card if needed
+            }
+    }
 }
 
 @Composable
-fun GameRow(){
-    Row (horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-        Field()
-        Field()
-        Field()
-        Field()
-    }
-
+@Preview
+fun FieldPreview() {
+    Field(content = ColorField())
 }
 
+@Composable
+fun GameRow(colorFields: Array<ColorField?>) {
+    Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+        for (i in 0..3) {
+            Field(colorFields[i])
+        }
+    }
+}
+
+data class ColorField(
+    val color: Color = Color.Red
+)
+
 sealed class MainViewDialog {
-    data class Dialog( val info: String) : MainViewDialog()
+    data class Dialog(val info: String) : MainViewDialog()
     data object None : MainViewDialog()
 }
 
 @Composable
 @Preview
 fun PreviewMainScreen() {
-    MainScreenContent(
-
-    )
+    MainScreenContent(Array(4) { Array(4) { null } })
 }
