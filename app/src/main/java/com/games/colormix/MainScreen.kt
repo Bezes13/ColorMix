@@ -42,25 +42,24 @@ fun MainScreenContent(gameField: List<List<ColorField?>>, eventListener: (MainVi
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
-        Column(
-            verticalArrangement = Arrangement.spacedBy(2.dp),
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
             for (i in 0..3) {
-                GameRow(gameField[i], eventListener)
+                GameColumn(gameField[i], i, eventListener)
             }
         }
     }
 }
 
 @Composable
-fun GameRow(
-    colorFields: List<ColorField?>, eventListener: (MainViewEvent) -> Unit
+fun GameColumn(
+    colorFields: List<ColorField?>, column: Int, eventListener: (MainViewEvent) -> Unit
 ) {
-
-    Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
         for (i in 0..3) {
-            Field(colorFields[i], eventListener)
+            Field(colorFields[i], Pair(column, i), eventListener)
         }
     }
 }

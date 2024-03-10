@@ -28,9 +28,9 @@ import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
 
 @Composable
-fun Field(content: ColorField?, eventListener: (MainViewEvent) -> Unit) {
+fun Field(content: ColorField?, pos: Pair<Int, Int>, eventListener: (MainViewEvent) -> Unit) {
     var direction by remember { mutableStateOf(-1) }
-    var moved by remember { mutableStateOf(false) }
+    val moved by remember { mutableStateOf(false) }
     val pxToMove = with(LocalDensity.current) {
         100.dp.toPx().roundToInt()
     }
@@ -50,8 +50,7 @@ fun Field(content: ColorField?, eventListener: (MainViewEvent) -> Unit) {
                 1.dp,
                 Color.Black,
                 RoundedCornerShape(3.dp)
-            )
-            .swipeObserver { eventListener(MainViewEvent.Swipe(it)) }
+            ).swipeObserver { eventListener(MainViewEvent.Swap(pos, Pair(pos.first+it.first, pos.second+it.second))) }
     ) {
         if (content != null)
             Card(
@@ -77,11 +76,11 @@ fun Field(content: ColorField?, eventListener: (MainViewEvent) -> Unit) {
 @Composable
 @Preview
 fun FieldPreview() {
-    Field(content = ColorField(2),{})
+    Field(content = ColorField(2), Pair(2,2),{})
 }
 
 @Composable
 @Preview
 fun FieldHighlightPreview() {
-    Field(content = ColorField(2, highlight = true),{})
+    Field(content = ColorField(2, highlight = true),Pair(2,2),{})
 }

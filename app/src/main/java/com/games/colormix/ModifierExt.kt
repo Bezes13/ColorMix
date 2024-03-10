@@ -5,9 +5,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import kotlin.math.abs
 
-fun Modifier.swipeObserver(move: (Direction) -> Unit) : Modifier {
+fun Modifier.swipeObserver(move: (Pair<Int, Int>) -> Unit) : Modifier {
     return pointerInput(Unit) {
-        var direction = Direction.NONE
+        var direction = Pair(0,0)
         detectDragGestures(
             onDrag = { change, dragAmount ->
                 change.consume()
@@ -16,24 +16,25 @@ fun Modifier.swipeObserver(move: (Direction) -> Unit) : Modifier {
                     when {
                         x > 0 -> {
                             //right
-                            direction = Direction.RIGHT
+                            direction = Pair(1,0)
+
                         }
 
                         x < 0 -> {
                             // left
-                            direction = Direction.LEFT
+                            direction = Pair(-1,0)
                         }
                     }
                 } else {
                     when {
                         y > 0 -> {
                             // down
-                            direction = Direction.DOWN
+                            direction = Pair(0,1)
                         }
 
                         y < 0 -> {
                             // up
-                            direction = Direction.UP
+                            direction = Pair(0,-1)
                         }
                     }
                 }

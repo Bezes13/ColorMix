@@ -28,7 +28,11 @@ fun ColorField?.mergeAllowed(other: ColorField?): Boolean {
             (this.color != other.color && this.highlight && other.highlight)
 }
 
-fun ColorField.merge(other: ColorField): ColorField {
+fun ColorField?.merge(other: ColorField?): ColorField {
+    if (this == null || other == null) {
+        // Throw error
+        return this?: ColorField(-1)
+    }
     return if (this.highlight && other.highlight) {
         this.copy(
             highlight = false,
