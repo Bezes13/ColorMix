@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.whattowatch.manager.SharedPreferencesManager
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,9 +23,12 @@ class MainViewModel(
     init {
         _viewState.update { it.copy(isLoading = true) }
         fillGameField()
-        //placeRandomColorField()
         listenToEvent()
         _viewState.update { it.copy(isLoading = false) }
+        viewModelScope.launch {
+            delay(100)
+            _viewState.update { it.copy(gameField = it.gameField.map { column -> column.map { item -> item?.copy(spawned = false) }  }) }
+        }
     }
 
     private fun fillGameField() {
@@ -39,7 +43,7 @@ class MainViewModel(
         _viewState.update { it.copy(gameField = columns) }
     }
 
-    private fun placeRandomColorField() {
+    private fun placeRandomColorField() : Boolean {
         val emptyFields = mutableListOf<Pair<Int, Int>>()
         _viewState.value.gameField.forEachIndexed { i, column ->
             column.forEachIndexed { j, row ->
@@ -65,8 +69,10 @@ class MainViewModel(
             }
 
             _viewState.update { it.copy(gameField = newGameField) }
+            return true
         } else {
             // GAME OVER
+            return false
         }
     }
 
@@ -82,16 +88,83 @@ class MainViewModel(
                 is MainViewEvent.SetDialog -> updateDialog(event.dialog)
                 is MainViewEvent.Swap -> swapElements(event.from, event.to)
                 //is MainViewEvent.Swipe -> updateGameField(event.direction)
+                is MainViewEvent.FieldClicked -> fieldClicked(event.pos)
+            }
+        }
+    }
+
+    private fun isDestroyable(
+        pos: Pair<Int, Int>,
+        fieldsToDestroy: MutableList<Pair<Int, Int>>
+    ): Boolean {
+        val field = _viewState.value.gameField[pos.first][pos.second]
+
+        hasSameColor(Pair(pos.first + 1, pos.second), field)?.let { if(!fieldsToDestroy.contains(it)) fieldsToDestroy.add(it) }
+        hasSameColor(Pair(pos.first - 1, pos.second), field)?.let { if(!fieldsToDestroy.contains(it)) fieldsToDestroy.add(it)}
+        hasSameColor(Pair(pos.first, pos.second + 1), field)?.let { if(!fieldsToDestroy.contains(it)) fieldsToDestroy.add(it) }
+        hasSameColor(Pair(pos.first, pos.second - 1), field)?.let { if(!fieldsToDestroy.contains(it)) fieldsToDestroy.add(it) }
+        return fieldsToDestroy.size > 1
+    }
+
+    private fun hasSameColor(pair: Pair<Int, Int>, field: ColorField?): Pair<Int, Int>? {
+        val gameBoard = _viewState.value.gameField
+
+        if (field != null && pair.first >= 0 &&
+            pair.second >= 0 &&
+            pair.first < gameBoard.size &&
+            pair.second < gameBoard.size &&
+            gameBoard[pair.first][pair.second] != null &&
+            gameBoard[pair.first][pair.second]?.color == field.color
+        ) {
+            return pair
+        } else {
+            return null
+        }
+    }
+
+    private fun fieldClicked(pos: Pair<Int, Int>) {
+        _viewState.update {
+            it.copy(gameField = it.gameField.mapIndexed { column, colorFields ->
+                colorFields.mapIndexed { row, colorField ->
+                    colorField?.copy(animateFrom = row)
+                }
+            })
+        }
+        val fieldsToDestroy = mutableListOf<Pair<Int, Int>>()
+        fieldsToDestroy.add(pos)
+        if (isDestroyable(pos, fieldsToDestroy)) {
+            var lastSize = 0
+            while (lastSize != fieldsToDestroy.size){
+                lastSize = fieldsToDestroy.size
+
+                fieldsToDestroy.toMutableList().forEach { position ->
+                    isDestroyable(position, fieldsToDestroy)
+                }
+            }
+
+            _viewState.update {
+                it.copy(gameField = it.gameField.mapIndexed { column, colorFields ->
+                    colorFields.mapIndexed { row, colorField ->
+                        if (fieldsToDestroy.contains(Pair(column, row))) null else colorField
+                    }
+                })
+            }
+            updateGameField(Direction.RIGHT)
+            while (placeRandomColorField()){
+
+            }
+            viewModelScope.launch {
+                delay(100)
+                _viewState.update { it.copy(gameField = it.gameField.map { column -> column.map { item -> item?.copy(spawned = false)  }  }) }
             }
         }
     }
 
     private fun swapElements(from: Pair<Int, Int>, to: Pair<Int, Int>) {
-        println(from)
-        println(to)
         val board = _viewState.value.gameField
         if (from.first < 0 || from.second > board.size - 1 || to.first < 0 || to.second > board.size - 1 ||
-            from.second < 0 || from.first > board.size - 1 || to.second < 0 || to.first > board.size - 1) {
+            from.second < 0 || from.first > board.size - 1 || to.second < 0 || to.first > board.size - 1
+        ) {
             return
         }
         if (!board[from.first][from.second].mergeAllowed(board[to.first][to.second])) {
@@ -121,31 +194,31 @@ class MainViewModel(
         val columns = mutableListOf<List<ColorField?>>()
         when (direction) {
             Direction.RIGHT -> {
-                for (i in 0..3) {
+                for (i in 0..<_viewState.value.gameField.size) {
                     columns.add(orderLine(_viewState.value.gameField[i].toMutableList()))
                 }
             }
 
             Direction.LEFT -> {
-                for (i in 0..3) {
+                for (i in 0..<_viewState.value.gameField.size) {
                     columns.add(orderLineReverse(_viewState.value.gameField[i].toMutableList()))
                 }
             }
 
             Direction.DOWN -> {
                 val rows = mutableListOf<List<ColorField?>>()
-                for (j in 0..3) {
+                for (j in 0..<_viewState.value.gameField.size) {
                     val mutList = mutableListOf<ColorField?>()
-                    for (i in 0..3) {
-                        mutList.add(_viewState.value.gameField[i][j])
+                    for (i in 0..<_viewState.value.gameField[j].size) {
+                        mutList.add(_viewState.value.gameField[j][i])
                     }
                     rows.add(orderLine(mutList))
                 }
                 // Rotate
-                for (j in 0..3) {
+                for (j in 0..<_viewState.value.gameField.size) {
                     val row = mutableListOf<ColorField?>()
-                    for (i in 0..3) {
-                        row.add(rows[i][j])
+                    for (i in 0..<_viewState.value.gameField[j].size) {
+                        row.add(rows[j][i])
                     }
                     columns.add(row)
                 }
@@ -153,18 +226,18 @@ class MainViewModel(
 
             Direction.UP -> {
                 val rows = mutableListOf<List<ColorField?>>()
-                for (j in 0..3) {
+                for (j in 0..<_viewState.value.gameField.size) {
                     val mutList = mutableListOf<ColorField?>()
-                    for (i in 0..3) {
-                        mutList.add(_viewState.value.gameField[i][j])
+                    for (i in 0..<_viewState.value.gameField[j].size) {
+                        mutList.add(_viewState.value.gameField[j][i])
                     }
                     rows.add(orderLineReverse(mutList))
                 }
                 // Rotate
-                for (j in 0..3) {
+                for (j in 0..<_viewState.value.gameField.size) {
                     val row = mutableListOf<ColorField?>()
-                    for (i in 0..3) {
-                        row.add(rows[i][j])
+                    for (i in 0..<_viewState.value.gameField[j].size) {
+                        row.add(rows[j][i])
                     }
                     columns.add(row)
                 }
@@ -181,10 +254,10 @@ class MainViewModel(
         var anyMove = true
         while (anyMove) {
             anyMove = false
-            for (i in 0..2) {
+            for (i in 0.._viewState.value.gameField.size-2) {
                 if (list[i] != null && list[i + 1] == null) {
                     anyMove = true
-                    list[i + 1] = list[i]
+                    list[i + 1] = list[i]?.copy(spawned = true)
                     list[i] = null
                 }
                 if (false && list[i].mergeAllowed(list[i + 1])) {
@@ -226,4 +299,5 @@ sealed class MainViewEvent {
 
     //data class Swipe(val direction: Direction) : MainViewEvent()
     data class Swap(val from: Pair<Int, Int>, val to: Pair<Int, Int>) : MainViewEvent()
+    data class FieldClicked(val pos: Pair<Int, Int>) : MainViewEvent()
 }

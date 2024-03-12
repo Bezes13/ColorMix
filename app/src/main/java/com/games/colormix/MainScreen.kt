@@ -19,7 +19,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 
-const val FieldSize = 80
+val FieldSize = 50.dp
+val VerticalPadding = 5.dp
 
 @Composable
 fun MainScreen(mainViewModel: MainViewModel = viewModel()) {
@@ -43,10 +44,10 @@ fun MainScreenContent(gameField: List<List<ColorField?>>, eventListener: (MainVi
             modifier = Modifier.fillMaxWidth()
         )
         Row(
-            horizontalArrangement = Arrangement.spacedBy(2.dp),
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
-            for (i in 0..3) {
+            for (i in gameField.indices) {
                 GameColumn(gameField[i], i, eventListener)
             }
         }
@@ -57,8 +58,8 @@ fun MainScreenContent(gameField: List<List<ColorField?>>, eventListener: (MainVi
 fun GameColumn(
     colorFields: List<ColorField?>, column: Int, eventListener: (MainViewEvent) -> Unit
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        for (i in 0..3) {
+    Column(verticalArrangement = Arrangement.spacedBy(VerticalPadding)) {
+        for (i in colorFields.indices) {
             Field(colorFields[i], Pair(column, i), eventListener)
         }
     }

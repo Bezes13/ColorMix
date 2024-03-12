@@ -5,7 +5,9 @@ import androidx.compose.ui.graphics.Color
 data class ColorField(
     val id: Int,
     val color: Color = startColor(),
-    val highlight: Boolean = false
+    val highlight: Boolean = false,
+    val spawned: Boolean = true,
+    val animateFrom: Int = 0
 )
 
 // merge Colors
@@ -18,7 +20,7 @@ val mergeColors = mapOf(
     Pair(Color.Magenta, Color.Green) to Color.White,
 )
 
-fun startColor() = listOf(Color.Red, Color.Green, Color.Blue).random()
+fun startColor() = listOf(Color.Red, Color.Green, Color.Blue, Color.Yellow, Color.Cyan).random()
 
 fun ColorField?.mergeAllowed(other: ColorField?): Boolean {
     if (this == null || other == null) {
