@@ -7,8 +7,12 @@ data class ColorField(
     val color: Color = startColor(),
     val highlight: Boolean = false,
     val spawned: Boolean = true,
-    val animateFrom: Int = 0
-)
+    val animateTo: Int
+) : Comparable<ColorField> {
+    override fun compareTo(other: ColorField): Int {
+        return animateTo.compareTo(other.animateTo)
+    }
+}
 
 // merge Colors
 val mergeColors = mapOf(
@@ -33,7 +37,7 @@ fun ColorField?.mergeAllowed(other: ColorField?): Boolean {
 fun ColorField?.merge(other: ColorField?): ColorField {
     if (this == null || other == null) {
         // Throw error
-        return this?: ColorField(-1)
+        return this?: ColorField(-1, animateTo = 0)
     }
     return if (this.highlight && other.highlight) {
         this.copy(
