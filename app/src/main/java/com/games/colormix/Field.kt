@@ -1,5 +1,6 @@
 package com.games.colormix
 
+import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.animateIntOffsetAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,8 +28,9 @@ fun Field(content: ColorField?, pos: Pair<Int, Int>, eventListener: (MainViewEve
         return
     }
     val pxToMove = with(LocalDensity.current) {
-        (-(FieldSize + VerticalPadding) * (pos.second-content.animateFrom + 1)).toPx().roundToInt()
+        (-(FieldSize + VerticalPadding) * (pos.second-content.animateFrom)).toPx().roundToInt()
     }
+
     val offset by animateIntOffsetAsState(
         targetValue = if (content.spawned) {
             IntOffset(0, pxToMove)

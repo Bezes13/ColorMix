@@ -27,7 +27,15 @@ class MainViewModel(
         _viewState.update { it.copy(isLoading = false) }
         viewModelScope.launch {
             delay(100)
-            _viewState.update { it.copy(gameField = it.gameField.map { column -> column.map { item -> item?.copy(spawned = false) }  }) }
+            _viewState.update {
+                it.copy(gameField = it.gameField.map { column ->
+                    column.map { item ->
+                        item?.copy(
+                            spawned = false
+                        )
+                    }
+                })
+            }
         }
     }
 
@@ -43,7 +51,7 @@ class MainViewModel(
         _viewState.update { it.copy(gameField = columns) }
     }
 
-    private fun placeRandomColorField() : Boolean {
+    private fun placeRandomColorField(): Boolean {
         val emptyFields = mutableListOf<Pair<Int, Int>>()
         _viewState.value.gameField.forEachIndexed { i, column ->
             column.forEachIndexed { j, row ->
@@ -99,10 +107,22 @@ class MainViewModel(
     ): Boolean {
         val field = _viewState.value.gameField[pos.first][pos.second]
 
-        hasSameColor(Pair(pos.first + 1, pos.second), field)?.let { if(!fieldsToDestroy.contains(it)) fieldsToDestroy.add(it) }
-        hasSameColor(Pair(pos.first - 1, pos.second), field)?.let { if(!fieldsToDestroy.contains(it)) fieldsToDestroy.add(it)}
-        hasSameColor(Pair(pos.first, pos.second + 1), field)?.let { if(!fieldsToDestroy.contains(it)) fieldsToDestroy.add(it) }
-        hasSameColor(Pair(pos.first, pos.second - 1), field)?.let { if(!fieldsToDestroy.contains(it)) fieldsToDestroy.add(it) }
+        hasSameColor(
+            Pair(pos.first + 1, pos.second),
+            field
+        )?.let { if (!fieldsToDestroy.contains(it)) fieldsToDestroy.add(it) }
+        hasSameColor(
+            Pair(pos.first - 1, pos.second),
+            field
+        )?.let { if (!fieldsToDestroy.contains(it)) fieldsToDestroy.add(it) }
+        hasSameColor(
+            Pair(pos.first, pos.second + 1),
+            field
+        )?.let { if (!fieldsToDestroy.contains(it)) fieldsToDestroy.add(it) }
+        hasSameColor(
+            Pair(pos.first, pos.second - 1),
+            field
+        )?.let { if (!fieldsToDestroy.contains(it)) fieldsToDestroy.add(it) }
         return fieldsToDestroy.size > 1
     }
 
@@ -112,7 +132,7 @@ class MainViewModel(
         if (field != null && pair.first >= 0 &&
             pair.second >= 0 &&
             pair.first < gameBoard.size &&
-            pair.second < gameBoard.size &&
+            pair.second < gameBoard[pair.first].size &&
             gameBoard[pair.first][pair.second] != null &&
             gameBoard[pair.first][pair.second]?.color == field.color
         ) {
@@ -134,7 +154,7 @@ class MainViewModel(
         fieldsToDestroy.add(pos)
         if (isDestroyable(pos, fieldsToDestroy)) {
             var lastSize = 0
-            while (lastSize != fieldsToDestroy.size){
+            while (lastSize != fieldsToDestroy.size) {
                 lastSize = fieldsToDestroy.size
 
                 fieldsToDestroy.toMutableList().forEach { position ->
@@ -149,13 +169,30 @@ class MainViewModel(
                     }
                 })
             }
-            updateGameField(Direction.RIGHT)
-            while (placeRandomColorField()){
+            val columns = mutableListOf<List<ColorField?>>()
+            for (i in 0..<_viewState.value.gameField.size) {
+                columns.add(orderLine(_viewState.value.gameField[i].toMutableList()))
+            }
 
+            _viewState.update { it.copy(gameField = columns) }
+            _viewState.update {
+                it.copy(gameField = it.gameField.map { colorFields ->
+                    colorFields.map { colorField ->
+                        colorField ?: ColorField(colorFieldNextId++)
+                    }
+                })
             }
             viewModelScope.launch {
                 delay(100)
-                _viewState.update { it.copy(gameField = it.gameField.map { column -> column.map { item -> item?.copy(spawned = false)  }  }) }
+                _viewState.update {
+                    it.copy(gameField = it.gameField.map { column ->
+                        column.map { item ->
+                            item?.copy(
+                                spawned = false
+                            )
+                        }
+                    })
+                }
             }
         }
     }
@@ -254,7 +291,7 @@ class MainViewModel(
         var anyMove = true
         while (anyMove) {
             anyMove = false
-            for (i in 0.._viewState.value.gameField.size-2) {
+            for (i in 0.._viewState.value.gameField.size - 2) {
                 if (list[i] != null && list[i + 1] == null) {
                     anyMove = true
                     list[i + 1] = list[i]?.copy(spawned = true)
