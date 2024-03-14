@@ -7,6 +7,8 @@ data class ColorField(
     val color: Color = startColor(),
     val highlight: Boolean = false,
     val spawned: Boolean = true,
+    val dropped: Boolean = true,
+
     val animateTo: Int
 ) : Comparable<ColorField> {
     override fun compareTo(other: ColorField): Int {
@@ -24,7 +26,9 @@ val mergeColors = mapOf(
     Pair(Color.Magenta, Color.Green) to Color.White,
 )
 
-fun startColor() = listOf(Color.Red, Color.Green, Color.Blue, Color.Yellow, Color.Cyan).random()
+val startColors = listOf(Color.Yellow, Color.Green, Color.Blue, Color.Red, Color.Cyan)
+
+fun startColor() = startColors.random()
 
 fun ColorField?.mergeAllowed(other: ColorField?): Boolean {
     if (this == null || other == null) {

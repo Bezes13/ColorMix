@@ -31,7 +31,8 @@ class MainViewModel(
                 it.copy(gameField = it.gameField.map { column ->
                     column.map { item ->
                         item?.copy(
-                            spawned = false
+                            spawned = false,
+                            dropped = false
                         )
                     }
                 })
@@ -44,7 +45,7 @@ class MainViewModel(
         _viewState.value.gameField.forEach {
             val row = mutableListOf<ColorField>()
             it.forEachIndexed { index, _ ->
-                row.add(ColorField(colorFieldNextId++, animateTo = index ))
+                row.add(ColorField(colorFieldNextId++, animateTo = index))
             }
             columns.add(row)
         }
@@ -62,7 +63,6 @@ class MainViewModel(
             when (event) {
                 is MainViewEvent.SetDialog -> updateDialog(event.dialog)
                 is MainViewEvent.Swap -> {}
-                //is MainViewEvent.Swipe -> updateGameField(event.direction)
                 is MainViewEvent.FieldClicked -> fieldClicked(event.pos)
                 is MainViewEvent.SetBlocksAfterAnimation -> updateBlocksAfterAnimation()
                 is MainViewEvent.ResetSpawns -> updateDropppedBlocksAfterAnimation()
@@ -71,17 +71,32 @@ class MainViewModel(
     }
 
     private fun updateDropppedBlocksAfterAnimation() {
-        _viewState.update { it.copy(gameField = it.gameField.map { colorFields -> colorFields.map { field -> field?.copy(spawned = false) } }) }
+        // _viewState.update { it.copy(gameField = it.gameField.map { colorFields -> colorFields.map { field -> field?.copy(spawned = false) } }) }
     }
 
     private fun updateBlocksAfterAnimation() {
-        _viewState.update { it.copy(gameField = it.gameField.map { colorFields -> colorFields.sortedBy { it?.animateTo } }) }
-        // Drop new Blocks
-        _viewState.update { it.copy(gameField = it.gameField.map { columns -> columns.mapIndexed { idx, item -> item
-            ?: ColorField(colorFieldNextId++, animateTo = idx) } }) }
+        // Place the animated Fields in the correct Spot
+        // Add new ColorFields in empty fields
+        _viewState.update {
+            it.copy(gameField = it.gameField.map { colorFields ->
+                colorFields.sortedBy { it?.animateTo }.mapIndexed { idx, item ->
+                    item ?: ColorField(colorFieldNextId++, animateTo = idx)
+                }
+            })
+        }
+
+        // Let the new Guys fall
         viewModelScope.launch {
-            delay(100)
-            updateDropppedBlocksAfterAnimation()
+            delay(10)
+            _viewState.update {
+                it.copy(gameField = it.gameField.map { colorFields ->
+                    colorFields.map { field ->
+                        field?.copy(
+                            dropped = false
+                        )
+                    }
+                })
+            }
         }
     }
 
@@ -91,13 +106,17 @@ class MainViewModel(
     ): Boolean {
         val field = _viewState.value.gameField[pos.first][pos.second]
 
-        hasSameColor(Pair(pos.first + 1, pos.second), field
-        )?.let{ if (!fieldsToDestroy.contains(it)) fieldsToDestroy.add(it) }
-        hasSameColor(Pair(pos.first - 1, pos.second), field
+        hasSameColor(
+            Pair(pos.first + 1, pos.second), field
         )?.let { if (!fieldsToDestroy.contains(it)) fieldsToDestroy.add(it) }
-        hasSameColor(Pair(pos.first, pos.second + 1), field
+        hasSameColor(
+            Pair(pos.first - 1, pos.second), field
         )?.let { if (!fieldsToDestroy.contains(it)) fieldsToDestroy.add(it) }
-        hasSameColor(Pair(pos.first, pos.second - 1), field
+        hasSameColor(
+            Pair(pos.first, pos.second + 1), field
+        )?.let { if (!fieldsToDestroy.contains(it)) fieldsToDestroy.add(it) }
+        hasSameColor(
+            Pair(pos.first, pos.second - 1), field
         )?.let { if (!fieldsToDestroy.contains(it)) fieldsToDestroy.add(it) }
         return fieldsToDestroy.size > 1
     }
@@ -119,9 +138,6 @@ class MainViewModel(
         }
     }
 
-    // Remove Tiles
-    // Drop Tiles
-    // Add new Tiles
     private fun fieldClicked(pos: Pair<Int, Int>) {
         val fieldsToDestroy = mutableListOf<Pair<Int, Int>>()
         fieldsToDestroy.add(pos)
@@ -148,10 +164,17 @@ class MainViewModel(
                 columns.add(orderLine(_viewState.value.gameField[i].toMutableList()))
             }
 
-            _viewState.update { it.copy(gameField = it.gameField.mapIndexed{ index, colorFields ->
-                colorFields.map { colorField -> colorField?.copy( animateTo = columns[index].indexOfFirst{it?.id == colorField.id} ) }
-            }) }
-
+            _viewState.update {
+                it.copy(gameField = it.gameField.mapIndexed { index, colorFields ->
+                    colorFields.map { colorField -> colorField?.copy(animateTo = columns[index].indexOfFirst { it?.id == colorField.id }) }
+                })
+            }
+            if(columns.any{ colorFields -> colorFields.filterIndexed{index, colorField -> index != colorField?.animateTo }.isEmpty() }){
+                viewModelScope.launch {
+                    delay(10)
+                    updateBlocksAfterAnimation()
+                }
+            }
         }
     }
 
@@ -160,14 +183,10 @@ class MainViewModel(
         var anyMove = true
         while (anyMove) {
             anyMove = false
-            for (i in 0.._viewState.value.gameField.size - 1) {
+            for (i in 0..<_viewState.value.gameField.size) {
                 if (list[i] != null && list[i + 1] == null) {
                     anyMove = true
-                    list[i + 1] = list[i]?.copy(spawned = true, animateTo = i+1)
-                    list[i] = null
-                }
-                if (false && list[i].mergeAllowed(list[i + 1])) {
-                    list[i + 1] = list[i + 1]!!.merge(list[i]!!)
+                    list[i + 1] = list[i]?.copy(spawned = true, animateTo = i + 1)
                     list[i] = null
                 }
             }

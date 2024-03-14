@@ -11,7 +11,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,8 +39,14 @@ fun MainScreenContent(gameField: List<List<ColorField?>>, eventListener: (MainVi
         modifier = Modifier.fillMaxSize()
     ) {
         Text(
-            text = stringResource(id = R.string.app_name),
-            fontSize = 30.sp,
+            stringResource(id = R.string.app_name),
+            fontSize = 60.sp,
+            style = TextStyle(
+                brush = Brush.linearGradient(
+                    colors = startColors
+                )
+            ),
+
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
@@ -73,6 +81,6 @@ sealed class MainViewDialog {
 @Preview
 fun PreviewMainScreen() {
     MainScreenContent(
-        (0 until 4).map { arrayOfNulls<ColorField?>(4).toList() },{}
+        (0 until 4).map { arrayOfNulls<ColorField?>(4).toList() }, {}
     )
 }
