@@ -121,7 +121,7 @@ class MainViewModel(
         fieldsToDestroy: MutableList<Pair<Int, Int>>
     ): Boolean {
         val field = _viewState.value.gameField[pos.first][pos.second]
-
+        val board = _viewState.value.gameField
         hasSameColor(
             Pair(pos.first + 1, pos.second), field
         )?.let { if (!fieldsToDestroy.contains(it)) fieldsToDestroy.add(it) }
@@ -134,7 +134,7 @@ class MainViewModel(
         hasSameColor(
             Pair(pos.first, pos.second - 1), field
         )?.let { if (!fieldsToDestroy.contains(it)) fieldsToDestroy.add(it) }
-        return fieldsToDestroy.size > 1
+        return fieldsToDestroy.filter { board[it.first][it.second]?.specialType == SpecialType.None }.size > 1
     }
 
     private fun hasSameColor(pair: Pair<Int, Int>, field: ColorField?): Pair<Int, Int>? {
@@ -221,12 +221,10 @@ class MainViewModel(
 }
 
 fun List<ColorField?>.putOnRightPosition(): MutableList<ColorField?> {
-    val result = this.toMutableList()
+    val result = arrayOfNulls<ColorField?>(8).toMutableList()
     this.forEachIndexed { index, it ->
         if (it != null) {
             result[it.animateTo] = it
-            if (it.animateTo != index)
-                result[index] = null
         }
     }
     return result
