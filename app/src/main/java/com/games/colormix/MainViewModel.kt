@@ -23,6 +23,7 @@ class MainViewModel(
     init {
         _viewState.update { it.copy(isLoading = true) }
         fillGameField()
+
         listenToEvent()
         _viewState.update { it.copy(isLoading = false) }
         viewModelScope.launch {
@@ -49,7 +50,16 @@ class MainViewModel(
             }
             columns.add(row)
         }
-        _viewState.update { it.copy(gameField = columns) }
+        val rockPosition = Pair(2, 2)
+        val res = columns.mapIndexed { index, row ->
+            row.mapIndexed { inner, item ->
+                if (rockPosition.first == index && rockPosition.second == inner) item.copy(
+                    specialType = SpecialType.Box,
+                    color = null
+                ) else item
+            }
+        }
+        _viewState.update { it.copy(gameField = res) }
     }
 
     fun sendEvent(event: MainViewEvent) {
@@ -79,8 +89,14 @@ class MainViewModel(
         // Add new ColorFields in empty fields
         _viewState.update {
             it.copy(gameField = it.gameField.map { colorFields ->
-                colorFields.sortedBy { it?.animateTo }.mapIndexed { idx, item ->
-                    item ?: ColorField(colorFieldNextId++, animateTo = idx)
+                var fromTop = true
+                colorFields.putOnRightPosition().mapIndexed { idx, item ->
+                    if (item == null && fromTop) {
+                        ColorField(colorFieldNextId++, animateTo = idx)
+                    } else {
+                        fromTop = false
+                        item
+                    }
                 }
             })
         }
@@ -130,7 +146,8 @@ class MainViewModel(
             pair.first < gameBoard.size &&
             pair.second < gameBoard[pair.first].size &&
             gameBoard[pair.first][pair.second] != null &&
-            gameBoard[pair.first][pair.second]?.color == field.color
+            (gameBoard[pair.first][pair.second]?.color == field.color ||
+                    gameBoard[pair.first][pair.second]?.specialType == SpecialType.Box || gameBoard[pair.first][pair.second]?.specialType == SpecialType.OpenBox)
         ) {
             return pair
         } else {
@@ -154,7 +171,8 @@ class MainViewModel(
             _viewState.update {
                 it.copy(gameField = it.gameField.mapIndexed { column, colorFields ->
                     colorFields.mapIndexed { row, colorField ->
-                        if (fieldsToDestroy.contains(Pair(column, row))) null else colorField
+                        if (colorField == null) null else
+                        if (fieldsToDestroy.contains(Pair(column, row))) if(colorField.specialType == SpecialType.Box) colorField.copy(specialType = SpecialType.OpenBox) else null else colorField
                     }
                 })
             }
@@ -169,7 +187,10 @@ class MainViewModel(
                     colorFields.map { colorField -> colorField?.copy(animateTo = columns[index].indexOfFirst { it?.id == colorField.id }) }
                 })
             }
-            if(columns.any{ colorFields -> colorFields.filterIndexed{index, colorField -> index != colorField?.animateTo }.isEmpty() }){
+            if (columns.any { colorFields ->
+                    colorFields.filterIndexed { index, colorField -> index != colorField?.animateTo }
+                        .isEmpty()
+                }) {
                 viewModelScope.launch {
                     delay(10)
                     updateBlocksAfterAnimation()
@@ -184,7 +205,7 @@ class MainViewModel(
         while (anyMove) {
             anyMove = false
             for (i in 0..<_viewState.value.gameField.size) {
-                if (list[i] != null && list[i + 1] == null) {
+                if (list[i] != null && list[i]?.specialType != SpecialType.Rock && list[i + 1] == null) {
                     anyMove = true
                     list[i + 1] = list[i]?.copy(spawned = true, animateTo = i + 1)
                     list[i] = null
@@ -199,10 +220,20 @@ class MainViewModel(
     }
 }
 
+fun List<ColorField?>.putOnRightPosition(): MutableList<ColorField?> {
+    val result = this.toMutableList()
+    this.forEachIndexed { index, it ->
+        if (it != null) {
+            result[it.animateTo] = it
+            if (it.animateTo != index)
+                result[index] = null
+        }
+    }
+    return result
+}
+
 sealed class MainViewEvent {
     data class SetDialog(val dialog: MainViewDialog) : MainViewEvent()
-
-    //data class Swipe(val direction: Direction) : MainViewEvent()
     data class Swap(val from: Pair<Int, Int>, val to: Pair<Int, Int>) : MainViewEvent()
     data class FieldClicked(val pos: Pair<Int, Int>) : MainViewEvent()
     data object SetBlocksAfterAnimation : MainViewEvent()

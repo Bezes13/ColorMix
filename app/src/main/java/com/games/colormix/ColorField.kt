@@ -4,16 +4,20 @@ import androidx.compose.ui.graphics.Color
 
 data class ColorField(
     val id: Int,
-    val color: Color = startColor(),
+    val color: Color? = startColor(),
     val highlight: Boolean = false,
     val spawned: Boolean = true,
     val dropped: Boolean = true,
-
+    val specialType: SpecialType = SpecialType.None,
     val animateTo: Int
 ) : Comparable<ColorField> {
     override fun compareTo(other: ColorField): Int {
         return animateTo.compareTo(other.animateTo)
     }
+}
+
+enum class SpecialType {
+    None, Rock, Box, OpenBox
 }
 
 // merge Colors
