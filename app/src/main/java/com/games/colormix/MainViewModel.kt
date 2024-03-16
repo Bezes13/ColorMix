@@ -21,23 +21,14 @@ class MainViewModel(
     private var colorFieldNextId = 0
 
     init {
-        _viewState.update { it.copy(isLoading = true) }
-        fillGameField()
-
         listenToEvent()
-        _viewState.update { it.copy(isLoading = false) }
-        viewModelScope.launch {
-            delay(100)
-            _viewState.update {
-                it.copy(gameField = it.gameField.map { column ->
-                    column.map { item ->
-                        item?.copy(
-                            spawned = false,
-                            dropped = false
-                        )
-                    }
-                })
-            }
+        fillGameField()
+        letTheBlocksFall()
+    }
+
+    fun sendEvent(event: MainViewEvent) {
+        viewModelScope.launch(ioDispatcher) {
+            _event.emit(event)
         }
     }
 
@@ -51,20 +42,20 @@ class MainViewModel(
             columns.add(row)
         }
         val rockPosition = Pair(2, 2)
-        val res = columns.mapIndexed { index, row ->
-            row.mapIndexed { inner, item ->
-                if (rockPosition.first == index && rockPosition.second == inner) item.copy(
-                    specialType = SpecialType.Box,
-                    color = null
-                ) else item
-            }
-        }
+        val res = placeSpecialBlockAtPosition(columns, listOf(SpecialBlockPlacement(SpecialType.Rock, rockPosition)))
         _viewState.update { it.copy(gameField = res) }
     }
 
-    fun sendEvent(event: MainViewEvent) {
-        viewModelScope.launch(ioDispatcher) {
-            _event.emit(event)
+    data class SpecialBlockPlacement(val specialType: SpecialType, val pos: Pair<Int, Int>)
+
+    private fun placeSpecialBlockAtPosition(columns : List<List<ColorField>>, specialBlocks: List<SpecialBlockPlacement> ) : List<List<ColorField>> {
+        return columns.mapIndexed { index, row ->
+            row.mapIndexed { inner, item ->
+                if (specialBlocks.any { it.pos == Pair(index, inner) }) item.copy(
+                    specialType = specialBlocks.first { it.pos == Pair(index, inner) }.specialType,
+                    color = null
+                ) else item
+            }
         }
     }
 
@@ -72,7 +63,6 @@ class MainViewModel(
         _event.collect { event ->
             when (event) {
                 is MainViewEvent.SetDialog -> updateDialog(event.dialog)
-                is MainViewEvent.Swap -> {}
                 is MainViewEvent.FieldClicked -> fieldClicked(event.pos)
                 is MainViewEvent.SetBlocksAfterAnimation -> updateBlocksAfterAnimation()
                 is MainViewEvent.ResetSpawns -> updateDropppedBlocksAfterAnimation()
@@ -102,6 +92,11 @@ class MainViewModel(
         }
 
         // Let the new Guys fall
+        letTheBlocksFall()
+
+    }
+
+    private fun letTheBlocksFall(){
         viewModelScope.launch {
             delay(10)
             _viewState.update {
@@ -120,8 +115,8 @@ class MainViewModel(
         pos: Pair<Int, Int>,
         fieldsToDestroy: MutableList<Pair<Int, Int>>
     ): Boolean {
-        val field = _viewState.value.gameField[pos.first][pos.second]
         val board = _viewState.value.gameField
+        val field = board[pos.first][pos.second]
         hasSameColor(
             Pair(pos.first + 1, pos.second), field
         )?.let { if (!fieldsToDestroy.contains(it)) fieldsToDestroy.add(it) }
@@ -140,19 +135,17 @@ class MainViewModel(
     private fun hasSameColor(pair: Pair<Int, Int>, field: ColorField?): Pair<Int, Int>? {
         val gameBoard = _viewState.value.gameField
 
-        if (field != null &&
+        return if (field != null &&
             pair.first >= 0 &&
             pair.second >= 0 &&
             pair.first < gameBoard.size &&
             pair.second < gameBoard[pair.first].size &&
             gameBoard[pair.first][pair.second] != null &&
             (gameBoard[pair.first][pair.second]?.color == field.color ||
-                    gameBoard[pair.first][pair.second]?.specialType == SpecialType.Box || gameBoard[pair.first][pair.second]?.specialType == SpecialType.OpenBox)
-        ) {
-            return pair
-        } else {
-            return null
-        }
+                    gameBoard[pair.first][pair.second]?.specialType == SpecialType.Box ||
+                    gameBoard[pair.first][pair.second]?.specialType == SpecialType.OpenBox)
+        )
+            pair else null
     }
 
     private fun fieldClicked(pos: Pair<Int, Int>) {
@@ -172,7 +165,15 @@ class MainViewModel(
                 it.copy(gameField = it.gameField.mapIndexed { column, colorFields ->
                     colorFields.mapIndexed { row, colorField ->
                         if (colorField == null) null else
-                        if (fieldsToDestroy.contains(Pair(column, row))) if(colorField.specialType == SpecialType.Box) colorField.copy(specialType = SpecialType.OpenBox) else null else colorField
+                            if (fieldsToDestroy.contains(
+                                    Pair(
+                                        column,
+                                        row
+                                    )
+                                )
+                            ) if (colorField.specialType == SpecialType.Box) colorField.copy(
+                                specialType = SpecialType.OpenBox
+                            ) else null else colorField
                     }
                 })
             }
@@ -232,7 +233,6 @@ fun List<ColorField?>.putOnRightPosition(): MutableList<ColorField?> {
 
 sealed class MainViewEvent {
     data class SetDialog(val dialog: MainViewDialog) : MainViewEvent()
-    data class Swap(val from: Pair<Int, Int>, val to: Pair<Int, Int>) : MainViewEvent()
     data class FieldClicked(val pos: Pair<Int, Int>) : MainViewEvent()
     data object SetBlocksAfterAnimation : MainViewEvent()
     data object ResetSpawns : MainViewEvent()
