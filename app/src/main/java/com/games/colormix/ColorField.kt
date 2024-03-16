@@ -59,5 +59,16 @@ fun ColorField?.merge(other: ColorField?): ColorField {
         this.copy(highlight = true)
     }
 
+
+}
+
+fun List<ColorField?>.putOnRightPositionAfterAnimation(): MutableList<ColorField?> {
+    val result = arrayOfNulls<ColorField?>(8).toMutableList()
+    this.forEachIndexed { _, it ->
+        if (it != null) {
+            result[it.animateTo] = it
+        }
+    }
+    return result
 }
 

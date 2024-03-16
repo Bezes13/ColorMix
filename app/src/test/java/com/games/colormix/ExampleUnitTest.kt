@@ -15,7 +15,7 @@ class ExampleUnitTest {
     fun addition_isCorrect() {
         gameField.map { colorFields ->
             var fromTop = true
-            colorFields.putOnRightPosition().mapIndexed { idx, item ->
+            colorFields.putOnRightPositionAfterAnimation().mapIndexed { idx, item ->
                 if (item == null && fromTop) {
                     ColorField(colorFieldNextId++, animateTo = idx)
                 } else {

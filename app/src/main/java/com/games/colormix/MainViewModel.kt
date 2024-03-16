@@ -33,22 +33,34 @@ class MainViewModel(
     }
 
     private fun fillGameField() {
-        val columns = mutableListOf<List<ColorField>>()
-        _viewState.value.gameField.forEach {
-            val row = mutableListOf<ColorField>()
-            it.forEachIndexed { index, _ ->
-                row.add(ColorField(colorFieldNextId++, animateTo = index))
+        _viewState.update { state ->
+            val columns = mutableListOf<List<ColorField>>()
+            state.gameField.forEach {
+                val row = mutableListOf<ColorField>()
+                it.forEachIndexed { index, _ ->
+                    row.add(ColorField(colorFieldNextId++, animateTo = index))
+                }
+                columns.add(row)
             }
-            columns.add(row)
+            val res = placeSpecialBlockAtPosition(
+                columns,
+                listOf(
+                    SpecialBlockPlacement(
+                        SpecialType.Rock,
+                        Pair(2, 2)
+                    )
+                )
+            )
+            state.copy(gameField = res)
         }
-        val rockPosition = Pair(2, 2)
-        val res = placeSpecialBlockAtPosition(columns, listOf(SpecialBlockPlacement(SpecialType.Rock, rockPosition)))
-        _viewState.update { it.copy(gameField = res) }
     }
 
     data class SpecialBlockPlacement(val specialType: SpecialType, val pos: Pair<Int, Int>)
 
-    private fun placeSpecialBlockAtPosition(columns : List<List<ColorField>>, specialBlocks: List<SpecialBlockPlacement> ) : List<List<ColorField>> {
+    private fun placeSpecialBlockAtPosition(
+        columns: List<List<ColorField>>,
+        specialBlocks: List<SpecialBlockPlacement>
+    ): List<List<ColorField>> {
         return columns.mapIndexed { index, row ->
             row.mapIndexed { inner, item ->
                 if (specialBlocks.any { it.pos == Pair(index, inner) }) item.copy(
@@ -63,24 +75,19 @@ class MainViewModel(
         _event.collect { event ->
             when (event) {
                 is MainViewEvent.SetDialog -> updateDialog(event.dialog)
-                is MainViewEvent.FieldClicked -> fieldClicked(event.pos)
+                is MainViewEvent.FieldClicked -> blockClicked(event.pos)
                 is MainViewEvent.SetBlocksAfterAnimation -> updateBlocksAfterAnimation()
-                is MainViewEvent.ResetSpawns -> updateDropppedBlocksAfterAnimation()
             }
         }
     }
 
-    private fun updateDropppedBlocksAfterAnimation() {
-        // _viewState.update { it.copy(gameField = it.gameField.map { colorFields -> colorFields.map { field -> field?.copy(spawned = false) } }) }
-    }
-
+    // Place the animated Fields in the correct Spot
+    // Add new ColorFields in empty fields
     private fun updateBlocksAfterAnimation() {
-        // Place the animated Fields in the correct Spot
-        // Add new ColorFields in empty fields
         _viewState.update {
             it.copy(gameField = it.gameField.map { colorFields ->
                 var fromTop = true
-                colorFields.putOnRightPosition().mapIndexed { idx, item ->
+                colorFields.putOnRightPositionAfterAnimation().mapIndexed { idx, item ->
                     if (item == null && fromTop) {
                         ColorField(colorFieldNextId++, animateTo = idx)
                     } else {
@@ -96,7 +103,7 @@ class MainViewModel(
 
     }
 
-    private fun letTheBlocksFall(){
+    private fun letTheBlocksFall() {
         viewModelScope.launch {
             delay(10)
             _viewState.update {
@@ -148,59 +155,65 @@ class MainViewModel(
             pair else null
     }
 
-    private fun fieldClicked(pos: Pair<Int, Int>) {
-        val fieldsToDestroy = mutableListOf<Pair<Int, Int>>()
-        fieldsToDestroy.add(pos)
-        if (isDestroyable(pos, fieldsToDestroy)) {
-            var lastSize = 0
-            while (lastSize != fieldsToDestroy.size) {
-                lastSize = fieldsToDestroy.size
+    // Is called when a Block is clicked
+    private fun blockClicked(pos: Pair<Int, Int>) {
+        val blocksToDestroy = mutableListOf<Pair<Int, Int>>()
+        if(!getBlocksToDestroy(blocksToDestroy, pos) ){
+            return
+        }
 
-                fieldsToDestroy.toMutableList().forEach { position ->
-                    isDestroyable(position, fieldsToDestroy)
+
+        _viewState.update {
+            it.copy(gameField = it.gameField.mapIndexed { column, colorFields ->
+                colorFields.mapIndexed { row, colorField ->
+                    if (colorField == null) null else
+                        if (blocksToDestroy.contains(Pair(column, row))
+                        ) if (colorField.specialType == SpecialType.Box) colorField.copy(
+                            specialType = SpecialType.OpenBox
+                        ) else null else colorField
                 }
-            }
+            })
+        }
 
-            _viewState.update {
-                it.copy(gameField = it.gameField.mapIndexed { column, colorFields ->
-                    colorFields.mapIndexed { row, colorField ->
-                        if (colorField == null) null else
-                            if (fieldsToDestroy.contains(
-                                    Pair(
-                                        column,
-                                        row
-                                    )
-                                )
-                            ) if (colorField.specialType == SpecialType.Box) colorField.copy(
-                                specialType = SpecialType.OpenBox
-                            ) else null else colorField
-                    }
-                })
-            }
+        val columns = mutableListOf<List<ColorField?>>()
+        for (i in 0..<_viewState.value.gameField.size) {
+            columns.add(pushBlocksDown(_viewState.value.gameField[i].toMutableList()))
+        }
 
-            val columns = mutableListOf<List<ColorField?>>()
-            for (i in 0..<_viewState.value.gameField.size) {
-                columns.add(orderLine(_viewState.value.gameField[i].toMutableList()))
-            }
-
-            _viewState.update {
-                it.copy(gameField = it.gameField.mapIndexed { index, colorFields ->
-                    colorFields.map { colorField -> colorField?.copy(animateTo = columns[index].indexOfFirst { it?.id == colorField.id }) }
-                })
-            }
-            if (columns.any { colorFields ->
-                    colorFields.filterIndexed { index, colorField -> index != colorField?.animateTo }
-                        .isEmpty()
-                }) {
-                viewModelScope.launch {
-                    delay(10)
-                    updateBlocksAfterAnimation()
-                }
+        _viewState.update { state ->
+            state.copy(gameField = state.gameField.mapIndexed { index, colorFields ->
+                colorFields.map { colorField -> colorField?.copy(animateTo = columns[index].indexOfFirst { it?.id == colorField.id }) }
+            })
+        }
+        if (columns.any { colorFields ->
+                colorFields.filterIndexed { index, colorField -> index != colorField?.animateTo }
+                    .isEmpty()
+            }) {
+            viewModelScope.launch {
+                delay(10)
+                updateBlocksAfterAnimation()
             }
         }
+
     }
 
-    private fun orderLine(list: MutableList<ColorField?>): List<ColorField?> {
+    private fun getBlocksToDestroy(blocksToDestroy: MutableList<Pair<Int,Int>>,pos: Pair<Int, Int>) : Boolean{
+        blocksToDestroy.add(pos)
+        if (isDestroyable(pos, blocksToDestroy)) {
+            return false
+        }
+        var lastSize = 0
+        while (lastSize != blocksToDestroy.size) {
+            lastSize = blocksToDestroy.size
+
+            blocksToDestroy.toMutableList().forEach { position ->
+                isDestroyable(position, blocksToDestroy)
+            }
+        }
+        return true
+    }
+
+    private fun pushBlocksDown(list: MutableList<ColorField?>): List<ColorField?> {
         // [B, null, G, Null] -> [null, null, B, G]
         var anyMove = true
         while (anyMove) {
@@ -221,19 +234,8 @@ class MainViewModel(
     }
 }
 
-fun List<ColorField?>.putOnRightPosition(): MutableList<ColorField?> {
-    val result = arrayOfNulls<ColorField?>(8).toMutableList()
-    this.forEachIndexed { index, it ->
-        if (it != null) {
-            result[it.animateTo] = it
-        }
-    }
-    return result
-}
-
 sealed class MainViewEvent {
     data class SetDialog(val dialog: MainViewDialog) : MainViewEvent()
     data class FieldClicked(val pos: Pair<Int, Int>) : MainViewEvent()
     data object SetBlocksAfterAnimation : MainViewEvent()
-    data object ResetSpawns : MainViewEvent()
 }
