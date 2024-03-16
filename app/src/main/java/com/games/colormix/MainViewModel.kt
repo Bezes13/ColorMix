@@ -2,7 +2,6 @@ package com.games.colormix
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.whattowatch.manager.SharedPreferencesManager
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -12,7 +11,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MainViewModel(
-    private var sharedPreferencesManager: SharedPreferencesManager,
+    //private var sharedPreferencesManager: SharedPreferencesManager,
     private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
     private val _event = MutableSharedFlow<MainViewEvent>()
@@ -32,6 +31,16 @@ class MainViewModel(
         }
     }
 
+    private fun listenToEvent() = viewModelScope.launch(ioDispatcher) {
+        _event.collect { event ->
+            when (event) {
+                is MainViewEvent.SetDialog -> updateDialog(event.dialog)
+                is MainViewEvent.FieldClicked -> blockClicked(event.pos)
+                is MainViewEvent.SetBlocksAfterAnimation -> updateBlocksAfterAnimation()
+            }
+        }
+    }
+
     private fun fillGameField() {
         _viewState.update { state ->
             val columns = mutableListOf<List<ColorField>>()
@@ -45,17 +54,12 @@ class MainViewModel(
             val res = placeSpecialBlockAtPosition(
                 columns,
                 listOf(
-                    SpecialBlockPlacement(
-                        SpecialType.Rock,
-                        Pair(2, 2)
-                    )
+                    SpecialBlockPlacement(SpecialType.Rock, Pair(2, 2))
                 )
             )
             state.copy(gameField = res)
         }
     }
-
-    data class SpecialBlockPlacement(val specialType: SpecialType, val pos: Pair<Int, Int>)
 
     private fun placeSpecialBlockAtPosition(
         columns: List<List<ColorField>>,
@@ -71,13 +75,25 @@ class MainViewModel(
         }
     }
 
-    private fun listenToEvent() = viewModelScope.launch(ioDispatcher) {
-        _event.collect { event ->
-            when (event) {
-                is MainViewEvent.SetDialog -> updateDialog(event.dialog)
-                is MainViewEvent.FieldClicked -> blockClicked(event.pos)
-                is MainViewEvent.SetBlocksAfterAnimation -> updateBlocksAfterAnimation()
+    // Is called when a Block is clicked
+    private fun blockClicked(pos: Pair<Int, Int>) {
+        val blocksToDestroy = mutableListOf<Pair<Int, Int>>()
+        if(!getBlocksToDestroy(blocksToDestroy, pos) ){
+            return
+        }
+
+        _viewState.update { state ->
+            val gameBoard = removeBlocksFromGameBoard(state.gameField, blocksToDestroy)
+
+            val columns = mutableListOf<List<ColorField?>>()
+            for (i in gameBoard.indices) {
+                columns.add(pushBlocksDown(gameBoard[i].toMutableList()))
             }
+
+            placeNewBlocks(columns)
+            state.copy(gameField = gameBoard.mapIndexed { index, colorFields ->
+                colorFields.map { colorField -> colorField?.copy(animateTo = columns[index].indexOfFirst { it?.id == colorField.id }) }
+            })
         }
     }
 
@@ -97,10 +113,7 @@ class MainViewModel(
                 }
             })
         }
-
-        // Let the new Guys fall
         letTheBlocksFall()
-
     }
 
     private fun letTheBlocksFall() {
@@ -116,6 +129,67 @@ class MainViewModel(
                 })
             }
         }
+    }
+
+    private fun placeNewBlocks(columns: MutableList<List<ColorField?>>) {
+        if (columns.any { colorFields ->
+                colorFields.filterIndexed { index, colorField -> index != colorField?.animateTo }
+                    .isEmpty()
+            }) {
+            viewModelScope.launch {
+                delay(10)
+                updateBlocksAfterAnimation()
+            }
+        }
+    }
+
+    private fun removeBlocksFromGameBoard(
+        gameBoard: List<List<ColorField?>>,
+        blocksToDestroy: MutableList<Pair<Int, Int>>
+    ) = gameBoard.mapIndexed { column, colorFields ->
+        colorFields.mapIndexed { row, colorField ->
+            if (colorField == null) null else
+                if (blocksToDestroy.contains(Pair(column, row))
+                ) if (colorField.specialType == SpecialType.Box) colorField.copy(
+                    specialType = SpecialType.OpenBox
+                ) else null else colorField
+        }
+    }
+
+    private fun getBlocksToDestroy(blocksToDestroy: MutableList<Pair<Int,Int>>,pos: Pair<Int, Int>) : Boolean{
+        blocksToDestroy.add(pos)
+        if (!isDestroyable(pos, blocksToDestroy)) {
+            return false
+        }
+        var lastSize = 0
+        while (lastSize != blocksToDestroy.size) {
+            lastSize = blocksToDestroy.size
+
+            blocksToDestroy.toMutableList().forEach { position ->
+                isDestroyable(position, blocksToDestroy)
+            }
+        }
+        return true
+    }
+
+    private fun pushBlocksDown(list: MutableList<ColorField?>): List<ColorField?> {
+        // [B, null, G, Null] -> [null, null, B, G]
+        var anyMove = true
+        while (anyMove) {
+            anyMove = false
+            for (i in 0..<_viewState.value.gameField.size) {
+                if (list[i] != null && list[i]?.specialType != SpecialType.Rock && list[i + 1] == null) {
+                    anyMove = true
+                    list[i + 1] = list[i]?.copy(spawned = true, animateTo = i + 1)
+                    list[i] = null
+                }
+            }
+        }
+        return list
+    }
+
+    private fun updateDialog(dialog: MainViewDialog) {
+        _viewState.update { it.copy(dialog = dialog) }
     }
 
     private fun isDestroyable(
@@ -153,84 +227,6 @@ class MainViewModel(
                     gameBoard[pair.first][pair.second]?.specialType == SpecialType.OpenBox)
         )
             pair else null
-    }
-
-    // Is called when a Block is clicked
-    private fun blockClicked(pos: Pair<Int, Int>) {
-        val blocksToDestroy = mutableListOf<Pair<Int, Int>>()
-        if(!getBlocksToDestroy(blocksToDestroy, pos) ){
-            return
-        }
-
-
-        _viewState.update {
-            it.copy(gameField = it.gameField.mapIndexed { column, colorFields ->
-                colorFields.mapIndexed { row, colorField ->
-                    if (colorField == null) null else
-                        if (blocksToDestroy.contains(Pair(column, row))
-                        ) if (colorField.specialType == SpecialType.Box) colorField.copy(
-                            specialType = SpecialType.OpenBox
-                        ) else null else colorField
-                }
-            })
-        }
-
-        val columns = mutableListOf<List<ColorField?>>()
-        for (i in 0..<_viewState.value.gameField.size) {
-            columns.add(pushBlocksDown(_viewState.value.gameField[i].toMutableList()))
-        }
-
-        _viewState.update { state ->
-            state.copy(gameField = state.gameField.mapIndexed { index, colorFields ->
-                colorFields.map { colorField -> colorField?.copy(animateTo = columns[index].indexOfFirst { it?.id == colorField.id }) }
-            })
-        }
-        if (columns.any { colorFields ->
-                colorFields.filterIndexed { index, colorField -> index != colorField?.animateTo }
-                    .isEmpty()
-            }) {
-            viewModelScope.launch {
-                delay(10)
-                updateBlocksAfterAnimation()
-            }
-        }
-
-    }
-
-    private fun getBlocksToDestroy(blocksToDestroy: MutableList<Pair<Int,Int>>,pos: Pair<Int, Int>) : Boolean{
-        blocksToDestroy.add(pos)
-        if (isDestroyable(pos, blocksToDestroy)) {
-            return false
-        }
-        var lastSize = 0
-        while (lastSize != blocksToDestroy.size) {
-            lastSize = blocksToDestroy.size
-
-            blocksToDestroy.toMutableList().forEach { position ->
-                isDestroyable(position, blocksToDestroy)
-            }
-        }
-        return true
-    }
-
-    private fun pushBlocksDown(list: MutableList<ColorField?>): List<ColorField?> {
-        // [B, null, G, Null] -> [null, null, B, G]
-        var anyMove = true
-        while (anyMove) {
-            anyMove = false
-            for (i in 0..<_viewState.value.gameField.size) {
-                if (list[i] != null && list[i]?.specialType != SpecialType.Rock && list[i + 1] == null) {
-                    anyMove = true
-                    list[i + 1] = list[i]?.copy(spawned = true, animateTo = i + 1)
-                    list[i] = null
-                }
-            }
-        }
-        return list
-    }
-
-    private fun updateDialog(dialog: MainViewDialog) {
-        _viewState.update { it.copy(dialog = dialog) }
     }
 }
 
