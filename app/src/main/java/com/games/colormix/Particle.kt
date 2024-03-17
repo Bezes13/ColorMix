@@ -7,8 +7,6 @@ import kotlin.math.pow
 
 class Particle(
     val color: Color,
-    val startXPosition: Int,
-    val startYPosition: Int,
     val maxHorizontalDisplacement: Float,
     val maxVerticalDisplacement: Float
 ) {
@@ -48,8 +46,7 @@ class Particle(
         val verticalDisplacement =
             (currentTime * velocity + 0.5 * acceleration * currentTime.toDouble()
                 .pow(2.0)).toFloat()
-        currentYPosition = startXPosition + initialXDisplacement - verticalDisplacement
-        currentXPosition =
-            startYPosition + initialYDisplacement + maxHorizontalDisplacement * trajectoryProgress
+        currentYPosition = initialXDisplacement - verticalDisplacement
+        currentXPosition = initialYDisplacement + maxHorizontalDisplacement * trajectoryProgress
     }
 }

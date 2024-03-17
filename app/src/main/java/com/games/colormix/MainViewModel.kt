@@ -37,8 +37,13 @@ class MainViewModel(
                 is MainViewEvent.SetDialog -> updateDialog(event.dialog)
                 is MainViewEvent.FieldClicked -> blockClicked(event.pos)
                 is MainViewEvent.SetBlocksAfterAnimation -> updateBlocksAfterAnimation()
+                is MainViewEvent.SetAnimateAt -> setAnimateAt(event.pos)
             }
         }
+    }
+
+    private fun setAnimateAt(pos: Pair<Int, Int>?) {
+        _viewState.update { it.copy(animationAt = pos) }
     }
 
     private fun fillGameField() {
@@ -54,7 +59,8 @@ class MainViewModel(
             val res = placeSpecialBlockAtPosition(
                 columns,
                 listOf(
-                    SpecialBlockPlacement(SpecialType.Rock, Pair(2, 2))
+                    SpecialBlockPlacement(SpecialType.Rock, Pair(2, 2)),
+                    SpecialBlockPlacement(SpecialType.Box, Pair(4, 4))
                 )
             )
             state.copy(gameField = res)
@@ -91,7 +97,7 @@ class MainViewModel(
             }
 
             placeNewBlocks(columns)
-            state.copy(gameField = gameBoard.mapIndexed { index, colorFields ->
+            state.copy(animationAt = pos, gameField = gameBoard.mapIndexed { index, colorFields ->
                 colorFields.map { colorField -> colorField?.copy(animateTo = columns[index].indexOfFirst { it?.id == colorField.id }) }
             })
         }
@@ -233,5 +239,7 @@ class MainViewModel(
 sealed class MainViewEvent {
     data class SetDialog(val dialog: MainViewDialog) : MainViewEvent()
     data class FieldClicked(val pos: Pair<Int, Int>) : MainViewEvent()
+    data class SetAnimateAt(val pos: Pair<Int, Int>?) : MainViewEvent() {}
+
     data object SetBlocksAfterAnimation : MainViewEvent()
 }

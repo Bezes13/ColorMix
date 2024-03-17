@@ -11,7 +11,7 @@ class MainViewModelFactory(
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-            return MainViewModel(sharedPreferencesManager, ioDispatcher) as T
+            return MainViewModel(/*sharedPreferencesManager,*/ ioDispatcher) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
