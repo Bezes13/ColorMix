@@ -1,4 +1,4 @@
-package com.games.colormix
+package com.games.colormix.data
 
 import androidx.compose.ui.graphics.Color
 

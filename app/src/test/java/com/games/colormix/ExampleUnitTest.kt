@@ -1,5 +1,7 @@
 package com.games.colormix
 
+import com.games.colormix.data.ColorField
+import com.games.colormix.data.putOnRightPositionAfterAnimation
 import org.junit.Test
 
 /**

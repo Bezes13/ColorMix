@@ -13,6 +13,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.games.colormix.data.Particle
 import kotlin.math.roundToInt
 
 @Composable
@@ -29,8 +30,6 @@ fun Explosion(progress: Float, color: Color) {
         }
     }
     particles.forEach { it.updateProgress(progress) }
-
-
     particles.forEach { particle ->
         Card(
             colors = CardDefaults.cardColors(containerColor = particle.color),

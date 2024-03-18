@@ -1,6 +1,7 @@
 package com.games.colormix
 
 import androidx.compose.ui.graphics.Color
+import com.games.colormix.data.ColorField
 
 object DummyDaten {
 

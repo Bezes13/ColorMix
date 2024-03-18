@@ -1,8 +1,12 @@
-package com.games.colormix
+package com.games.colormix.data
 
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.games.colormix.mapInRange
+import com.games.colormix.randomBoolean
+import com.games.colormix.randomInRange
+import com.games.colormix.toPx
 import kotlin.math.pow
 
 class Particle(

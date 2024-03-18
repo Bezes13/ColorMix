@@ -3,6 +3,11 @@ package com.games.colormix
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.games.colormix.data.Animation
+import com.games.colormix.data.ColorField
+import com.games.colormix.data.SpecialBlockPlacement
+import com.games.colormix.data.SpecialType
+import com.games.colormix.data.putOnRightPositionAfterAnimation
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow

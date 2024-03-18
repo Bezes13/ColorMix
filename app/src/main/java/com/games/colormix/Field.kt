@@ -18,6 +18,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
+import com.games.colormix.data.ColorField
+import com.games.colormix.data.SpecialType
 import kotlin.math.roundToInt
 
 @Composable
