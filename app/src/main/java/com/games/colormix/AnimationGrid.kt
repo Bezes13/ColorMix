@@ -41,7 +41,6 @@ fun AnimationGrid(
                         ) {
                             if (Pair(i, j) == animateAt?.pos) {
                                 Explosion(progress = progress, animateAt.color)
-                                println(progress)
                             }
                         }
 

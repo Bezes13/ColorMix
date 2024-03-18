@@ -9,8 +9,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import com.games.colormix.manager.MainViewModelFactory
 import com.example.whattowatch.manager.SharedPreferencesManager
+import com.games.colormix.manager.MainViewModelFactory
 import com.games.colormix.manager.StartViewModelFactory
 import com.games.colormix.navigation.AppNavHost
 import com.games.colormix.start.StartViewModel
@@ -22,12 +22,15 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val sharedPreferencesManager = SharedPreferencesManager(this)
         val ioDispatcher = Dispatchers.IO
+
         val mainViewModel: MainViewModel by viewModels {
-            MainViewModelFactory(sharedPreferencesManager, ioDispatcher)
+            MainViewModelFactory(sharedPreferencesManager,ioDispatcher)
         }
+
         val startViewModel: StartViewModel by viewModels {
             StartViewModelFactory(sharedPreferencesManager, ioDispatcher)
         }
+
         setContent {
             ColorMixTheme {
                 Surface(

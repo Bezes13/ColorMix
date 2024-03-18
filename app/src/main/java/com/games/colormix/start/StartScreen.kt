@@ -23,12 +23,13 @@ import com.games.colormix.navigation.Screen
 @Composable
 fun StartScreen(navController: NavController, startViewModel: StartViewModel = viewModel()) {
     StartScreen(
-        navController::navigate
+        navController::navigate,
+        startViewModel::getNextLevel
     )
 }
 
 @Composable
-fun StartScreen(navigate: (String)-> Unit){
+fun StartScreen(navigate: (String)-> Unit, getNextLevel: () -> Int){
     Column(
         verticalArrangement = Arrangement.spacedBy(30.dp),
         modifier = Modifier.fillMaxSize()
@@ -45,7 +46,8 @@ fun StartScreen(navigate: (String)-> Unit){
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
-        Button(onClick = { navigate(Screen.Main.name) }) {
+        println(getNextLevel())
+        Button(onClick = { navigate(Screen.Main.name+"/${getNextLevel()}") }) {
             Text(text = stringResource(id = R.string.play))
         }
         Button(onClick = { /*TODO*/ }) {

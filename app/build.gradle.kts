@@ -73,4 +73,5 @@ dependencies {
     val navVersion = "2.7.7"
 
     implementation("androidx.navigation:navigation-compose:$navVersion")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.7.0")
 }

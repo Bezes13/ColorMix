@@ -1,8 +1,10 @@
 package com.games.colormix
 
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.whattowatch.manager.SharedPreferencesManager
 import com.games.colormix.data.Animation
 import com.games.colormix.data.ColorField
 import com.games.colormix.data.SpecialBlockPlacement
@@ -17,16 +19,19 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MainViewModel(
-    //private var sharedPreferencesManager: SharedPreferencesManager,
-    private val ioDispatcher: CoroutineDispatcher
+    private var sharedPreferencesManager: SharedPreferencesManager,
+    private val ioDispatcher: CoroutineDispatcher,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val _event = MutableSharedFlow<MainViewEvent>()
     private val _viewState = MutableStateFlow(MainViewState())
     val viewState = _viewState.asStateFlow()
     private var colorFieldNextId = 0
+    private var levelIndex: Int = 0
 
     init {
         listenToEvent()
+
         fillGameField()
         letTheBlocksFall()
     }
@@ -44,8 +49,21 @@ class MainViewModel(
                 is MainViewEvent.FieldClicked -> blockClicked(event.pos)
                 is MainViewEvent.SetBlocksAfterAnimation -> updateBlocksAfterAnimation()
                 is MainViewEvent.SetAnimateAt -> setAnimateAt(event.pos)
+                is MainViewEvent.NextLevel -> updateToNextLevel()
+                is MainViewEvent.Retry -> retryLevel()
             }
         }
+    }
+
+    private fun retryLevel() {
+        fillGameField()
+        letTheBlocksFall()
+    }
+
+    private fun updateToNextLevel() {
+        levelIndex += 1
+        fillGameField()
+        letTheBlocksFall()
     }
 
     private fun setAnimateAt(anim: Animation?) {
@@ -53,6 +71,8 @@ class MainViewModel(
     }
 
     private fun fillGameField() {
+        println(levelIndex)
+        val level = LevelData.LEVELS[levelIndex ?: 0]
         _viewState.update { state ->
             val columns = mutableListOf<List<ColorField>>()
             state.gameField.forEach {
@@ -64,12 +84,9 @@ class MainViewModel(
             }
             val res = placeSpecialBlockAtPosition(
                 columns,
-                listOf(
-                    SpecialBlockPlacement(SpecialType.Rock, Pair(2, 2)),
-                    SpecialBlockPlacement(SpecialType.Box, Pair(4, 4))
-                )
+                level.specialBlocks
             )
-            state.copy(gameField = res)
+            state.copy(gameField = res, currentLevel = level, dialog = MainViewDialog.None)
         }
     }
 
@@ -91,7 +108,7 @@ class MainViewModel(
     private fun blockClicked(pos: Pair<Int, Int>) {
         val blocksToDestroy = mutableListOf<Pair<Int, Int>>()
         val field = viewState.value.gameField[pos.first][pos.second]
-        if(!getBlocksToDestroy(blocksToDestroy, pos) ){
+        if (!getBlocksToDestroy(blocksToDestroy, pos)) {
             return
         }
 
@@ -103,11 +120,27 @@ class MainViewModel(
                 for (i in gameBoard.indices) {
                     columns.add(pushBlocksDown(gameBoard[i].toMutableList()))
                 }
-
+                val updatedQuests =
+                    state.currentLevel.quests.map { quest -> quest.copy(amount = quest.amount - blocksToDestroy.filter { pos -> state.gameField[pos.first][pos.second]?.specialType == quest.specialType && state.gameField[pos.first][pos.second]?.color == quest.color }.size) }
                 placeNewBlocks(columns)
-                state.copy(animationAt = Animation(pos, field.color?: Color.Transparent), gameField = gameBoard.mapIndexed { index, colorFields ->
-                    colorFields.map { colorField -> colorField?.copy(animateTo = columns[index].indexOfFirst { it?.id == colorField.id }) }
-                })
+                if (updatedQuests.all { it.amount <= 0 }) {
+                    state.copy(dialog = MainViewDialog.LevelComplete(levelIndex.toString()))
+
+                } else {
+                    if (state.currentLevel.moves <= 0) {
+                        state.copy(dialog = MainViewDialog.LevelFailed)
+                    } else {
+                        state.copy(
+                            currentLevel = state.currentLevel.copy(
+                                moves = state.currentLevel.moves - 1,
+                                quests = updatedQuests
+                            ),
+                            animationAt = Animation(pos, field.color ?: Color.Transparent),
+                            gameField = gameBoard.mapIndexed { index, colorFields ->
+                                colorFields.map { colorField -> colorField?.copy(animateTo = columns[index].indexOfFirst { it?.id == colorField.id }) }
+                            })
+                    }
+                }
             }
         }
     }
@@ -171,7 +204,10 @@ class MainViewModel(
         }
     }
 
-    private fun getBlocksToDestroy(blocksToDestroy: MutableList<Pair<Int,Int>>,pos: Pair<Int, Int>) : Boolean{
+    private fun getBlocksToDestroy(
+        blocksToDestroy: MutableList<Pair<Int, Int>>,
+        pos: Pair<Int, Int>
+    ): Boolean {
         blocksToDestroy.add(pos)
         if (!isDestroyable(pos, blocksToDestroy)) {
             return false
@@ -249,6 +285,7 @@ sealed class MainViewEvent {
     data class SetDialog(val dialog: MainViewDialog) : MainViewEvent()
     data class FieldClicked(val pos: Pair<Int, Int>) : MainViewEvent()
     data class SetAnimateAt(val pos: Animation?) : MainViewEvent() {}
-
     data object SetBlocksAfterAnimation : MainViewEvent()
+    data object NextLevel : MainViewEvent()
+    data object Retry : MainViewEvent()
 }

@@ -12,7 +12,7 @@ class StartViewModelFactory (
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(StartViewModel::class.java)) {
-            return StartViewModel(/*sharedPreferencesManager,*/ ioDispatcher) as T
+            return StartViewModel(sharedPreferencesManager, ioDispatcher) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

@@ -23,4 +23,8 @@ class SharedPreferencesManager(val context: Context) {
         val type = object : TypeToken<List<String>>() {}.type
         return Gson().fromJson(json, type) ?: emptyList()
     }
+
+    fun getValue(nextLevel: Int) :Int {
+        return sharedPreferences.getInt(nextLevel.toString(), 0)
+    }
 }

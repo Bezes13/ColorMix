@@ -1,5 +1,6 @@
 package com.games.colormix
 
+import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateIntOffsetAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -25,7 +26,7 @@ import kotlin.math.roundToInt
 @Composable
 fun Field(content: ColorField?, pos: Pair<Int, Int>, eventListener: (MainViewEvent) -> Unit) {
     if (content == null) {
-        Box(modifier = Modifier.size(FieldSize))//.background(Color.Black))
+        Box(modifier = Modifier.size(FieldSize))
         return
     }
     val pxToMove = with(LocalDensity.current) {
@@ -38,12 +39,14 @@ fun Field(content: ColorField?, pos: Pair<Int, Int>, eventListener: (MainViewEve
 
     val offset by animateIntOffsetAsState(
         targetValue = IntOffset(0, pxToMove),
+        animationSpec = TweenSpec(300),
         label = "offset",
         finishedListener = { eventListener(MainViewEvent.SetBlocksAfterAnimation) }
     )
 
     val dropOffset by animateIntOffsetAsState(
         targetValue = if (content.dropped) IntOffset(0, pxDrop) else IntOffset(0, 0),
+        animationSpec = TweenSpec(300),
         label = "offset",
         finishedListener = { }
     )
