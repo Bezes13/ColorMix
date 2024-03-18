@@ -1,3 +1,4 @@
+package com.games.colormix
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.offset
@@ -12,9 +13,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.games.colormix.Particle
-import com.games.colormix.randomInRange
-import com.games.colormix.toPx
 import kotlin.math.roundToInt
 
 @Composable
