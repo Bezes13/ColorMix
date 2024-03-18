@@ -1,5 +1,6 @@
 package com.games.colormix
 
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineDispatcher
@@ -42,8 +43,8 @@ class MainViewModel(
         }
     }
 
-    private fun setAnimateAt(pos: Pair<Int, Int>?) {
-        _viewState.update { it.copy(animationAt = pos) }
+    private fun setAnimateAt(anim: Animation?) {
+        _viewState.update { it.copy(animationAt = anim) }
     }
 
     private fun fillGameField() {
@@ -84,22 +85,25 @@ class MainViewModel(
     // Is called when a Block is clicked
     private fun blockClicked(pos: Pair<Int, Int>) {
         val blocksToDestroy = mutableListOf<Pair<Int, Int>>()
+        val field = viewState.value.gameField[pos.first][pos.second]
         if(!getBlocksToDestroy(blocksToDestroy, pos) ){
             return
         }
 
-        _viewState.update { state ->
-            val gameBoard = removeBlocksFromGameBoard(state.gameField, blocksToDestroy)
+        if (field != null) {
+            _viewState.update { state ->
+                val gameBoard = removeBlocksFromGameBoard(state.gameField, blocksToDestroy)
 
-            val columns = mutableListOf<List<ColorField?>>()
-            for (i in gameBoard.indices) {
-                columns.add(pushBlocksDown(gameBoard[i].toMutableList()))
+                val columns = mutableListOf<List<ColorField?>>()
+                for (i in gameBoard.indices) {
+                    columns.add(pushBlocksDown(gameBoard[i].toMutableList()))
+                }
+
+                placeNewBlocks(columns)
+                state.copy(animationAt = Animation(pos, field.color?: Color.Transparent), gameField = gameBoard.mapIndexed { index, colorFields ->
+                    colorFields.map { colorField -> colorField?.copy(animateTo = columns[index].indexOfFirst { it?.id == colorField.id }) }
+                })
             }
-
-            placeNewBlocks(columns)
-            state.copy(animationAt = pos, gameField = gameBoard.mapIndexed { index, colorFields ->
-                colorFields.map { colorField -> colorField?.copy(animateTo = columns[index].indexOfFirst { it?.id == colorField.id }) }
-            })
         }
     }
 
@@ -239,7 +243,7 @@ class MainViewModel(
 sealed class MainViewEvent {
     data class SetDialog(val dialog: MainViewDialog) : MainViewEvent()
     data class FieldClicked(val pos: Pair<Int, Int>) : MainViewEvent()
-    data class SetAnimateAt(val pos: Pair<Int, Int>?) : MainViewEvent() {}
+    data class SetAnimateAt(val pos: Animation?) : MainViewEvent() {}
 
     data object SetBlocksAfterAnimation : MainViewEvent()
 }

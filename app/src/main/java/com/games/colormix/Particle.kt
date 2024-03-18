@@ -8,7 +8,7 @@ import kotlin.math.pow
 class Particle(
     val color: Color,
     val maxHorizontalDisplacement: Float,
-    val maxVerticalDisplacement: Float
+    val maxVerticalDisplacement: Float,
 ) {
     val velocity = 4 * maxVerticalDisplacement
     val acceleration = -2 * velocity
