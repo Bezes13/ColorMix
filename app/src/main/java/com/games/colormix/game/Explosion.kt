@@ -1,4 +1,4 @@
-package com.games.colormix
+package com.games.colormix.game
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.offset
@@ -14,11 +14,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.games.colormix.data.Particle
+import com.games.colormix.randomInRange
+import com.games.colormix.toPx
 import kotlin.math.roundToInt
 
 @Composable
 fun Explosion(progress: Float, color: Color) {
-    val sizeDp = 100.dp
+    val sizeDp = 200.dp
     val sizePx = sizeDp.toPx()
     val particles = remember {
         List(5) {
@@ -37,7 +39,7 @@ fun Explosion(progress: Float, color: Color) {
                 .size(20.dp)
                 .offset {
                     IntOffset((particle.currentXPosition).roundToInt(), particle.currentYPosition.roundToInt())
-                }.alpha(particle.alpha),
+                }.alpha(particle.alpha*particle.alpha*particle.alpha),
             border = BorderStroke(1.dp,Color.Black),
             shape = RoundedCornerShape(0.dp)
         ){}

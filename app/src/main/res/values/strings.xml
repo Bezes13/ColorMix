@@ -1,6 +1,14 @@
 <resources>
     <string name="app_name">ColorMix</string>
     <string name="play">PLAY</string>
-    <string name="level_selection">Level Selection</string>
+    <string name="level_selection">Level Selection Level</string>
     <string name="next_level">NextLevel</string>
+    <string name="level_complete">Level Complete</string>
+    <string name="level_complete_body">You completed successfully Level %d</string>
+    <string name="level_failed">Level failed</string>
+    <string name="retry">Retry</string>
+    <string name="level_failed_body">You have failed the Level. Try Again by clicking Retry.</string>
+    <string name="quit">Quit</string>
+    <string name="level">LEVEL %d</string>
+
 </resources>

@@ -39,12 +39,7 @@ class Particle(
             if (explosionProgress < visibilityThresholdLow || (explosionProgress > (1 - visibilityThresholdHigh))) {
                 alpha = 0f; return
             } else (explosionProgress - visibilityThresholdLow).mapInRange(0f,1f - visibilityThresholdHigh - visibilityThresholdLow,0f, 1f)
-        alpha = if (trajectoryProgress < 0.7f) 1f else (trajectoryProgress - 0.7f).mapInRange(
-            0f,
-            0.3f,
-            1f,
-            0f
-        )
+        alpha = explosionProgress
         currentRadius = startRadius + (endRadius - startRadius) * trajectoryProgress
         val currentTime = trajectoryProgress.mapInRange(0f, 1f, 0f, 1.4f)
         val verticalDisplacement =

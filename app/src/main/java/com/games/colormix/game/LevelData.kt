@@ -1,4 +1,4 @@
-package com.games.colormix
+package com.games.colormix.game
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -13,6 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.games.colormix.FieldSize
+import com.games.colormix.R
 import com.games.colormix.data.LevelQuest
 import com.games.colormix.data.SpecialBlockPlacement
 import com.games.colormix.data.SpecialType
@@ -23,27 +25,27 @@ object LevelData {
         // Level 1
         LevelInfo(
             quests = listOf(element = LevelQuest(SpecialType.None, Color.Green, 6)),
-            moves = 5
+            moves = 6
         ),
         // Level 2
         LevelInfo(
             quests = listOf(element = LevelQuest(SpecialType.None, Color.Red, 8)),
-            moves = 5
+            moves = 7
         ),
         // Level 3
         LevelInfo(
             quests = listOf(element = LevelQuest(SpecialType.None, Color.Yellow, 10)),
-            moves = 5
+            moves = 8
         ),
         // Level 4
         LevelInfo(
             quests = listOf(element = LevelQuest(SpecialType.None, Color.Cyan, 12)),
-            moves = 5
+            moves = 9
         ),
         // Level 5
         LevelInfo(
             quests = listOf(element = LevelQuest(SpecialType.None, Color.Blue, 15)),
-            moves = 5
+            moves = 10
         ),
         // Level 6
         LevelInfo(
@@ -51,7 +53,7 @@ object LevelData {
                 LevelQuest(SpecialType.None, Color.Green, 15),
                 LevelQuest(SpecialType.None, Color.Red, 15)
             ),
-            moves = 10
+            moves = 12
         ),
         // Level 7
         LevelInfo(
@@ -59,7 +61,7 @@ object LevelData {
                 LevelQuest(SpecialType.None, Color.Blue, 15),
                 LevelQuest(SpecialType.None, Color.Cyan, 15)
             ),
-            moves = 10
+            moves = 12
         ),
         // Level 8
         LevelInfo(
@@ -67,7 +69,7 @@ object LevelData {
                 LevelQuest(SpecialType.None, Color.Yellow, 15),
                 LevelQuest(SpecialType.None, Color.Green, 15)
             ),
-            moves = 10
+            moves = 12
         ),
         // Level 9
         LevelInfo(
@@ -75,7 +77,7 @@ object LevelData {
                 LevelQuest(SpecialType.None, Color.Blue, 20),
                 LevelQuest(SpecialType.None, Color.Cyan, 20)
             ),
-            moves = 10
+            moves = 15
         ),
         // Level 10
         LevelInfo(
@@ -93,7 +95,7 @@ fun QuestObject(quest: LevelQuest){
         colors = CardDefaults.cardColors(
             containerColor = quest.color ?: Color.Transparent
         ),
-        modifier = Modifier.size(FieldSize/2),
+        modifier = Modifier.size(FieldSize /2),
         shape = RoundedCornerShape(2.dp),
         border = BorderStroke(1.dp, Color.Black)
     )
@@ -117,5 +119,6 @@ fun QuestObject(quest: LevelQuest){
 data class LevelInfo(
     val quests: List<LevelQuest> = listOf(),
     val specialBlocks: List<SpecialBlockPlacement> = listOf(),
-    val moves: Int
+    val moves: Int,
+    val level: Int = 100
 )

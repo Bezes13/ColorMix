@@ -1,14 +1,27 @@
 package com.games.colormix.start
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -17,7 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.games.colormix.R
-import com.games.colormix.data.startColors
+import com.games.colormix.data.startColor
 import com.games.colormix.navigation.Screen
 
 @Composable
@@ -26,32 +39,71 @@ fun StartScreen(navController: NavController, startViewModel: StartViewModel = v
         navController::navigate,
         startViewModel::getNextLevel
     )
+
 }
 
 @Composable
-fun StartScreen(navigate: (String)-> Unit, getNextLevel: () -> Int){
-    Column(
-        verticalArrangement = Arrangement.spacedBy(30.dp),
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Text(
-            stringResource(id = R.string.app_name),
-            fontSize = 60.sp,
-            style = TextStyle(
-                brush = Brush.linearGradient(
-                    colors = startColors
-                )
-            ),
+fun StartScreen(navigate: (String) -> Unit, getNextLevel: () -> Int) {
+    val backGround by remember { mutableStateOf( (0 until 20).map { Array(10) { startColor() }
+        .toList() }) }
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Column(Modifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(5.dp),) {
+            backGround.forEach{ row->
+                Row (horizontalArrangement = Arrangement.spacedBy(5.dp)){
+                    row.forEach{ block ->
+                        Card(
+                            modifier = Modifier.size(45.dp),
+                            colors = CardDefaults.cardColors(containerColor = block)
+                        ) {
+                        }
+                    }
+                }
+            }
+        }
 
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
-        )
-        println(getNextLevel())
-        Button(onClick = { navigate(Screen.Main.name+"/${getNextLevel()}") }) {
-            Text(text = stringResource(id = R.string.play))
+        Column(
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row (modifier = Modifier
+                .weight(0.4f)
+                .padding(vertical = 60.dp)) {
+                Card(modifier = Modifier.wrapContentSize(),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)) {
+                    Text(
+                        stringResource(id = R.string.app_name),
+                        fontSize = 80.sp,
+                        style = TextStyle(color = MaterialTheme.colorScheme.primary),
+                        modifier = Modifier.padding(10.dp)
+                    )
+                }
+            }
+            Column(
+                verticalArrangement = Arrangement.spacedBy(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.weight(0.8f)
+            ) {
+                MenuButton(R.string.play) { navigate(Screen.Main.name + "/${getNextLevel()}") }
+                MenuButton(R.string.level_selection) {}
+                MenuButton(R.string.quit) {}
+            }
         }
-        Button(onClick = { /*TODO*/ }) {
-            Text(text = stringResource(id = R.string.level_selection))
-        }
+    }
+}
+
+@Composable
+private fun MenuButton(textId: Int, onClick: () -> Unit) {
+    Button(
+        modifier = Modifier
+            .height(100.dp)
+            .fillMaxWidth(0.7f),
+        colors = ButtonDefaults.buttonColors(
+            contentColor = MaterialTheme.colorScheme.secondary,
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
+        ),
+        onClick = onClick
+    ) {
+        Text(text = stringResource(id = textId), fontSize = 30.sp, textAlign = TextAlign.Center)
     }
 }

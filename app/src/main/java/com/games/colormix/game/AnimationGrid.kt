@@ -1,4 +1,4 @@
-package com.games.colormix
+package com.games.colormix.game
 
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateFloatAsState
@@ -12,6 +12,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.games.colormix.FieldSize
+import com.games.colormix.MainViewEvent
+import com.games.colormix.VerticalPadding
 import com.games.colormix.data.Animation
 import com.games.colormix.data.ColorField
 

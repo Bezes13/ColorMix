@@ -1,4 +1,4 @@
-package com.games.colormix
+package com.games.colormix.game
 
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateIntOffsetAsState
@@ -19,6 +19,10 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
+import com.games.colormix.FieldSize
+import com.games.colormix.MainViewEvent
+import com.games.colormix.R
+import com.games.colormix.VerticalPadding
 import com.games.colormix.data.ColorField
 import com.games.colormix.data.SpecialType
 import kotlin.math.roundToInt

@@ -10,6 +10,7 @@ import com.games.colormix.data.ColorField
 import com.games.colormix.data.SpecialBlockPlacement
 import com.games.colormix.data.SpecialType
 import com.games.colormix.data.putOnRightPositionAfterAnimation
+import com.games.colormix.game.LevelData
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.math.max
 
 class MainViewModel(
     private var sharedPreferencesManager: SharedPreferencesManager,
@@ -86,7 +88,7 @@ class MainViewModel(
                 columns,
                 level.specialBlocks
             )
-            state.copy(gameField = res, currentLevel = level, dialog = MainViewDialog.None)
+            state.copy(gameField = res, currentLevel = level.copy(level = levelIndex+1), dialog = MainViewDialog.None)
         }
     }
 
@@ -121,26 +123,23 @@ class MainViewModel(
                     columns.add(pushBlocksDown(gameBoard[i].toMutableList()))
                 }
                 val updatedQuests =
-                    state.currentLevel.quests.map { quest -> quest.copy(amount = quest.amount - blocksToDestroy.filter { pos -> state.gameField[pos.first][pos.second]?.specialType == quest.specialType && state.gameField[pos.first][pos.second]?.color == quest.color }.size) }
+                    state.currentLevel.quests.map { quest -> quest.copy(amount = max(0, quest.amount - blocksToDestroy.filter { pos -> state.gameField[pos.first][pos.second]?.specialType == quest.specialType && state.gameField[pos.first][pos.second]?.color == quest.color }.size)) }
                 placeNewBlocks(columns)
-                if (updatedQuests.all { it.amount <= 0 }) {
-                    state.copy(dialog = MainViewDialog.LevelComplete(levelIndex.toString()))
 
-                } else {
-                    if (state.currentLevel.moves <= 0) {
-                        state.copy(dialog = MainViewDialog.LevelFailed)
-                    } else {
-                        state.copy(
-                            currentLevel = state.currentLevel.copy(
-                                moves = state.currentLevel.moves - 1,
-                                quests = updatedQuests
-                            ),
-                            animationAt = Animation(pos, field.color ?: Color.Transparent),
-                            gameField = gameBoard.mapIndexed { index, colorFields ->
-                                colorFields.map { colorField -> colorField?.copy(animateTo = columns[index].indexOfFirst { it?.id == colorField.id }) }
-                            })
-                    }
-                }
+                state.copy(
+                    currentLevel = state.currentLevel.copy(
+                        moves = state.currentLevel.moves - 1,
+                        quests = updatedQuests
+                    ),
+                    animationAt = Animation(pos, field.color ?: Color.Transparent),
+                    gameField = gameBoard.mapIndexed { index, colorFields ->
+                        colorFields.map { colorField -> colorField?.copy(animateTo = columns[index].indexOfFirst { it?.id == colorField.id }) }
+                    },
+                    dialog = if (updatedQuests.all { it.amount <= 0 }) MainViewDialog.LevelComplete(
+                        levelIndex.toString()
+                    ) else if (state.currentLevel.moves <= 1)
+                        MainViewDialog.LevelFailed else MainViewDialog.None
+                )
             }
         }
     }

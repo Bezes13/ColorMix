@@ -2,6 +2,8 @@ package com.games.colormix
 
 import com.games.colormix.data.Animation
 import com.games.colormix.data.ColorField
+import com.games.colormix.game.LevelData
+import com.games.colormix.game.LevelInfo
 
 data class MainViewState (
     val isLoading: Boolean= false,

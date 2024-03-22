@@ -1,5 +1,6 @@
 package com.games.colormix
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,29 +9,34 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.games.colormix.data.Animation
 import com.games.colormix.data.ColorField
-import com.games.colormix.data.SpecialType
-import com.games.colormix.data.startColors
+import com.games.colormix.game.AnimationGrid
+import com.games.colormix.game.BorderedBox
+import com.games.colormix.game.Field
+import com.games.colormix.game.LevelData
+import com.games.colormix.game.LevelDoneDialog
+import com.games.colormix.game.LevelInfo
+import com.games.colormix.game.LevelInfoCard
+import com.games.colormix.game.MovesInfo
+import com.games.colormix.game.QuestInfo
 
-val FieldSize = 45.dp
+val FieldSize = 40.dp
 val VerticalPadding = 5.dp
 
 @Composable
@@ -53,165 +59,94 @@ fun MainScreenContent(
     currentLevel: LevelInfo,
     dialog: MainViewDialog
 ) {
-    when(dialog){
-        is MainViewDialog.LevelComplete -> LevelCompleteDialog ({
-            eventListener(
-                MainViewEvent.SetDialog(
-                    MainViewDialog.None
-                )
-            )})
-        {
+    when (dialog) {
+        is MainViewDialog.LevelComplete -> LevelDoneDialog(
+            R.string.next_level,
+            R.string.level_complete,
+            stringResource(id = R.string.level_complete_body, currentLevel.level)
+        ) {
             eventListener(
                 MainViewEvent.NextLevel
-            )}
+            )
+        }
 
-        is MainViewDialog.LevelFailed -> LevelFailedDialog ({
-            eventListener(
-                MainViewEvent.SetDialog(
-                    MainViewDialog.None
-                )
-            )})
+        is MainViewDialog.LevelFailed -> LevelDoneDialog(
+            R.string.retry,
+            R.string.level_failed,
+            stringResource(id = R.string.level_failed_body)
+        )
         {
             eventListener(
                 MainViewEvent.Retry
-            )}
+            )
+        }
 
         is MainViewDialog.None -> {}
     }
     Column(
-        verticalArrangement = Arrangement.spacedBy(30.dp),
-        modifier = Modifier.fillMaxSize()
+        verticalArrangement = Arrangement.spacedBy(5.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.primaryContainer),
     ) {
         Text(
-            stringResource(id = R.string.app_name),
+            text = stringResource(id = R.string.app_name),
             fontSize = 60.sp,
             style = TextStyle(
-                brush = Brush.linearGradient(
-                    colors = startColors
-                )
+                color = MaterialTheme.colorScheme.primary,
+                textDecoration = TextDecoration.Underline
             ),
-
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
+            textAlign = TextAlign.Center
         )
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(80.dp)
-        ) {
-            Card(modifier = Modifier
-                .weight(1f)
-                .fillMaxSize()) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
+        LevelInfoCard {
+            Text(
+                stringResource(id = R.string.level, currentLevel.level),
+                fontSize = 30.sp,
+                style = TextStyle(color = MaterialTheme.colorScheme.primary),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(10.dp)
+            )
+        }
+
+        BorderedBox {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(100.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
-                        .padding(10.dp)
-                        .fillMaxSize()
+                        .fillMaxWidth(0.95f)
+                        .height(80.dp)
                 ) {
-                    Text(text = "Moves:")
-                    Text(text = currentLevel.moves.toString())
+                    MovesInfo(currentLevel)
+                    QuestInfo(currentLevel)
                 }
 
-            }
-            Card(modifier = Modifier.weight(1f)) {
-                Row(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxSize(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-
-                    Column {
-                        currentLevel.quests.forEach { quest ->
-                            Row(
-                                horizontalArrangement = Arrangement.SpaceEvenly,
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .fillMaxSize()
-                            ) {
-                                Text(text = quest.amount.toString())
-                                Box {
-                                    Row (horizontalArrangement = Arrangement.spacedBy(2.dp)){
-                                        QuestObject(quest = quest)
-                                        if (quest.specialType == SpecialType.None) {
-                                            QuestObject(quest = quest)
-                                        }
-                                    }
-
+                Box(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(5.dp),
+                        modifier = Modifier.padding(10.dp)
+                    ) {
+                        for (i in gameField.indices) {
+                            Column(verticalArrangement = Arrangement.spacedBy(VerticalPadding)) {
+                                for (j in gameField[i].indices) {
+                                    Field(gameField[i][j], Pair(i, j), eventListener)
                                 }
-
-
                             }
                         }
                     }
+                    AnimationGrid(gameField, animateAt, eventListener)
                 }
             }
-        }
-        Box(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(5.dp),
-            ) {
-                for (i in gameField.indices) {
-                    GameColumn(gameField[i], i, eventListener)
-                }
-            }
-            AnimationGrid(gameField, animateAt, eventListener)
-        }
-    }
-}
-
-@Composable
-fun LevelCompleteDialog(dismiss: ()-> Unit, nextLevel: ()-> Unit) {
-    Dialog(onDismissRequest =  dismiss ) {
-        Card {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-                modifier = Modifier.padding(10.dp)
-            ) {
-                Text(text = "Congrats")
-                Button(onClick = nextLevel) {
-                    Text(text = "Next Level")
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun LevelFailedDialog(dismiss: ()-> Unit, retry: ()-> Unit) {
-    Dialog(onDismissRequest =  dismiss ) {
-        Card {
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp),
-                modifier = Modifier.padding(10.dp)) {
-                Text(text = "Failed...")
-                Button(onClick =  retry ) {
-                    Text(text = "Retry")
-                }
-            }
-
-        }
-
-    }
-}
-
-@Composable
-fun GameColumn(
-    colorFields: List<ColorField?>, column: Int, eventListener: (MainViewEvent) -> Unit
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(VerticalPadding)) {
-        for (i in colorFields.indices) {
-            Field(colorFields[i], Pair(column, i), eventListener)
         }
     }
 }
 
 sealed class MainViewDialog {
     data class LevelComplete(val info: String) : MainViewDialog()
-    data object LevelFailed: MainViewDialog()
+    data object LevelFailed : MainViewDialog()
     data object None : MainViewDialog()
 }
 
@@ -219,6 +154,10 @@ sealed class MainViewDialog {
 @Preview
 fun PreviewMainScreen() {
     MainScreenContent(
-        (0 until 4).map { arrayOfNulls<ColorField?>(4).toList() }, {}, null, LevelData.LEVELS[8],MainViewDialog.None
+        (0 until 4).map { arrayOfNulls<ColorField?>(4).toList() },
+        {},
+        null,
+        LevelData.LEVELS[8],
+        MainViewDialog.None
     )
 }
