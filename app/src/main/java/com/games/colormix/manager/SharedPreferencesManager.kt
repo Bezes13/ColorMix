@@ -1,4 +1,4 @@
-package com.example.whattowatch.manager
+package com.games.colormix.manager
 
 import android.content.Context
 import android.content.SharedPreferences

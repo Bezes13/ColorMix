@@ -9,6 +9,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,7 +27,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.games.colormix.data.Animation
 import com.games.colormix.data.ColorField
 import com.games.colormix.game.AnimationGrid
@@ -35,14 +39,16 @@ import com.games.colormix.game.LevelInfo
 import com.games.colormix.game.LevelInfoCard
 import com.games.colormix.game.MovesInfo
 import com.games.colormix.game.QuestInfo
+import com.games.colormix.navigation.Screen
 
 val FieldSize = 40.dp
 val VerticalPadding = 5.dp
 
 @Composable
-fun MainScreen(mainViewModel: MainViewModel = viewModel()) {
+fun MainScreen(navigate: (String) -> Unit, mainViewModel: MainViewModel  = hiltViewModel()) {
     val viewState: MainViewState by mainViewModel.viewState.collectAsState()
     MainScreenContent(
+        navigate,
         viewState.gameField,
         mainViewModel::sendEvent,
         viewState.animationAt,
@@ -53,6 +59,7 @@ fun MainScreen(mainViewModel: MainViewModel = viewModel()) {
 
 @Composable
 fun MainScreenContent(
+    navigate: (String) -> Unit,
     gameField: List<List<ColorField?>>,
     eventListener: (MainViewEvent) -> Unit,
     animateAt: Animation?,
@@ -90,15 +97,23 @@ fun MainScreenContent(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.primaryContainer),
     ) {
-        Text(
-            text = stringResource(id = R.string.app_name),
-            fontSize = 60.sp,
-            style = TextStyle(
-                color = MaterialTheme.colorScheme.primary,
-                textDecoration = TextDecoration.Underline
-            ),
-            textAlign = TextAlign.Center
-        )
+        Row (horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth()){
+            Box{}
+            Text(
+                text = stringResource(id = R.string.app_name),
+                fontSize = 60.sp,
+                style = TextStyle(
+                    color = MaterialTheme.colorScheme.primary,
+                    textDecoration = TextDecoration.Underline
+                ),
+                textAlign = TextAlign.Center
+            )
+            IconButton(onClick = { navigate(Screen.HOME.name) }) {
+                Icon(Icons.Default.Menu, stringResource(R.string.menu))
+            }
+        }
+
         LevelInfoCard {
             Text(
                 stringResource(id = R.string.level, currentLevel.level),
@@ -154,6 +169,7 @@ sealed class MainViewDialog {
 @Preview
 fun PreviewMainScreen() {
     MainScreenContent(
+        {},
         (0 until 4).map { arrayOfNulls<ColorField?>(4).toList() },
         {},
         null,

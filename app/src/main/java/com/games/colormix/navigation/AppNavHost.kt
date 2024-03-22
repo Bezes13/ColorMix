@@ -8,30 +8,25 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.games.colormix.MainScreen
-import com.games.colormix.MainViewModel
 import com.games.colormix.start.StartScreen
-import com.games.colormix.start.StartViewModel
 
 @Composable
 fun AppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     startDestination: String = NavigationItem.Start.route,
-    main: MainViewModel,
-    start: StartViewModel,
 ) {
-
     NavHost(
         modifier = modifier,
         navController = navController,
         startDestination = startDestination
     ) {
         composable(NavigationItem.Start.route) {
-            StartScreen(navController, start)
+            StartScreen(navController::navigate)
         }
         composable(NavigationItem.Main.route+"/{levelIndex}",
-            arguments = listOf(navArgument("levelIndex") { type = NavType.IntType })) {
-            MainScreen(main)
+            arguments = listOf(navArgument("levelIndex") { type = NavType.StringType })) {
+            MainScreen(navController::navigate)
         }
 
     }

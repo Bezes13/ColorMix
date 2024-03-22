@@ -27,30 +27,39 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.games.colormix.R
 import com.games.colormix.data.startColor
 import com.games.colormix.navigation.Screen
 
 @Composable
-fun StartScreen(navController: NavController, startViewModel: StartViewModel = viewModel()) {
+fun StartScreen(navigate: (String) -> Unit, startViewModel: StartViewModel = hiltViewModel()) {
     StartScreen(
-        navController::navigate,
-        startViewModel::getNextLevel
+        navigate,
+        startViewModel::getCurrentMaxLevel
     )
-
 }
 
 @Composable
-fun StartScreen(navigate: (String) -> Unit, getNextLevel: () -> Int) {
-    val backGround by remember { mutableStateOf( (0 until 20).map { Array(10) { startColor() }
-        .toList() }) }
+fun StartScreen(
+    navigate: (String) -> Unit,
+    getCurrentLevel: () -> Int
+) {
+    val backGround by remember {
+        mutableStateOf((0 until 20).map {
+            Array(10) { startColor() }
+                .toList()
+        })
+    }
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Column(Modifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(5.dp),) {
-            backGround.forEach{ row->
-                Row (horizontalArrangement = Arrangement.spacedBy(5.dp)){
-                    row.forEach{ block ->
+        Column(
+            Modifier,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
+            backGround.forEach { row ->
+                Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+                    row.forEach { block ->
                         Card(
                             modifier = Modifier.size(45.dp),
                             colors = CardDefaults.cardColors(containerColor = block)
@@ -66,11 +75,15 @@ fun StartScreen(navigate: (String) -> Unit, getNextLevel: () -> Int) {
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row (modifier = Modifier
-                .weight(0.4f)
-                .padding(vertical = 60.dp)) {
-                Card(modifier = Modifier.wrapContentSize(),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)) {
+            Row(
+                modifier = Modifier
+                    .weight(0.4f)
+                    .padding(vertical = 60.dp)
+            ) {
+                Card(
+                    modifier = Modifier.wrapContentSize(),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                ) {
                     Text(
                         stringResource(id = R.string.app_name),
                         fontSize = 80.sp,
@@ -84,7 +97,8 @@ fun StartScreen(navigate: (String) -> Unit, getNextLevel: () -> Int) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.weight(0.8f)
             ) {
-                MenuButton(R.string.play) { navigate(Screen.Main.name + "/${getNextLevel()}") }
+                println(Screen.Main.name + "/${getCurrentLevel()}")
+                MenuButton(R.string.play) { navigate(Screen.Main.name + "/${getCurrentLevel()}") }
                 MenuButton(R.string.level_selection) {}
                 MenuButton(R.string.quit) {}
             }

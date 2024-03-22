@@ -10,5 +10,6 @@
     <string name="level_failed_body">You have failed the Level. Try Again by clicking Retry.</string>
     <string name="quit">Quit</string>
     <string name="level">LEVEL %d</string>
+    <string name="menu">Menu</string>
 
 </resources>

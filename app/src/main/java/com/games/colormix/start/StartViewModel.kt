@@ -1,27 +1,30 @@
 package com.games.colormix.start
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
-import com.example.whattowatch.manager.SharedPreferencesManager
 import com.games.colormix.MainViewEvent
 import com.games.colormix.MainViewState
-import com.games.colormix.R
-import kotlinx.coroutines.CoroutineDispatcher
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
 
-class StartViewModel(
-    private var sharedPreferencesManager: SharedPreferencesManager,
-    private val ioDispatcher: CoroutineDispatcher
+@HiltViewModel
+class StartViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
 ) : ViewModel() {
     private val _event = MutableSharedFlow<MainViewEvent>()
     private val _viewState = MutableStateFlow(MainViewState())
     val viewState = _viewState.asStateFlow()
-
+    private val sharedPreferences: SharedPreferences =
+        context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
     init {
 
     }
-    fun getNextLevel():Int{
-        return sharedPreferencesManager.getValue(R.string.next_level)
+    fun getCurrentMaxLevel():Int{
+        return sharedPreferences.getInt("currentLevel", 0)
     }
 }

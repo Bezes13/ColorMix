@@ -1,16 +1,19 @@
 package com.games.colormix
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.whattowatch.manager.SharedPreferencesManager
 import com.games.colormix.data.Animation
 import com.games.colormix.data.ColorField
 import com.games.colormix.data.SpecialBlockPlacement
 import com.games.colormix.data.SpecialType
 import com.games.colormix.data.putOnRightPositionAfterAnimation
 import com.games.colormix.game.LevelData
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -18,22 +21,25 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 import kotlin.math.max
 
-class MainViewModel(
-    private var sharedPreferencesManager: SharedPreferencesManager,
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val ioDispatcher: CoroutineDispatcher,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private val _event = MutableSharedFlow<MainViewEvent>()
     private val _viewState = MutableStateFlow(MainViewState())
     val viewState = _viewState.asStateFlow()
     private var colorFieldNextId = 0
-    private var levelIndex: Int = 0
-
+    private var levelIndex: Int = savedStateHandle.get<String>("levelIndex")?.toInt()?:0
+    private val sharedPreferences: SharedPreferences =
+        context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
     init {
-        listenToEvent()
 
+        listenToEvent()
         fillGameField()
         letTheBlocksFall()
     }
@@ -73,8 +79,9 @@ class MainViewModel(
     }
 
     private fun fillGameField() {
+        println()
         println(levelIndex)
-        val level = LevelData.LEVELS[levelIndex ?: 0]
+        val level = LevelData.LEVELS[levelIndex]
         _viewState.update { state ->
             val columns = mutableListOf<List<ColorField>>()
             state.gameField.forEach {
@@ -125,7 +132,11 @@ class MainViewModel(
                 val updatedQuests =
                     state.currentLevel.quests.map { quest -> quest.copy(amount = max(0, quest.amount - blocksToDestroy.filter { pos -> state.gameField[pos.first][pos.second]?.specialType == quest.specialType && state.gameField[pos.first][pos.second]?.color == quest.color }.size)) }
                 placeNewBlocks(columns)
-
+                if (updatedQuests.all { it.amount <= 0 }){
+                    val editor = sharedPreferences.edit()
+                    editor.putInt("currentLevel", levelIndex+1)
+                    editor.apply()
+                }
                 state.copy(
                     currentLevel = state.currentLevel.copy(
                         moves = state.currentLevel.moves - 1,
@@ -140,6 +151,9 @@ class MainViewModel(
                     ) else if (state.currentLevel.moves <= 1)
                         MainViewDialog.LevelFailed else MainViewDialog.None
                 )
+
+
+
             }
         }
     }
