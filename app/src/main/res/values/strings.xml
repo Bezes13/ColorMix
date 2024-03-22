@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">ColorMix</string>
     <string name="play">PLAY</string>
-    <string name="level_selection">Level Selection Level</string>
+    <string name="level_selection">Level Selection</string>
     <string name="next_level">NextLevel</string>
     <string name="level_complete">Level Complete</string>
     <string name="level_complete_body">You completed successfully Level %d</string>
@@ -11,5 +11,6 @@
     <string name="quit">Quit</string>
     <string name="level">LEVEL %d</string>
     <string name="menu">Menu</string>
+    <string name="completed">Completed</string>
 
 </resources>

@@ -10,6 +10,7 @@ data class MainViewState (
     val dialog: MainViewDialog = MainViewDialog.None,
     val gameField: List<List<ColorField?>> = (0 until 7).map { arrayOfNulls<ColorField?>(8).toList() },
     val animationAt: Animation? = null,
-    val currentLevel: LevelInfo = LevelData.LEVELS[7]
+    val currentLevel: LevelInfo = LevelData.LEVELS[7],
+    val points: Int = 0
 )
 

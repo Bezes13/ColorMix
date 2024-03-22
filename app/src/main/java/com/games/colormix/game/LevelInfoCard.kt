@@ -30,9 +30,9 @@ fun RowScope.LevelInfoCard(content: @Composable () -> Unit) {
 }
 
 @Composable
-fun LevelInfoCard(content: @Composable () -> Unit) {
+fun LevelInfoCard(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
     Card(
-        modifier = Modifier
+        modifier = modifier
             .wrapContentSize(),
         border = BorderStroke(3.dp, MaterialTheme.colorScheme.secondary),
         colors = CardDefaults.cardColors(

@@ -34,9 +34,10 @@ class MainViewModel @Inject constructor(
     private val _viewState = MutableStateFlow(MainViewState())
     val viewState = _viewState.asStateFlow()
     private var colorFieldNextId = 0
-    private var levelIndex: Int = savedStateHandle.get<String>("levelIndex")?.toInt()?:0
+    private var levelIndex: Int = savedStateHandle.get<String>("levelIndex")?.toInt() ?: 0
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+
     init {
 
         listenToEvent()
@@ -79,8 +80,6 @@ class MainViewModel @Inject constructor(
     }
 
     private fun fillGameField() {
-        println()
-        println(levelIndex)
         val level = LevelData.LEVELS[levelIndex]
         _viewState.update { state ->
             val columns = mutableListOf<List<ColorField>>()
@@ -95,7 +94,12 @@ class MainViewModel @Inject constructor(
                 columns,
                 level.specialBlocks
             )
-            state.copy(gameField = res, currentLevel = level.copy(level = levelIndex+1), dialog = MainViewDialog.None)
+            state.copy(
+                gameField = res,
+                currentLevel = level.copy(level = levelIndex + 1),
+                points = 0,
+                dialog = MainViewDialog.None
+            )
         }
     }
 
@@ -130,11 +134,25 @@ class MainViewModel @Inject constructor(
                     columns.add(pushBlocksDown(gameBoard[i].toMutableList()))
                 }
                 val updatedQuests =
-                    state.currentLevel.quests.map { quest -> quest.copy(amount = max(0, quest.amount - blocksToDestroy.filter { pos -> state.gameField[pos.first][pos.second]?.specialType == quest.specialType && state.gameField[pos.first][pos.second]?.color == quest.color }.size)) }
+                    state.currentLevel.quests.map { quest ->
+                        quest.copy(
+                            amount = max(
+                                0,
+                                quest.amount - blocksToDestroy.filter { pos -> state.gameField[pos.first][pos.second]?.specialType == quest.specialType && state.gameField[pos.first][pos.second]?.color == quest.color }.size
+                            )
+                        )
+                    }
                 placeNewBlocks(columns)
-                if (updatedQuests.all { it.amount <= 0 }){
+                val blockCount =
+                    blocksToDestroy.filter { pos -> state.gameField[pos.first][pos.second]?.specialType == SpecialType.None }.size
+
+                if (updatedQuests.all { it.amount <= 0 }) {
                     val editor = sharedPreferences.edit()
-                    editor.putInt("currentLevel", levelIndex+1)
+                    editor.putInt("currentLevel", levelIndex + 1)
+                    val newPoints = state.points + blockCount * 50 * blockCount
+                    if (sharedPreferences.getInt("LEVEL$levelIndex", 0) < newPoints){
+                        editor.putInt("LEVEL$levelIndex", newPoints)
+                    }
                     editor.apply()
                 }
                 state.copy(
@@ -149,11 +167,9 @@ class MainViewModel @Inject constructor(
                     dialog = if (updatedQuests.all { it.amount <= 0 }) MainViewDialog.LevelComplete(
                         levelIndex.toString()
                     ) else if (state.currentLevel.moves <= 1)
-                        MainViewDialog.LevelFailed else MainViewDialog.None
+                        MainViewDialog.LevelFailed else MainViewDialog.None,
+                    points = state.points + blockCount * 50 * blockCount
                 )
-
-
-
             }
         }
     }

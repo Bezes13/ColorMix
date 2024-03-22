@@ -1,5 +1,7 @@
 package com.games.colormix
 
+import androidx.compose.animation.core.TweenSpec
+import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -45,7 +47,7 @@ val FieldSize = 40.dp
 val VerticalPadding = 5.dp
 
 @Composable
-fun MainScreen(navigate: (String) -> Unit, mainViewModel: MainViewModel  = hiltViewModel()) {
+fun MainScreen(navigate: (String) -> Unit, mainViewModel: MainViewModel = hiltViewModel()) {
     val viewState: MainViewState by mainViewModel.viewState.collectAsState()
     MainScreenContent(
         navigate,
@@ -53,7 +55,8 @@ fun MainScreen(navigate: (String) -> Unit, mainViewModel: MainViewModel  = hiltV
         mainViewModel::sendEvent,
         viewState.animationAt,
         viewState.currentLevel,
-        viewState.dialog
+        viewState.dialog,
+        viewState.points
     )
 }
 
@@ -64,7 +67,8 @@ fun MainScreenContent(
     eventListener: (MainViewEvent) -> Unit,
     animateAt: Animation?,
     currentLevel: LevelInfo,
-    dialog: MainViewDialog
+    dialog: MainViewDialog,
+    points: Int
 ) {
     when (dialog) {
         is MainViewDialog.LevelComplete -> LevelDoneDialog(
@@ -97,9 +101,11 @@ fun MainScreenContent(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.primaryContainer),
     ) {
-        Row (horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()){
-            Box{}
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Box {}
             Text(
                 text = stringResource(id = R.string.app_name),
                 fontSize = 60.sp,
@@ -129,14 +135,29 @@ fun MainScreenContent(
                 verticalArrangement = Arrangement.spacedBy(100.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .fillMaxWidth(0.95f)
-                        .height(80.dp)
-                ) {
-                    MovesInfo(currentLevel)
-                    QuestInfo(currentLevel)
+                Column {
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth(0.95f)
+                            .height(80.dp)
+                    ) {
+                        MovesInfo(currentLevel)
+                        QuestInfo(currentLevel)
+                    }
+                    val animatedPoints by animateIntAsState(
+                        animationSpec = TweenSpec(500),
+                        targetValue = points,
+                        label = "points",
+                        finishedListener = {}
+                    )
+                    LevelInfoCard {
+                        Text(
+                            text = animatedPoints.toString(),
+                            fontSize = 25.sp,
+                            modifier = Modifier.padding(vertical = 5.dp, horizontal = 15.dp)
+                        )
+                    }
                 }
 
                 Box(modifier = Modifier.align(Alignment.CenterHorizontally)) {
@@ -174,6 +195,6 @@ fun PreviewMainScreen() {
         {},
         null,
         LevelData.LEVELS[8],
-        MainViewDialog.None
+        MainViewDialog.None, 66666
     )
 }

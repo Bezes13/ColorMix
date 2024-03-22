@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.games.colormix.MainScreen
+import com.games.colormix.levelselection.LevelSelectionScreen
 import com.games.colormix.start.StartScreen
 
 @Composable
@@ -28,6 +29,8 @@ fun AppNavHost(
             arguments = listOf(navArgument("levelIndex") { type = NavType.StringType })) {
             MainScreen(navController::navigate)
         }
-
+        composable(NavigationItem.LevelSelection.route) {
+            LevelSelectionScreen(navController::navigate)
+        }
     }
 }

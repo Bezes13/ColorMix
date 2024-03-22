@@ -97,9 +97,8 @@ fun StartScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.weight(0.8f)
             ) {
-                println(Screen.Main.name + "/${getCurrentLevel()}")
                 MenuButton(R.string.play) { navigate(Screen.Main.name + "/${getCurrentLevel()}") }
-                MenuButton(R.string.level_selection) {}
+                MenuButton(R.string.level_selection) { navigate(Screen.LEVELSELECTION.name)}
                 MenuButton(R.string.quit) {}
             }
         }
