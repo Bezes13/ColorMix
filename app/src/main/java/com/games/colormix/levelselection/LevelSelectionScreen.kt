@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Card
@@ -43,51 +44,71 @@ fun LevelSelectionScreen(
 
 @Composable
 fun LevelSelectionScreen(currentLevel: Int, navigate: (String) -> Unit, getPoints: (Int)-> Int) {
-    Column(
+    LazyColumn(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.background(MaterialTheme.colorScheme.primaryContainer)
     ) {
         for (i in 0..LevelData.LEVELS.size / 3) {
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 10.dp)
-            ) {
-                for (j in 1..3) {
-                    val level = (i * 3 + j)
-                    if (level > LevelData.LEVELS.size) {
-                        return
-                    }
-                    Card(
-                        modifier = Modifier
-                            .size(110.dp)
-                            .clickable { navigate(Screen.Main.name + "/${level - 1}") },
-                        border = BorderStroke(3.dp, MaterialTheme.colorScheme.secondary),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                            contentColor = MaterialTheme.colorScheme.secondary
-                        )
-                    ) {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            Column {
-                                Text(text = level.toString(), fontSize = 40.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
-                                Divider(thickness = 3.dp, color = MaterialTheme.colorScheme.secondary)
-                                Text(text = getPoints(level-1).toString(), fontSize = 40.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
-                            }
-
-                            if (level <= currentLevel) {
-                                Icon(
-                                    imageVector = Icons.Default.Check,
-                                    contentDescription = stringResource(
-                                        R.string.completed
+            item {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 10.dp)
+                ) {
+                    for (j in 1..3) {
+                        val level = (i * 3 + j)
+                        if (level <= LevelData.LEVELS.size) {
+                            val mod =
+                                if (level <= currentLevel + 1) Modifier.clickable { navigate(Screen.Main.name + "/${level - 1}") } else Modifier
+                            Card(
+                                modifier = mod.size(110.dp),
+                                border = BorderStroke(
+                                    3.dp,
+                                    MaterialTheme.colorScheme.secondary.copy(alpha = if (level <= currentLevel + 1) 1f else 0.5f)
+                                ),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(
+                                        alpha = if (level <= currentLevel + 1) 1f else 0.5f
                                     ),
-                                    modifier = Modifier.size(50.dp),
-                                    tint = Color.Green
+                                    contentColor = MaterialTheme.colorScheme.secondary.copy(alpha = if (level <= currentLevel + 1) 1f else 0.5f)
                                 )
+                            ) {
+                                Box(
+                                    contentAlignment = Alignment.TopCenter,
+                                    modifier = Modifier.fillMaxSize()
+                                ) {
+                                    Column(modifier = Modifier.fillMaxWidth()) {
+                                        Text(
+                                            text = level.toString(),
+                                            fontSize = 40.sp,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.fillMaxWidth()
+                                        )
+                                        Divider(
+                                            thickness = 3.dp,
+                                            color = MaterialTheme.colorScheme.secondary.copy(alpha = if (level <= currentLevel + 1) 1f else 0.5f),
+                                            modifier = Modifier.fillMaxWidth()
+                                        )
+                                        Text(
+                                            text = getPoints(level - 1).toString(),
+                                            fontSize = 30.sp,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.fillMaxWidth()
+                                        )
+                                    }
+
+                                    if (level <= currentLevel) {
+                                        Icon(
+                                            imageVector = Icons.Default.Check,
+                                            contentDescription = stringResource(
+                                                R.string.completed
+                                            ),
+                                            modifier = Modifier.size(90.dp),
+                                            tint = Color.Green
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
@@ -101,5 +122,5 @@ fun LevelSelectionScreen(currentLevel: Int, navigate: (String) -> Unit, getPoint
 @Preview
 @Composable
 fun LevelSelectionPreview() {
-    LevelSelectionScreen(currentLevel = 4, {}, {5})
+    LevelSelectionScreen(currentLevel = 4, {}, {5789})
 }

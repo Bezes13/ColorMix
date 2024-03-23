@@ -39,7 +39,6 @@ class MainViewModel @Inject constructor(
         context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
 
     init {
-
         listenToEvent()
         fillGameField()
         letTheBlocksFall()
@@ -80,6 +79,14 @@ class MainViewModel @Inject constructor(
     }
 
     private fun fillGameField() {
+        if (levelIndex>= LevelData.LEVELS.size){
+            _viewState.update { state ->
+                state.copy(
+                    currentLevel = state.currentLevel.copy(level = levelIndex),
+                )
+            }
+            return
+        }
         val level = LevelData.LEVELS[levelIndex]
         _viewState.update { state ->
             val columns = mutableListOf<List<ColorField>>()
@@ -148,9 +155,12 @@ class MainViewModel @Inject constructor(
 
                 if (updatedQuests.all { it.amount <= 0 }) {
                     val editor = sharedPreferences.edit()
-                    editor.putInt("currentLevel", levelIndex + 1)
+                    if (sharedPreferences.getInt("currentLevel", 0) < levelIndex + 1) {
+                        editor.putInt("currentLevel", levelIndex + 1)
+                    }
+
                     val newPoints = state.points + blockCount * 50 * blockCount
-                    if (sharedPreferences.getInt("LEVEL$levelIndex", 0) < newPoints){
+                    if (sharedPreferences.getInt("LEVEL$levelIndex", 0) < newPoints) {
                         editor.putInt("LEVEL$levelIndex", newPoints)
                     }
                     editor.apply()
@@ -278,6 +288,9 @@ class MainViewModel @Inject constructor(
     ): Boolean {
         val board = _viewState.value.gameField
         val field = board[pos.first][pos.second]
+        if(field?.specialType != SpecialType.None){
+            return false
+        }
         hasSameColor(
             Pair(pos.first + 1, pos.second), field
         )?.let { if (!fieldsToDestroy.contains(it)) fieldsToDestroy.add(it) }
