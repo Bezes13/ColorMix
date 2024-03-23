@@ -1,4 +1,4 @@
-package com.games.colormix
+package com.games.colormix.main
 
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateIntAsState
@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.games.colormix.R
 import com.games.colormix.data.Animation
 import com.games.colormix.data.ColorField
 import com.games.colormix.game.AnimationGrid

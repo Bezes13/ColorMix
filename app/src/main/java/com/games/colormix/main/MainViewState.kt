@@ -1,4 +1,4 @@
-package com.games.colormix
+package com.games.colormix.main
 
 import com.games.colormix.data.Animation
 import com.games.colormix.data.ColorField

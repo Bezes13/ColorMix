@@ -12,9 +12,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.games.colormix.FieldSize
-import com.games.colormix.MainViewEvent
-import com.games.colormix.VerticalPadding
+import com.games.colormix.main.FieldSize
+import com.games.colormix.main.MainViewEvent
+import com.games.colormix.main.VerticalPadding
 import com.games.colormix.data.Animation
 import com.games.colormix.data.ColorField
 

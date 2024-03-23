@@ -1,4 +1,4 @@
-package com.games.colormix
+package com.games.colormix.main
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -28,7 +28,7 @@ import kotlin.math.max
 class MainViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val ioDispatcher: CoroutineDispatcher,
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private val _event = MutableSharedFlow<MainViewEvent>()
     private val _viewState = MutableStateFlow(MainViewState())

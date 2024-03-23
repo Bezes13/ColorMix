@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.games.colormix.FieldSize
+import com.games.colormix.main.FieldSize
 import com.games.colormix.R
 import com.games.colormix.data.LevelQuest
 import com.games.colormix.data.SpecialBlockPlacement

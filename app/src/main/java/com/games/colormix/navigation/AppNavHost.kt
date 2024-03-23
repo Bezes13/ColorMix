@@ -7,7 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.games.colormix.MainScreen
+import com.games.colormix.main.MainScreen
 import com.games.colormix.levelselection.LevelSelectionScreen
 import com.games.colormix.start.StartScreen
 
