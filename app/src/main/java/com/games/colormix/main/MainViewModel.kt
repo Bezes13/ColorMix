@@ -79,7 +79,7 @@ class MainViewModel @Inject constructor(
     }
 
     private fun fillGameField() {
-        if (levelIndex>= LevelData.LEVELS.size){
+        if (levelIndex >= LevelData.LEVELS.size) {
             _viewState.update { state ->
                 state.copy(
                     currentLevel = state.currentLevel.copy(level = levelIndex),
@@ -140,15 +140,16 @@ class MainViewModel @Inject constructor(
                 for (i in gameBoard.indices) {
                     columns.add(pushBlocksDown(gameBoard[i].toMutableList()))
                 }
-                val blockCount = blocksToDestroy.filter { pos -> state.gameField[pos.first][pos.second]?.specialType == SpecialType.None }.size
+                val blockCount =
+                    blocksToDestroy.filter { pos -> state.gameField[pos.first][pos.second]?.specialType == SpecialType.None }.size
 
                 val updatedQuests =
                     state.currentLevel.quests.map { quest ->
                         quest.copy(
                             amount = max(
                                 0,
-                                if((quest.multiBlock != null) && (quest.multiBlock <= blockCount)) quest.amount-1 else
-                                quest.amount - blocksToDestroy.filter { pos -> state.gameField[pos.first][pos.second]?.specialType == quest.specialType && state.gameField[pos.first][pos.second]?.color == quest.color }.size
+                                if ((quest.multiBlock != null) && (quest.multiBlock <= blockCount)) quest.amount - 1 else
+                                    quest.amount - blocksToDestroy.filter { pos -> state.gameField[pos.first][pos.second]?.specialType == quest.specialType && state.gameField[pos.first][pos.second]?.color == quest.color }.size
                             )
                         )
                     }
@@ -188,8 +189,9 @@ class MainViewModel @Inject constructor(
     // Place the animated Fields in the correct Spot
     // Add new ColorFields in empty fields
     private fun updateBlocksAfterAnimation() {
+        println("check")
         _viewState.update {
-            it.copy(gameField = it.gameField.map { colorFields ->
+            val newGameField = it.gameField.map { colorFields ->
                 var fromTop = true
                 colorFields.putOnRightPositionAfterAnimation().mapIndexed { idx, item ->
                     if (item == null && fromTop) {
@@ -199,9 +201,30 @@ class MainViewModel @Inject constructor(
                         item
                     }
                 }
-            })
+            }
+            it.copy(
+                dialog = if (noMovesAvailable(newGameField)) MainViewDialog.NoMovesAvailable else it.dialog,
+                gameField = newGameField)
         }
         letTheBlocksFall()
+    }
+
+    private fun noMovesAvailable(gameField: List<List<ColorField?>>): Boolean {
+        gameField.forEachIndexed { column, colorFields ->
+            colorFields.forEachIndexed { row, colorField ->
+                if (colorField?.specialType == SpecialType.None) {
+                    if (gameField[column].size > row + 1 && colorField.color == gameField[column][row + 1]?.color) {
+                        return false
+                    }
+                    if (gameField.size > column + 1 && colorField.color == gameField[column + 1][row]?.color) {
+                        return false
+                    }
+
+                }
+
+            }
+        }
+        return true
     }
 
     private fun letTheBlocksFall() {
@@ -289,7 +312,7 @@ class MainViewModel @Inject constructor(
     ): Boolean {
         val board = _viewState.value.gameField
         val field = board[pos.first][pos.second]
-        if(field?.specialType != SpecialType.None){
+        if (field?.specialType != SpecialType.None) {
             return false
         }
         hasSameColor(

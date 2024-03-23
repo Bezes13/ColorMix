@@ -1,5 +1,6 @@
 package com.games.colormix.start
 
+import android.app.Activity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -51,6 +53,7 @@ fun StartScreen(
                 .toList()
         })
     }
+    val activity = (LocalContext.current as? Activity)
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(
             Modifier,
@@ -99,7 +102,7 @@ fun StartScreen(
             ) {
                 MenuButton(R.string.play) { navigate(Screen.Main.name + "/${getCurrentLevel()}") }
                 MenuButton(R.string.level_selection) { navigate(Screen.LEVELSELECTION.name)}
-                MenuButton(R.string.quit) {}
+                MenuButton(R.string.quit) { activity?.finish()}
             }
         }
     }

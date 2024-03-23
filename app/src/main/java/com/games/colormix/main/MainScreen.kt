@@ -95,6 +95,16 @@ fun MainScreenContent(
                 MainViewEvent.Retry
             )
         }
+        is MainViewDialog.NoMovesAvailable -> LevelDoneDialog(
+            R.string.retry,
+            R.string.no_more_moves,
+            stringResource(id = R.string.no_more_moves_body)
+        )
+        {
+            eventListener(
+                MainViewEvent.Retry
+            )
+        }
 
         is MainViewDialog.None -> {}
     }
@@ -188,6 +198,7 @@ sealed class MainViewDialog {
     data class LevelComplete(val info: String) : MainViewDialog()
     data object LevelFailed : MainViewDialog()
     data object None : MainViewDialog()
+    data object NoMovesAvailable : MainViewDialog()
 }
 
 @Composable

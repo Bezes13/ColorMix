@@ -12,5 +12,7 @@
     <string name="level">LEVEL %d</string>
     <string name="menu">Menu</string>
     <string name="completed">Completed</string>
+    <string name="no_more_moves">No more Moves</string>
+    <string name="no_more_moves_body">There are no more moves available.</string>
 
 </resources>
