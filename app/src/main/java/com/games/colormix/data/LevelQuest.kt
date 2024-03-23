@@ -5,5 +5,6 @@ import androidx.compose.ui.graphics.Color
 data class LevelQuest(
     val specialType: SpecialType = SpecialType.None,
     val color: Color? = null,
-    val amount: Int
+    val amount: Int,
+    val multiBlock: Int? = null
 )

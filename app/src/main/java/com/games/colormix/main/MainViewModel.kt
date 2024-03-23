@@ -140,18 +140,19 @@ class MainViewModel @Inject constructor(
                 for (i in gameBoard.indices) {
                     columns.add(pushBlocksDown(gameBoard[i].toMutableList()))
                 }
+                val blockCount = blocksToDestroy.filter { pos -> state.gameField[pos.first][pos.second]?.specialType == SpecialType.None }.size
+
                 val updatedQuests =
                     state.currentLevel.quests.map { quest ->
                         quest.copy(
                             amount = max(
                                 0,
+                                if((quest.multiBlock != null) && (quest.multiBlock <= blockCount)) quest.amount-1 else
                                 quest.amount - blocksToDestroy.filter { pos -> state.gameField[pos.first][pos.second]?.specialType == quest.specialType && state.gameField[pos.first][pos.second]?.color == quest.color }.size
                             )
                         )
                     }
                 placeNewBlocks(columns)
-                val blockCount =
-                    blocksToDestroy.filter { pos -> state.gameField[pos.first][pos.second]?.specialType == SpecialType.None }.size
 
                 if (updatedQuests.all { it.amount <= 0 }) {
                     val editor = sharedPreferences.edit()

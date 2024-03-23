@@ -2,6 +2,7 @@ package com.games.colormix.game
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,6 +11,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -18,6 +20,7 @@ import com.games.colormix.R
 import com.games.colormix.data.LevelQuest
 import com.games.colormix.data.SpecialBlockPlacement
 import com.games.colormix.data.SpecialType
+import com.games.colormix.data.startColors
 
 object LevelData {
 
@@ -31,6 +34,18 @@ object LevelData {
         LevelInfo(
             quests = listOf(element = LevelQuest(SpecialType.None, Color.Red, 8)),
             moves = 7
+        ),
+        // Level 15
+        LevelInfo(
+            quests = listOf(element = LevelQuest(amount = 1, multiBlock = 4 )),
+            specialBlocks = listOf(),
+            moves = 6
+        ),
+        // Level 15
+        LevelInfo(
+            quests = listOf(element = LevelQuest(amount = 2, multiBlock = 5 )),
+            specialBlocks = listOf(),
+            moves = 6
         ),
         // Level 3
         LevelInfo(
@@ -144,6 +159,13 @@ object LevelData {
                 SpecialBlockPlacement(SpecialType.Box, Pair(3,4))),
             moves = 5
         ),
+
+        // Level 15
+        LevelInfo(
+            quests = listOf(element = LevelQuest(amount = 1, multiBlock = 6 )),
+            specialBlocks = listOf(),
+            moves = 6
+        ),
         // Level 16
         LevelInfo(
             quests = listOf(element = LevelQuest(SpecialType.OpenBox, null, 2)),
@@ -185,13 +207,15 @@ object LevelData {
 
 @Composable
 fun QuestObject(quest: LevelQuest){
+    val brush = Brush.sweepGradient(startColors)
+    val modifier = if(quest.multiBlock != null) Modifier.background(brush) else Modifier
     Card(
         colors = CardDefaults.cardColors(
             containerColor = quest.color ?: Color.Transparent
         ),
-        modifier = Modifier.size(FieldSize /2),
+        modifier = modifier.size(FieldSize /2),
         shape = RoundedCornerShape(2.dp),
-        border = BorderStroke(1.dp, Color.Black)
+        border = if (quest.specialType == SpecialType.None) BorderStroke(1.dp, Color.Black) else BorderStroke(0.dp, Color.Black)
     )
     {
         if (quest.specialType != SpecialType.None) {

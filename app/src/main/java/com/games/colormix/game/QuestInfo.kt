@@ -6,10 +6,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.games.colormix.data.SpecialType
@@ -35,17 +38,54 @@ fun RowScope.QuestInfo(currentLevel: LevelInfo) {
                     ) {
                         Text(text = quest.amount.toString(), fontSize = 30.sp)
                         Box {
-                            Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                                QuestObject(quest = quest)
-                                if (quest.specialType == SpecialType.None) {
+                            if (quest.multiBlock != null) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(2.dp)
+                                ) {
+                                    Text(text = quest.multiBlock.toString() + "#", fontSize = 30.sp)
+                                    QuestObject(quest = quest)
+                                    QuestObject(quest = quest)
                                     QuestObject(quest = quest)
                                 }
+                            } else {
+                                Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                                    QuestObject(quest = quest)
+                                    if (quest.specialType == SpecialType.None) {
+                                        QuestObject(quest = quest)
+                                    }
+                                }
                             }
-
                         }
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+@Preview
+fun QuestInfoPreview() {
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
+            .fillMaxWidth(0.95f)
+            .height(80.dp)
+    ) {
+        QuestInfo(currentLevel = LevelData.LEVELS[8])
+    }
+}
+
+@Composable
+@Preview
+fun QuestInfoPreview2() {
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
+            .fillMaxWidth(0.95f)
+            .height(80.dp)
+    ) {
+        QuestInfo(currentLevel = LevelData.LEVELS[15])
     }
 }
