@@ -1,8 +1,14 @@
 package com.games.colormix.main
 
+import android.content.ClipData
+import android.content.Intent
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.draganddrop.dragAndDropSource
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Icon
@@ -22,6 +29,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draganddrop.DragAndDropTransferData
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -50,7 +59,7 @@ val VerticalPadding = 5.dp
 @Composable
 fun MainScreen(navigate: (String) -> Unit, mainViewModel: MainViewModel = hiltViewModel()) {
     val viewState: MainViewState by mainViewModel.viewState.collectAsState()
-    if (viewState.currentLevel.level > LevelData.LEVELS.size){
+    if (viewState.currentLevel.level > LevelData.LEVELS.size) {
         navigate(Screen.LEVELSELECTION.name)
     }
     MainScreenContent(
@@ -63,7 +72,7 @@ fun MainScreen(navigate: (String) -> Unit, mainViewModel: MainViewModel = hiltVi
         viewState.points
     )
 }
-
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreenContent(
     navigate: (String) -> Unit,
@@ -95,6 +104,7 @@ fun MainScreenContent(
                 MainViewEvent.Retry
             )
         }
+
         is MainViewDialog.NoMovesAvailable -> LevelDoneDialog(
             R.string.retry,
             R.string.no_more_moves,
@@ -133,7 +143,6 @@ fun MainScreenContent(
                 Icon(Icons.Default.Menu, stringResource(R.string.menu))
             }
         }
-
         LevelInfoCard {
             Text(
                 stringResource(id = R.string.level, currentLevel.level),
@@ -165,13 +174,47 @@ fun MainScreenContent(
                         label = "points",
                         finishedListener = {}
                     )
-                    LevelInfoCard {
-                        Text(
-                            text = animatedPoints.toString(),
-                            fontSize = 25.sp,
-                            modifier = Modifier.padding(vertical = 5.dp, horizontal = 15.dp)
-                        )
+                    Row(
+                        modifier = Modifier.height(40.dp),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        LevelInfoCard {
+                            Text(
+                                text = animatedPoints.toString(),
+                                fontSize = 25.sp,
+                                modifier = Modifier.padding(vertical = 5.dp, horizontal = 15.dp)
+                            )
+                        }
+
+                        Image(
+                            painter = painterResource(id = R.drawable.bomb),
+                            contentDescription = "bomb for rocks",
+                            modifier = Modifier.size(60.dp)
+                                .dragAndDropSource {
+                                    detectTapGestures(
+                                        onPress = {
+                                            startTransfer(
+                                                DragAndDropTransferData(
+                                                    clipData = ClipData.newIntent(
+                                                        "foodItem",
+                                                        Intent("foodItemTransferAction"),
+                                                    )
+                                                )
+                                            )
+                                        }
+                                    )
+                                })
+                        LevelInfoCard {
+                            Text(
+                                text = "Bomb Cost 2500",
+                                fontSize = 15.sp,
+                                modifier = Modifier.padding(vertical = 5.dp, horizontal = 15.dp)
+                            )
+                        }
                     }
+
+
                 }
 
                 Box(modifier = Modifier.align(Alignment.CenterHorizontally)) {

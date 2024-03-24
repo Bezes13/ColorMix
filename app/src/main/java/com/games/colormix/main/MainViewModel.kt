@@ -59,6 +59,7 @@ class MainViewModel @Inject constructor(
                 is MainViewEvent.SetAnimateAt -> setAnimateAt(event.pos)
                 is MainViewEvent.NextLevel -> updateToNextLevel()
                 is MainViewEvent.Retry -> retryLevel()
+                is MainViewEvent.UseBomb -> destroyBlock(event.pos)
             }
         }
     }
@@ -124,6 +125,36 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    private fun destroyBlock(pos: Pair<Int, Int>) {
+        val explode = _viewState.value.gameField[pos.first][pos.second]
+
+        if (explode != null && (_viewState.value.points < 2500 || explode.specialType == SpecialType.Box || explode.specialType == SpecialType.OpenBox)) {
+            return
+        }
+
+        _viewState.update { state ->
+            val gameBoard = removeBlocksFromGameBoard(state.gameField, mutableListOf(pos))
+
+            val columns = mutableListOf<List<ColorField?>>()
+            for (i in gameBoard.indices) {
+                columns.add(pushBlocksDown(gameBoard[i].toMutableList()))
+            }
+
+            placeNewBlocks(columns)
+
+            state.copy(
+                animationAt = Animation(pos, Color.Black),
+                gameField = gameBoard.mapIndexed { index, colorFields ->
+                    colorFields.map { colorField -> colorField?.copy(animateTo = columns[index].indexOfFirst { it?.id == colorField.id }) }
+                },
+                points = state.points - 2500,
+                currentLevel = state.currentLevel.copy(moves = state.currentLevel.moves - 1),
+                dialog = if (state.currentLevel.moves <= 1)
+                    MainViewDialog.LevelFailed else MainViewDialog.None,
+            )
+        }
+    }
+
     // Is called when a Block is clicked
     private fun blockClicked(pos: Pair<Int, Int>) {
         val blocksToDestroy = mutableListOf<Pair<Int, Int>>()
@@ -154,15 +185,15 @@ class MainViewModel @Inject constructor(
                         )
                     }
                 placeNewBlocks(columns)
-
+                var newPoints = state.points + blockCount * 50 * blockCount
                 if (updatedQuests.all { it.amount <= 0 }) {
                     val editor = sharedPreferences.edit()
                     if (sharedPreferences.getInt("currentLevel", 0) < levelIndex + 1) {
                         editor.putInt("currentLevel", levelIndex + 1)
                     }
-
-                    val newPoints = state.points + blockCount * 50 * blockCount
                     if (sharedPreferences.getInt("LEVEL$levelIndex", 0) < newPoints) {
+                        newPoints =
+                            state.points + blockCount * 50 * blockCount + state.currentLevel.moves * 1000
                         editor.putInt("LEVEL$levelIndex", newPoints)
                     }
                     editor.apply()
@@ -180,7 +211,7 @@ class MainViewModel @Inject constructor(
                         levelIndex.toString()
                     ) else if (state.currentLevel.moves <= 1)
                         MainViewDialog.LevelFailed else MainViewDialog.None,
-                    points = state.points + blockCount * 50 * blockCount
+                    points = newPoints
                 )
             }
         }
@@ -204,7 +235,8 @@ class MainViewModel @Inject constructor(
             }
             it.copy(
                 dialog = if (noMovesAvailable(newGameField)) MainViewDialog.NoMovesAvailable else it.dialog,
-                gameField = newGameField)
+                gameField = newGameField
+            )
         }
         letTheBlocksFall()
     }
@@ -351,6 +383,10 @@ sealed class MainViewEvent {
     data class SetDialog(val dialog: MainViewDialog) : MainViewEvent()
     data class FieldClicked(val pos: Pair<Int, Int>) : MainViewEvent()
     data class SetAnimateAt(val pos: Animation?) : MainViewEvent() {}
+    data class UseBomb(val pos: Pair<Int, Int>) : MainViewEvent() {
+
+    }
+
     data object SetBlocksAfterAnimation : MainViewEvent()
     data object NextLevel : MainViewEvent()
     data object Retry : MainViewEvent()

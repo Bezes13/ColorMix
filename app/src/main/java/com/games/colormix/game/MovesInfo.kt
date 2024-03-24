@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun RowScope.MovesInfo(currentLevel: LevelInfo) {
-    LevelInfoCard {
+    LevelInfoCardRow {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,

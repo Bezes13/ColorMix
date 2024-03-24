@@ -19,7 +19,7 @@ import com.games.colormix.data.SpecialType
 
 @Composable
 fun RowScope.QuestInfo(currentLevel: LevelInfo) {
-    LevelInfoCard {
+    LevelInfoCardRow {
         Row(
             modifier = Modifier
                 .weight(1f)

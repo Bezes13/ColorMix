@@ -1,9 +1,12 @@
 package com.games.colormix.game
 
+import android.content.ClipDescription
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateIntOffsetAsState
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.draganddrop.dragAndDropTarget
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
@@ -14,19 +17,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draganddrop.DragAndDropEvent
+import androidx.compose.ui.draganddrop.DragAndDropTarget
+import androidx.compose.ui.draganddrop.mimeTypes
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
-import com.games.colormix.main.FieldSize
-import com.games.colormix.main.MainViewEvent
 import com.games.colormix.R
-import com.games.colormix.main.VerticalPadding
 import com.games.colormix.data.ColorField
 import com.games.colormix.data.SpecialType
+import com.games.colormix.main.FieldSize
+import com.games.colormix.main.MainViewEvent
+import com.games.colormix.main.VerticalPadding
 import kotlin.math.roundToInt
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Field(content: ColorField?, pos: Pair<Int, Int>, eventListener: (MainViewEvent) -> Unit) {
     if (content == null) {
@@ -66,7 +73,18 @@ fun Field(content: ColorField?, pos: Pair<Int, Int>, eventListener: (MainViewEve
                 ) else dropOffset
             }
             .clickable(onClick = {
-                eventListener(MainViewEvent.FieldClicked(pos))})
+                eventListener(MainViewEvent.FieldClicked(pos))}).dragAndDropTarget(
+                shouldStartDragAndDrop = { event ->
+                    // Check if the drag-and-drop event contains text intent mime type
+                    event.mimeTypes().contains(ClipDescription.MIMETYPE_TEXT_INTENT)
+                },
+                target = object : DragAndDropTarget {
+                    override fun onDrop(event: DragAndDropEvent): Boolean {
+                        eventListener(MainViewEvent.UseBomb(pos))
+                        return true
+                    }
+                }
+            ),
     )
     {
         if (content.specialType != SpecialType.None) {

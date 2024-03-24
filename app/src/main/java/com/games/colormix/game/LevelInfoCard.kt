@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun RowScope.LevelInfoCard(content: @Composable () -> Unit) {
+fun RowScope.LevelInfoCardRow(content: @Composable () -> Unit) {
     Card(
         modifier = Modifier
             .weight(1f)
