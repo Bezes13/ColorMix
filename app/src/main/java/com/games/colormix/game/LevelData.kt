@@ -594,7 +594,660 @@ object LevelData {
                 SpecialBlockPlacement(SpecialType.Rock, Pair(1, 3))
             ),
             moves = 12
-        )
+        ),
+        LevelInfo(
+            quests = listOf(
+                LevelQuest(SpecialType.OpenBox, null, 1, null),
+                LevelQuest(SpecialType.None, Color.Green, 7, null)
+            ),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(0, 3)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(2, 2)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(4, 2)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(0, 4)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(0, 1))
+            ),
+            moves = 6
+        ),
+        LevelInfo(
+            quests = listOf(LevelQuest(SpecialType.None, null, 6, 8)),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.Rock, Pair(3, 2)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(1, 2)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(0, 5)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(4, 1))
+            ),
+            moves = 24
+        ),
+        LevelInfo(
+            quests = listOf(
+                LevelQuest(SpecialType.None, null, 2, 7),
+                LevelQuest(SpecialType.None, Color.Green, 6, null)
+            ),
+            specialBlocks = listOf(SpecialBlockPlacement(SpecialType.Rock, Pair(3, 2))),
+            moves = 11
+        ),
+        LevelInfo(
+            quests = listOf(LevelQuest(SpecialType.OpenBox, null, 5, null)),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.Box, Pair(2, 5)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(5, 5)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(3, 5)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(3, 3)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(5, 0)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(2, 1)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(1, 1)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(4, 6))
+            ),
+            moves = 10
+        ),
+        LevelInfo(
+            quests = listOf(
+                LevelQuest(SpecialType.None, Color.Green, 4, null),
+                LevelQuest(SpecialType.OpenBox, null, 9, null)
+            ),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(3, 3)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(1, 1)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(4, 1)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(4, 3)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(2, 3)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(0, 3)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(0, 1)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(5, 6)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(3, 4)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(5, 5)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(5, 0)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(2, 1)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(0, 5)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(0, 4))
+            ),
+            moves = 12
+        ),
+        LevelInfo(
+            quests = listOf(
+                LevelQuest(SpecialType.OpenBox, null, 8, null),
+                LevelQuest(SpecialType.None, null, 7, 9)
+            ),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.Box, Pair(5, 5)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(4, 0)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(3, 5)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(5, 1)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(1, 2)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(5, 2)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(4, 5)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(0, 2)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(3, 4))
+            ),
+            moves = 47
+        ),
+        LevelInfo(
+            quests = listOf(LevelQuest(SpecialType.OpenBox, null, 2, null)),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.Box, Pair(5, 2)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(5, 0)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(1, 4))
+            ),
+            moves = 4
+        ),
+        LevelInfo(
+            quests = listOf(
+                LevelQuest(SpecialType.None, Color.Yellow, 11, null),
+                LevelQuest(SpecialType.None, null, 4, 5)
+            ),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.Rock, Pair(5, 3)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(3, 5))
+            ),
+            moves = 18
+        ),
+        LevelInfo(
+            quests = listOf(LevelQuest(SpecialType.None, null, 1, 6)),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.Rock, Pair(5, 5)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(1, 0)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(0, 1)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(4, 3))
+            ),
+            moves = 3
+        ),
+        LevelInfo(
+            quests = listOf(LevelQuest(SpecialType.None, null, 8, 7)),
+            specialBlocks = listOf(SpecialBlockPlacement(SpecialType.Rock, Pair(0, 6))),
+            moves = 28
+        ),
+        LevelInfo(
+            quests = listOf(
+                LevelQuest(SpecialType.None, null, 6, 6),
+                LevelQuest(SpecialType.OpenBox, null, 4, null)
+            ),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(3, 6)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(1, 5)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(3, 1)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(5, 3)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(2, 0)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(0, 4))
+            ),
+            moves = 22
+        ),
+        LevelInfo(
+            quests = listOf(LevelQuest(SpecialType.None, null, 1, 8)),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.Rock, Pair(2, 3)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(5, 0)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(1, 2))
+            ),
+            moves = 4
+        ),
+        LevelInfo(
+            quests = listOf(LevelQuest(SpecialType.OpenBox, null, 8, null)),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(3, 2)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(0, 6)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(4, 4)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(0, 4)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(3, 6)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(5, 6)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(2, 6)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(2, 0)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(3, 3)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(0, 5))
+            ),
+            moves = 8
+        ),
+        LevelInfo(
+            quests = listOf(
+                LevelQuest(SpecialType.OpenBox, null, 7, null),
+                LevelQuest(SpecialType.None, Color.Cyan, 11, null)
+            ),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.Box, Pair(5, 0)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(4, 1)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(4, 2)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(3, 6)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(2, 2)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(1, 1)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(2, 4)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(4, 4)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(0, 2)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(1, 2))
+            ),
+            moves = 22
+        ),
+        LevelInfo(
+            quests = listOf(LevelQuest(SpecialType.OpenBox, null, 8, null)),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(1, 1)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(1, 6)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(2, 2)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(3, 1)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(5, 1)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(5, 3)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(0, 5)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(1, 2)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(4, 4)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(4, 2)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(2, 1)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(1, 5))
+            ),
+            moves = 10
+        ),
+        LevelInfo(
+            quests = listOf(LevelQuest(SpecialType.OpenBox, null, 2, null)),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(3, 2)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(5, 5)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(4, 3))
+            ),
+            moves = 2
+        ),
+        LevelInfo(
+            quests = listOf(
+                LevelQuest(SpecialType.None, Color.Cyan, 15, null),
+                LevelQuest(SpecialType.OpenBox, null, 4, null)
+            ),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.Box, Pair(4, 3)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(1, 3)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(3, 2)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(2, 3)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(0, 1)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(5, 4)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(2, 0)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(0, 4))
+            ),
+            moves = 20
+        ),
+        LevelInfo(
+            quests = listOf(
+                LevelQuest(SpecialType.None, Color.Red, 11, null),
+                LevelQuest(SpecialType.None, null, 8, 9)
+            ),
+            specialBlocks = listOf(SpecialBlockPlacement(SpecialType.Rock, Pair(2, 1))),
+            moves = 44
+        ),
+        LevelInfo(
+            quests = listOf(
+                LevelQuest(SpecialType.OpenBox, null, 9, null),
+                LevelQuest(SpecialType.None, Color.Cyan, 15, null)
+            ),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.Box, Pair(3, 3)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(5, 0)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(1, 1)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(4, 3)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(2, 1)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(1, 4)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(5, 5)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(0, 1)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(0, 3)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(5, 1)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(2, 5)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(3, 0)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(0, 2))
+            ),
+            moves = 30
+        ),
+        LevelInfo(
+            quests = listOf(
+                LevelQuest(SpecialType.OpenBox, null, 6, null),
+                LevelQuest(SpecialType.None, Color.Red, 19, null)
+            ),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(5, 6)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(3, 1)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(2, 0)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(2, 6)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(0, 4)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(5, 4)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(5, 0))
+            ),
+            moves = 21
+        ),
+        LevelInfo(
+            quests = listOf(LevelQuest(SpecialType.None, Color.Cyan, 7, null)),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.Rock, Pair(1, 1)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(5, 0)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(3, 1)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(1, 4)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(0, 1))
+            ),
+            moves = 5
+        ),
+        LevelInfo(
+            quests = listOf(
+                LevelQuest(SpecialType.None, Color.Yellow, 4, null),
+                LevelQuest(SpecialType.None, null, 5, 8)
+            ),
+            specialBlocks = listOf(SpecialBlockPlacement(SpecialType.Rock, Pair(0, 2))),
+            moves = 23
+        ),
+        LevelInfo(
+            quests = listOf(
+                LevelQuest(SpecialType.None, Color.Cyan, 13, null),
+                LevelQuest(SpecialType.None, Color.Blue, 6, null)
+            ),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.Rock, Pair(2, 1)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(4, 3))
+            ),
+            moves = 14
+        ),
+        LevelInfo(
+            quests = listOf(
+                LevelQuest(SpecialType.None, Color.Blue, 5, null),
+                LevelQuest(SpecialType.None, null, 6, 5)
+            ),
+            specialBlocks = listOf(SpecialBlockPlacement(SpecialType.Rock, Pair(5, 5))),
+            moves = 19
+        ),
+        LevelInfo(
+            quests = listOf(LevelQuest(SpecialType.None, null, 7, 6)),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.Rock, Pair(2, 3)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(5, 0)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(4, 1))
+            ),
+            moves = 21
+        ),
+        LevelInfo(
+            quests = listOf(
+                LevelQuest(SpecialType.None, Color.Green, 6, null),
+                LevelQuest(SpecialType.OpenBox, null, 9, null)
+            ),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(3, 5)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(1, 4)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(2, 0)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(1, 6)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(1, 0)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(4, 1)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(5, 5)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(1, 2)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(0, 5)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(3, 6)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(5, 0)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(3, 4)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(0, 1))
+            ),
+            moves = 13
+        ),
+        LevelInfo(
+            quests = listOf(
+                LevelQuest(SpecialType.OpenBox, null, 3, null),
+                LevelQuest(SpecialType.None, Color.Blue, 14, null)
+            ),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(3, 3)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(5, 4)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(1, 5)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(5, 1)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(3, 4)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(0, 1))
+            ),
+            moves = 14
+        ),
+        LevelInfo(
+            quests = listOf(LevelQuest(SpecialType.None, Color.Yellow, 7, null)),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.Rock, Pair(2, 0)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(5, 0))
+            ),
+            moves = 5
+        ),
+        LevelInfo(
+            quests = listOf(LevelQuest(SpecialType.OpenBox, null, 9, null)),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.Box, Pair(3, 2)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(0, 5)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(5, 6)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(0, 6)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(2, 2)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(1, 2)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(2, 5)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(1, 5)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(4, 2)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(4, 5))
+            ),
+            moves = 18
+        ),
+        LevelInfo(
+            quests = listOf(LevelQuest(SpecialType.None, Color.Cyan, 15, null)),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.Rock, Pair(3, 4)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(4, 2)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(1, 6)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(0, 4)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(2, 4))
+            ),
+            moves = 12
+        ),
+        LevelInfo(
+            quests = listOf(LevelQuest(SpecialType.None, null, 4, 8)),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.Rock, Pair(5, 3)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(4, 0))
+            ),
+            moves = 16
+        ),
+        LevelInfo(
+            quests = listOf(LevelQuest(SpecialType.OpenBox, null, 7, null)),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.Box, Pair(1, 4)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(3, 1)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(0, 4)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(1, 2)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(3, 2)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(1, 6)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(3, 0)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(5, 2))
+            ),
+            moves = 14
+        ),
+        LevelInfo(
+            quests = listOf(LevelQuest(SpecialType.OpenBox, null, 1, null)),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(3, 2)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(4, 6)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(1, 0)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(1, 6)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(4, 3))
+            ),
+            moves = 1
+        ),
+        LevelInfo(
+            quests = listOf(LevelQuest(SpecialType.None, null, 1, 5)),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.Rock, Pair(1, 5)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(5, 4))
+            ),
+            moves = 2
+        ),
+        LevelInfo(
+            quests = listOf(
+                LevelQuest(SpecialType.OpenBox, null, 5, null),
+                LevelQuest(SpecialType.None, Color.Cyan, 6, null)
+            ),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.Box, Pair(5, 4)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(5, 2)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(5, 6)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(0, 3)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(1, 6)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(4, 3)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(2, 6)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(1, 3)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(2, 4))
+            ),
+            moves = 14
+        ),
+        LevelInfo(
+            quests = listOf(LevelQuest(SpecialType.OpenBox, null, 7, null)),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.Box, Pair(0, 1)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(1, 3)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(4, 4)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(3, 6)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(3, 2)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(5, 2)),
+                SpecialBlockPlacement(SpecialType.Box, Pair(0, 2)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(2, 5)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(1, 2)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(1, 6)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(1, 1)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(5, 4))
+            ),
+            moves = 14
+        ),
+        LevelInfo(
+            quests = listOf(LevelQuest(SpecialType.None, null, 2, 7)),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.Rock, Pair(2, 3)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(5, 6)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(0, 2))
+            ),
+            moves = 7
+        ),
+        LevelInfo(
+            quests = listOf(
+                LevelQuest(SpecialType.None, Color.Blue, 5, null),
+                LevelQuest(SpecialType.None, null, 1, 9)
+            ),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.Rock, Pair(4, 6)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(1, 3)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(1, 0))
+            ),
+            moves = 8
+        ),
+        LevelInfo(
+            quests = listOf(LevelQuest(SpecialType.None, Color.Blue, 7, null)),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.Rock, Pair(0, 1)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(2, 5))
+            ),
+            moves = 5
+        ),
+        LevelInfo(
+            quests = listOf(
+                LevelQuest(SpecialType.OpenBox, null, 6, null),
+                LevelQuest(SpecialType.None, null, 7, 6)
+            ),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(2, 6)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(0, 5)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(1, 6)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(2, 2)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(0, 1)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(3, 3)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(2, 5)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(1, 4)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(5, 0)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(1, 3))
+            ),
+            moves = 27
+        ),
+        LevelInfo(
+            quests = listOf(LevelQuest(SpecialType.None, Color.Yellow, 6, null)),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.Rock, Pair(2, 5)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(3, 3)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(0, 6))
+            ),
+            moves = 4
+        ),
+        LevelInfo(
+            quests = listOf(
+                LevelQuest(SpecialType.None, Color.Blue, 10, null),
+                LevelQuest(SpecialType.None, Color.Red, 7, null)
+            ),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.Rock, Pair(4, 2)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(2, 2)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(2, 6)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(4, 5)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(0, 0))
+            ),
+            moves = 13
+        ),
+        LevelInfo(
+            quests = listOf(
+                LevelQuest(SpecialType.None, Color.Red, 13, null),
+                LevelQuest(SpecialType.None, Color.Green, 4, null)
+            ),
+            specialBlocks = listOf(SpecialBlockPlacement(SpecialType.Rock, Pair(5, 0))),
+            moves = 13
+        ),
+        LevelInfo(
+            quests = listOf(
+                LevelQuest(SpecialType.OpenBox, null, 8, null),
+                LevelQuest(SpecialType.None, Color.Blue, 10, null)
+            ),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(1, 1)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(2, 3)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(5, 0)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(2, 1)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(1, 2)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(3, 1)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(0, 3)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(0, 4)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(1, 5)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(2, 2)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(0, 1))
+            ),
+            moves = 16
+        ),
+        LevelInfo(
+            quests = listOf(
+                LevelQuest(SpecialType.None, Color.Cyan, 14, null),
+                LevelQuest(SpecialType.OpenBox, null, 2, null)
+            ),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(0, 6)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(2, 6)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(1, 5)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(5, 4)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(2, 0)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(4, 4)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(4, 0))
+            ),
+            moves = 13
+        ),
+        LevelInfo(
+            quests = listOf(
+                LevelQuest(SpecialType.None, null, 1, 7),
+                LevelQuest(SpecialType.OpenBox, null, 2, null)
+            ),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(4, 6)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(4, 0)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(3, 4)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(1, 3)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(1, 2)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(1, 6))
+            ),
+            moves = 5
+        ),
+        LevelInfo(
+            quests = listOf(LevelQuest(SpecialType.None, Color.Yellow, 15, null)),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.Rock, Pair(4, 1)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(2, 6)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(0, 5)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(4, 2))
+            ),
+            moves = 12
+        ),
+        LevelInfo(
+            quests = listOf(
+                LevelQuest(SpecialType.None, null, 4, 9),
+                LevelQuest(SpecialType.None, Color.Yellow, 4, null)
+            ),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.Rock, Pair(5, 0)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(5, 2)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(0, 3)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(5, 5))
+            ),
+            moves = 21
+        ),
+        LevelInfo(
+            quests = listOf(
+                LevelQuest(SpecialType.None, null, 2, 8),
+                LevelQuest(SpecialType.None, Color.Cyan, 9, null)
+            ),
+            specialBlocks = listOf(SpecialBlockPlacement(SpecialType.Rock, Pair(3, 5))),
+            moves = 15
+        ),
+        LevelInfo(
+            quests = listOf(
+                LevelQuest(SpecialType.OpenBox, null, 4, null),
+                LevelQuest(SpecialType.None, null, 6, 9)
+            ),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(4, 1)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(3, 6)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(1, 4)),
+                SpecialBlockPlacement(SpecialType.OpenBox, Pair(5, 3)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(2, 4))
+            ),
+            moves = 31
+        ),
+        LevelInfo(
+            quests = listOf(LevelQuest(SpecialType.None, null, 3, 8)),
+            specialBlocks = listOf(
+                SpecialBlockPlacement(SpecialType.Rock, Pair(5, 6)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(0, 4)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(5, 4)),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(0, 3))
+            ),
+            moves = 12
+        ),
 
-    )
+
+        )
 }
