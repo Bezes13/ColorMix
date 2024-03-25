@@ -155,7 +155,7 @@ class MainViewModel @Inject constructor(
                 },
                 points = state.points - 2500,
                 currentLevel = state.currentLevel.copy(moves = state.currentLevel.moves - 1),
-                dialog = if (state.currentLevel.moves <= 0)
+                dialog = if (state.currentLevel.moves <= 1)
                     MainViewDialog.LevelFailed else MainViewDialog.None,
             )
         }
