@@ -26,7 +26,7 @@ fun AnimationGrid(
     eventListener: (MainViewEvent) -> Unit,
 ) {
     val progress by animateFloatAsState(
-        animationSpec = TweenSpec(500),
+        animationSpec = TweenSpec( if (animateAt?.color == Color.Black) 200 else 500),
         targetValue = if (animateAt != null) 1f else 0f,
         label = "progress",
         finishedListener = {
