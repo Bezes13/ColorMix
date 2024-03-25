@@ -25,6 +25,5 @@ fun RowScope.MovesInfo(currentLevel: LevelInfo) {
             Text(text = "Moves:", fontSize = 20.sp)
             Text(text = currentLevel.moves.toString(), fontSize = 20.sp)
         }
-
     }
 }

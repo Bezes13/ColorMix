@@ -68,7 +68,7 @@ object LevelData {
         // Level 3
         LevelInfo(
             quests = listOf(element = LevelQuest(SpecialType.None, Color.Yellow, 10)),
-            ),
+        ),
         // Level 4
         LevelInfo(
             quests = listOf(element = LevelQuest(SpecialType.None, Color.Cyan, 12)),

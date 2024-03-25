@@ -105,9 +105,9 @@ class MainViewModel @Inject constructor(
             )
             var moves = 1
             level.quests.forEach { moves += it.getMoveEstimation() }
-            moves += level.specialBlocks.filter { it.specialType == SpecialType.Rock}.size
-            moves += level.specialBlocks.filter { it.specialType == SpecialType.Box}.size * 2
-            moves += (level.specialBlocks.filter { it.specialType == SpecialType.OpenBox}.size * 1.5).toInt()
+            moves += level.specialBlocks.filter { it.specialType == SpecialType.Rock }.size
+            moves += level.specialBlocks.filter { it.specialType == SpecialType.Box }.size * 2
+            moves += (level.specialBlocks.filter { it.specialType == SpecialType.OpenBox }.size * 1.5).toInt()
             state.copy(
                 gameField = res,
                 currentLevel = level.copy(level = levelIndex + 1, moves = moves),

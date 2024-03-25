@@ -14,11 +14,11 @@ class LevelSelectionViewModel @Inject constructor(
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
 
-    fun getCurrentMaxLevel():Int{
+    fun getCurrentMaxLevel(): Int {
         return sharedPreferences.getInt("currentLevel", 0)
     }
 
-    fun getCurrentPoints(level: Int):Int{
+    fun getCurrentPoints(level: Int): Int {
         return sharedPreferences.getInt("LEVEL$level", 0)
     }
 }

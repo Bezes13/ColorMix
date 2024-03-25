@@ -72,6 +72,7 @@ fun MainScreen(navigate: (String) -> Unit, mainViewModel: MainViewModel = hiltVi
         viewState.points
     )
 }
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreenContent(
@@ -190,7 +191,8 @@ fun MainScreenContent(
                         Image(
                             painter = painterResource(id = R.drawable.bomb),
                             contentDescription = "bomb for rocks",
-                            modifier = Modifier.size(60.dp)
+                            modifier = Modifier
+                                .size(60.dp)
                                 .dragAndDropSource {
                                     detectTapGestures(
                                         onPress = {

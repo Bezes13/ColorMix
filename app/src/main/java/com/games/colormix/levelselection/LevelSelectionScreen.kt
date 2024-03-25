@@ -43,7 +43,7 @@ fun LevelSelectionScreen(
 }
 
 @Composable
-fun LevelSelectionScreen(currentLevel: Int, navigate: (String) -> Unit, getPoints: (Int)-> Int) {
+fun LevelSelectionScreen(currentLevel: Int, navigate: (String) -> Unit, getPoints: (Int) -> Int) {
     LazyColumn(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.background(MaterialTheme.colorScheme.primaryContainer)
@@ -122,5 +122,5 @@ fun LevelSelectionScreen(currentLevel: Int, navigate: (String) -> Unit, getPoint
 @Preview
 @Composable
 fun LevelSelectionPreview() {
-    LevelSelectionScreen(currentLevel = 4, {}, {5789})
+    LevelSelectionScreen(currentLevel = 4, {}, { 5789 })
 }

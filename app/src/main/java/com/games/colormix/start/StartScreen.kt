@@ -101,8 +101,8 @@ fun StartScreen(
                 modifier = Modifier.weight(0.8f)
             ) {
                 MenuButton(R.string.play) { navigate(Screen.Main.name + "/${getCurrentLevel()}") }
-                MenuButton(R.string.level_selection) { navigate(Screen.LEVELSELECTION.name)}
-                MenuButton(R.string.quit) { activity?.finish()}
+                MenuButton(R.string.level_selection) { navigate(Screen.LEVELSELECTION.name) }
+                MenuButton(R.string.quit) { activity?.finish() }
             }
         }
     }

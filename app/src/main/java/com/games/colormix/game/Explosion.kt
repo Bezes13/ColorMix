@@ -38,10 +38,14 @@ fun Explosion(progress: Float, color: Color) {
             modifier = Modifier
                 .size(20.dp)
                 .offset {
-                    IntOffset((particle.currentXPosition).roundToInt(), particle.currentYPosition.roundToInt())
-                }.alpha(particle.alpha*particle.alpha*particle.alpha),
-            border = BorderStroke(1.dp,Color.Black),
+                    IntOffset(
+                        (particle.currentXPosition).roundToInt(),
+                        particle.currentYPosition.roundToInt()
+                    )
+                }
+                .alpha(particle.alpha * particle.alpha * particle.alpha),
+            border = BorderStroke(1.dp, Color.Black),
             shape = RoundedCornerShape(0.dp)
-        ){}
-        }
+        ) {}
+    }
 }

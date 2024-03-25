@@ -14,21 +14,21 @@ class Particle(
     val maxHorizontalDisplacement: Float,
     val maxVerticalDisplacement: Float,
 ) {
-    val velocity = 4 * maxVerticalDisplacement
-    val acceleration = -2 * velocity
+    private val velocity = 4 * maxVerticalDisplacement
+    private val acceleration = -2 * velocity
     var currentXPosition = 0f
     var currentYPosition = 0f
 
-    var visibilityThresholdLow = randomInRange(0f, 0.14f)
-    var visibilityThresholdHigh = randomInRange(0f, 0.4f)
+    private var visibilityThresholdLow = randomInRange(0f, 0.14f)
+    private var visibilityThresholdHigh = randomInRange(0f, 0.4f)
 
-    val initialXDisplacement = 10.dp.toPx() * randomInRange(-1f, 1f)
-    val initialYDisplacement = 10.dp.toPx() * randomInRange(-1f, 1f)
+    private val initialXDisplacement = 10.dp.toPx() * randomInRange(-1f, 1f)
+    private val initialYDisplacement = 10.dp.toPx() * randomInRange(-1f, 1f)
 
     var alpha = 0f
-    var currentRadius = 0f
-    val startRadius = 2.dp.toPx()
-    val endRadius = if (randomBoolean(trueProbabilityPercentage = 20)) {
+    private var currentRadius = 0f
+    private val startRadius = 2.dp.toPx()
+    private val endRadius = if (randomBoolean(trueProbabilityPercentage = 20)) {
         randomInRange(startRadius, 7.dp.toPx())
     } else {
         randomInRange(1.5.dp.toPx(), startRadius)

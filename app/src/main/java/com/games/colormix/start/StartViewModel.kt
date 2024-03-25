@@ -24,48 +24,59 @@ class StartViewModel @Inject constructor(
 
     init {
         //for (i in 0..50)
-       //     generateNewLevel()
+        //     generateNewLevel()
     }
 
-    private fun generateNewLevel() : LevelInfo{
+    private fun generateNewLevel(): LevelInfo {
         val questCount = if (Math.random() > 0.5) 1 else 2
         var quests = mutableListOf<LevelQuest>()
         val specials = mutableListOf<SpecialBlockPlacement>()
         for (i in 1..questCount) {
             var typeRandom = Math.random()
-            var quest = if (typeRandom < 0.33) createColorQuest() else if (typeRandom < 0.66) createMultiQuest() else createBoxQuest()
-            while(quests.any { it.specialType == quest.specialType && it.color == quest.color }){
+            var quest =
+                if (typeRandom < 0.33) createColorQuest() else if (typeRandom < 0.66) createMultiQuest() else createBoxQuest()
+            while (quests.any { it.specialType == quest.specialType && it.color == quest.color }) {
 
                 typeRandom = Math.random()
-                quest = if (typeRandom < 0.33) createColorQuest() else if (typeRandom < 0.66) createMultiQuest() else createBoxQuest()
+                quest =
+                    if (typeRandom < 0.33) createColorQuest() else if (typeRandom < 0.66) createMultiQuest() else createBoxQuest()
             }
             quests.add(quest)
         }
         quests.forEach {
-            if(it.specialType == SpecialType.Box || it.specialType == SpecialType.OpenBox){
-                for (i in 1..it.amount){
-                    var pos = Pair(Random.nextInt(0, 6),Random.nextInt(0, 7))
-                    while (specials.any { it.pos == pos }){
+            if (it.specialType == SpecialType.Box || it.specialType == SpecialType.OpenBox) {
+                for (i in 1..it.amount) {
+                    var pos = Pair(Random.nextInt(0, 6), Random.nextInt(0, 7))
+                    while (specials.any { it.pos == pos }) {
 
-                        pos = Pair(Random.nextInt(0, 6),Random.nextInt(0, 7))
+                        pos = Pair(Random.nextInt(0, 6), Random.nextInt(0, 7))
                     }
                     specials.add(SpecialBlockPlacement(it.specialType, pos))
                 }
             }
         }
-        for (i in 0.. Random.nextInt(0,5)){
-            var pos = Pair(Random.nextInt(0, 6),Random.nextInt(0, 7))
-            while (specials.any { it.pos == pos }){
+        for (i in 0..Random.nextInt(0, 5)) {
+            var pos = Pair(Random.nextInt(0, 6), Random.nextInt(0, 7))
+            while (specials.any { it.pos == pos }) {
 
-                pos = Pair(Random.nextInt(0, 6),Random.nextInt(0, 7))
+                pos = Pair(Random.nextInt(0, 6), Random.nextInt(0, 7))
             }
             specials.add(SpecialBlockPlacement(SpecialType.Rock, pos))
         }
-        quests = quests.map { if(it.specialType == SpecialType.Box) it.copy(specialType = SpecialType.OpenBox) else it }.toMutableList()
-        if(quests.size == 2 && quests[0].specialType == SpecialType.OpenBox  && quests[1].specialType == SpecialType.OpenBox){
-            quests = listOf(LevelQuest(SpecialType.OpenBox, Color.Transparent, quests[0].amount+ quests[1].amount, null)).toMutableList()
+        quests =
+            quests.map { if (it.specialType == SpecialType.Box) it.copy(specialType = SpecialType.OpenBox) else it }
+                .toMutableList()
+        if (quests.size == 2 && quests[0].specialType == SpecialType.OpenBox && quests[1].specialType == SpecialType.OpenBox) {
+            quests = listOf(
+                LevelQuest(
+                    SpecialType.OpenBox,
+                    Color.Transparent,
+                    quests[0].amount + quests[1].amount,
+                    null
+                )
+            ).toMutableList()
         }
-        val level = LevelInfo(quests,specials)
+        val level = LevelInfo(quests, specials)
         println(generateObjectDefinition(level))
         return level
     }

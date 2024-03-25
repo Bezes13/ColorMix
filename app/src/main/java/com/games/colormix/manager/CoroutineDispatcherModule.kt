@@ -13,7 +13,7 @@ import kotlinx.coroutines.Dispatchers.IO
 object CoroutineDispatcherModule {
     @Provides
     fun provideCoroutineDispatcher(): CoroutineDispatcher {
-        // Return the CoroutineDispatcher instance you want to use
-        return IO // For example, using the IO dispatcher
+
+        return IO
     }
 }

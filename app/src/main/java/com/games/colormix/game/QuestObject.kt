@@ -22,16 +22,19 @@ import com.games.colormix.data.startColors
 import com.games.colormix.main.FieldSize
 
 @Composable
-fun QuestObject(quest: LevelQuest){
+fun QuestObject(quest: LevelQuest) {
     val brush = Brush.sweepGradient(startColors)
-    val modifier = if(quest.multiBlock != null) Modifier.background(brush) else Modifier
+    val modifier = if (quest.multiBlock != null) Modifier.background(brush) else Modifier
     Card(
         colors = CardDefaults.cardColors(
             containerColor = quest.color ?: Color.Transparent
         ),
-        modifier = modifier.size(FieldSize /2),
+        modifier = modifier.size(FieldSize / 2),
         shape = RoundedCornerShape(2.dp),
-        border = if (quest.specialType == SpecialType.None) BorderStroke(1.dp, Color.Black) else BorderStroke(0.dp, Color.Black)
+        border = if (quest.specialType == SpecialType.None) BorderStroke(
+            1.dp,
+            Color.Black
+        ) else BorderStroke(0.dp, Color.Black)
     )
     {
         if (quest.specialType != SpecialType.None) {

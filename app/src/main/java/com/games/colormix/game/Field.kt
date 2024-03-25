@@ -73,10 +73,13 @@ fun Field(content: ColorField?, pos: Pair<Int, Int>, eventListener: (MainViewEve
                 ) else dropOffset
             }
             .clickable(onClick = {
-                eventListener(MainViewEvent.FieldClicked(pos))}).dragAndDropTarget(
+                eventListener(MainViewEvent.FieldClicked(pos))
+            })
+            .dragAndDropTarget(
                 shouldStartDragAndDrop = { event ->
-                    // Check if the drag-and-drop event contains text intent mime type
-                    event.mimeTypes().contains(ClipDescription.MIMETYPE_TEXT_INTENT)
+                    event
+                        .mimeTypes()
+                        .contains(ClipDescription.MIMETYPE_TEXT_INTENT)
                 },
                 target = object : DragAndDropTarget {
                     override fun onDrop(event: DragAndDropEvent): Boolean {

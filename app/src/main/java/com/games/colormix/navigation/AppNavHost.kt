@@ -25,8 +25,9 @@ fun AppNavHost(
         composable(NavigationItem.Start.route) {
             StartScreen(navController::navigate)
         }
-        composable(NavigationItem.Main.route+"/{levelIndex}",
-            arguments = listOf(navArgument("levelIndex") { type = NavType.StringType })) {
+        composable(NavigationItem.Main.route + "/{levelIndex}",
+            arguments = listOf(navArgument("levelIndex") { type = NavType.StringType })
+        ) {
             MainScreen(navController::navigate)
         }
         composable(NavigationItem.LevelSelection.route) {

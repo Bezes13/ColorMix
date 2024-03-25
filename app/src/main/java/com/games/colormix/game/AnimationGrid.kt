@@ -26,10 +26,11 @@ fun AnimationGrid(
 ) {
     val progress by animateFloatAsState(
         animationSpec = TweenSpec(500),
-        targetValue = if(animateAt != null) 1f else 0f,
-        label = "offset",
+        targetValue = if (animateAt != null) 1f else 0f,
+        label = "progress",
         finishedListener = {
-            eventListener(MainViewEvent.SetAnimateAt(null))}
+            eventListener(MainViewEvent.SetAnimateAt(null))
+        }
     )
     Box {
         Row(
