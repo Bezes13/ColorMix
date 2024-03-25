@@ -60,7 +60,7 @@ val VerticalPadding = 5.dp
 fun MainScreen(navigate: (String) -> Unit, mainViewModel: MainViewModel = hiltViewModel()) {
     val viewState: MainViewState by mainViewModel.viewState.collectAsState()
     if (viewState.currentLevel.level > LevelData.LEVELS.size) {
-        navigate(Screen.LEVELSELECTION.name)
+        navigate(Screen.LEVEL_SELECTION.name)
     }
     MainScreenContent(
         navigate,

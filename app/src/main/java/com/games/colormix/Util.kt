@@ -12,7 +12,6 @@ fun Dp.toPx() = value.dpToPx()
 
 fun Float.dpToPx() = this * Resources.getSystem().displayMetrics.density
 
-
 private val random = Random(1232)
 fun Float.randomTillZero() = this * random.nextFloat()
 fun randomInRange(min:Float,max:Float) = min + (max - min).randomTillZero()
