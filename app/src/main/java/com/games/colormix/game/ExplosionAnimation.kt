@@ -1,7 +1,6 @@
 package com.games.colormix.game
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
@@ -9,19 +8,18 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.games.colormix.toPx
 import kotlin.math.cos
 import kotlin.math.sin
 
 @Composable
-fun ExplosionAnimation() {
-    val density = LocalDensity.current
-
-    val particles = (0 until 50).map {
+fun ExplosionAnimation(progress: Float) {
+    val particles = (0 until 30).map {
         val angle = Math.random() * 2 * Math.PI
-        val speed = density.run { (50f + Math.random() * 200f).dp.toPx() }
+        val speed =  (progress*Math.random() * 30f).dp.toPx()
         val xSpeed = cos(angle) * speed
         val ySpeed = sin(angle) * speed
         mutableStateOf(
@@ -31,13 +29,13 @@ fun ExplosionAnimation() {
                 xSpeed = xSpeed.toFloat(),
                 ySpeed = ySpeed.toFloat(),
                 color = Color(255, (Math.random() * 255).toInt(), 0),
-                size = (Math.random() * 10).dp
+                size = (Math.random() * 30).dp
             )
         )
     }
 
     Canvas(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
     ) {
         drawIntoCanvas {
             particles.forEach { particle ->
@@ -58,7 +56,7 @@ data class Particle(
     var xSpeed: Float,
     var ySpeed: Float,
     val color: Color,
-    val size: androidx.compose.ui.unit.Dp
+    val size: Dp
 ) {
     fun update() {
         x += xSpeed
@@ -69,5 +67,5 @@ data class Particle(
 @Preview
 @Composable
 fun PreviewExplosionAnimation() {
-    ExplosionAnimation()
+    ExplosionAnimation(1f)
 }

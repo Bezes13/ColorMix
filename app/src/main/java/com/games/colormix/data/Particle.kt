@@ -19,7 +19,6 @@ class Particle(
     var currentXPosition = 0f
     var currentYPosition = 0f
 
-    private var visibilityThresholdLow = randomInRange(0f, 0.14f)
     private var visibilityThresholdHigh = randomInRange(0f, 0.4f)
 
     private val initialXDisplacement = 10.dp.toPx() * randomInRange(-1f, 1f)
@@ -36,10 +35,10 @@ class Particle(
 
     fun updateProgress(explosionProgress: Float) {
         val trajectoryProgress =
-            if (explosionProgress < visibilityThresholdLow || (explosionProgress > (1 - visibilityThresholdHigh))) {
+            if (explosionProgress > (1 - visibilityThresholdHigh)) {
                 alpha = 0f; return
-            } else (explosionProgress - visibilityThresholdLow).mapInRange(0f,1f - visibilityThresholdHigh - visibilityThresholdLow,0f, 1f)
-        alpha = explosionProgress
+            } else (explosionProgress).mapInRange(0f,1f - visibilityThresholdHigh,0f, 1f)
+        alpha = 1f
         currentRadius = startRadius + (endRadius - startRadius) * trajectoryProgress
         val currentTime = trajectoryProgress.mapInRange(0f, 1f, 0f, 1.4f)
         val verticalDisplacement =

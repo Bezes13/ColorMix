@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.games.colormix.main.FieldSize
 import com.games.colormix.main.MainViewEvent
@@ -44,7 +45,11 @@ fun AnimationGrid(
                             contentAlignment = Alignment.Center
                         ) {
                             if (Pair(i, j) == animateAt?.pos) {
-                                Explosion(progress = progress, animateAt.color)
+                                if (animateAt.color == Color.Black) {
+                                    ExplosionAnimation(progress)
+                                } else {
+                                    Explosion(progress = progress, animateAt.color)
+                                }
                             }
                         }
 

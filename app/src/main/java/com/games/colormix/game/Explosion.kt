@@ -43,7 +43,7 @@ fun Explosion(progress: Float, color: Color) {
                         particle.currentYPosition.roundToInt()
                     )
                 }
-                .alpha(particle.alpha * particle.alpha * particle.alpha),
+                .alpha(particle.alpha),
             border = BorderStroke(1.dp, Color.Black),
             shape = RoundedCornerShape(0.dp)
         ) {}
