@@ -134,9 +134,9 @@ class MainViewModel @Inject constructor(
     private fun destroyBlock(pos: Pair<Int, Int>) {
         val explode = _viewState.value.gameField[pos.first][pos.second]
 
-       // if (explode != null && (_viewState.value.points < 2500 || explode.specialType == SpecialType.Box || explode.specialType == SpecialType.OpenBox)) {
-       //     return
-       // }
+        if (explode != null && (_viewState.value.points < 2500 || explode.specialType == SpecialType.Box || explode.specialType == SpecialType.OpenBox)) {
+            return
+        }
 
         _viewState.update { state ->
             val gameBoard = removeBlocksFromGameBoard(state.gameField, mutableListOf(pos))
