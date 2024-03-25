@@ -9,16 +9,16 @@ data class LevelQuest(
     val multiBlock: Int? = null
 )
 
-fun LevelQuest.getMoveEstimation(): Int{
+fun LevelQuest.getMoveEstimation(): Int {
     var factor = 0.75
-    if (this.specialType== SpecialType.Box){
+    if (this.specialType == SpecialType.Box) {
         factor = 0.0
     }
-    if (this.specialType== SpecialType.OpenBox){
+    if (this.specialType == SpecialType.OpenBox) {
         factor = 0.0
     }
-    if (this.multiBlock != null){
+    if (this.multiBlock != null) {
         factor = multiBlock.toDouble()
     }
-    return (amount*factor).toInt()
+    return (amount * factor).toInt()
 }
