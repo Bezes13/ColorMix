@@ -11,7 +11,6 @@ import com.games.colormix.data.getMoveEstimation
 import com.games.colormix.data.startColor
 import com.games.colormix.game.LevelInfo
 import com.games.colormix.game.generateObjectDefinition
-import com.games.colormix.levelselection.LevelSelectionPreview
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -68,6 +67,7 @@ class StartViewModel @Inject constructor(
                 pos = Pair(Random.nextInt(0, 6),Random.nextInt(0, 7))
             }
             specials.add(SpecialBlockPlacement(SpecialType.Rock, pos))
+            moves++
         }
         quests = quests.map { if(it.specialType == SpecialType.Box) it.copy(specialType = SpecialType.OpenBox) else it }.toMutableList()
         if(quests.size == 2 && quests[0].specialType == SpecialType.OpenBox  && quests[1].specialType == SpecialType.OpenBox){

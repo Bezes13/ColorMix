@@ -10,6 +10,7 @@ import com.games.colormix.data.Animation
 import com.games.colormix.data.ColorField
 import com.games.colormix.data.SpecialBlockPlacement
 import com.games.colormix.data.SpecialType
+import com.games.colormix.data.getMoveEstimation
 import com.games.colormix.data.putOnRightPositionAfterAnimation
 import com.games.colormix.game.LevelData
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -102,9 +103,12 @@ class MainViewModel @Inject constructor(
                 columns,
                 level.specialBlocks
             )
+            var moves = 0
+            level.quests.forEach { moves += it.getMoveEstimation() }
+            moves += level.specialBlocks.filter { it.specialType == SpecialType.Rock }.size
             state.copy(
                 gameField = res,
-                currentLevel = level.copy(level = levelIndex + 1),
+                currentLevel = level.copy(level = levelIndex + 1, moves = moves),
                 points = 0,
                 dialog = MainViewDialog.None
             )
@@ -149,7 +153,7 @@ class MainViewModel @Inject constructor(
                 },
                 points = state.points - 2500,
                 currentLevel = state.currentLevel.copy(moves = state.currentLevel.moves - 1),
-                dialog = if (state.currentLevel.moves <= 1)
+                dialog = if (state.currentLevel.moves <= 0)
                     MainViewDialog.LevelFailed else MainViewDialog.None,
             )
         }

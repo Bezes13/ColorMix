@@ -322,7 +322,6 @@ object LevelData {
         LevelInfo(
             quests = listOf(
                 LevelQuest(SpecialType.OpenBox, null, 9, null),
-                LevelQuest(SpecialType.None, Color.Green, 16, null),
                 LevelQuest(SpecialType.None, null, 7, 7)
             ),
             specialBlocks = listOf(
@@ -403,7 +402,6 @@ object LevelData {
             quests = listOf(
                 LevelQuest(SpecialType.OpenBox, null, 5, null),
                 LevelQuest(SpecialType.None, null, 1, 5),
-                LevelQuest(SpecialType.None, Color.Green, 8, null)
             ),
             specialBlocks = listOf(
                 SpecialBlockPlacement(SpecialType.OpenBox, Pair(3, 1)),
@@ -419,7 +417,6 @@ object LevelData {
         ),
         LevelInfo(
             quests = listOf(
-                LevelQuest(SpecialType.None, Color.Green, 9, null),
                 LevelQuest(SpecialType.OpenBox, null, 4, null),
                 LevelQuest(SpecialType.None, Color.Cyan, 15, null)
             ),
