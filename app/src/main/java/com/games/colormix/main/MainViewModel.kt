@@ -103,9 +103,11 @@ class MainViewModel @Inject constructor(
                 columns,
                 level.specialBlocks
             )
-            var moves = 0
+            var moves = 1
             level.quests.forEach { moves += it.getMoveEstimation() }
-            moves += level.specialBlocks.filter { it.specialType == SpecialType.Rock }.size
+            moves += level.specialBlocks.filter { it.specialType == SpecialType.Rock}.size
+            moves += level.specialBlocks.filter { it.specialType == SpecialType.Box}.size * 2
+            moves += (level.specialBlocks.filter { it.specialType == SpecialType.OpenBox}.size * 1.5).toInt()
             state.copy(
                 gameField = res,
                 currentLevel = level.copy(level = levelIndex + 1, moves = moves),
@@ -386,11 +388,8 @@ class MainViewModel @Inject constructor(
 sealed class MainViewEvent {
     data class SetDialog(val dialog: MainViewDialog) : MainViewEvent()
     data class FieldClicked(val pos: Pair<Int, Int>) : MainViewEvent()
-    data class SetAnimateAt(val pos: Animation?) : MainViewEvent() {}
-    data class UseBomb(val pos: Pair<Int, Int>) : MainViewEvent() {
-
-    }
-
+    data class SetAnimateAt(val pos: Animation?) : MainViewEvent()
+    data class UseBomb(val pos: Pair<Int, Int>) : MainViewEvent()
     data object SetBlocksAfterAnimation : MainViewEvent()
     data object NextLevel : MainViewEvent()
     data object Retry : MainViewEvent()
