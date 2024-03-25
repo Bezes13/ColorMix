@@ -17,6 +17,7 @@ data class MainViewState(
     },
     val animationAt: Animation? = null,
     val currentLevel: LevelInfo = LevelData.LEVELS[7],
-    val points: Int = 0
+    val points: Int = 0,
+    val bombCount: Int = 0
 )
 

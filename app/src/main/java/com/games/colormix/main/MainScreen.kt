@@ -69,7 +69,8 @@ fun MainScreen(navigate: (String) -> Unit, mainViewModel: MainViewModel = hiltVi
         viewState.animationAt,
         viewState.currentLevel,
         viewState.dialog,
-        viewState.points
+        viewState.points,
+        viewState.bombCount
     )
 }
 
@@ -82,7 +83,8 @@ fun MainScreenContent(
     animateAt: Animation?,
     currentLevel: LevelInfo,
     dialog: MainViewDialog,
-    points: Int
+    points: Int,
+    bombCount: Int
 ) {
     when (dialog) {
         is MainViewDialog.LevelComplete -> LevelDoneDialog(
@@ -187,36 +189,36 @@ fun MainScreenContent(
                                 modifier = Modifier.padding(vertical = 5.dp, horizontal = 15.dp)
                             )
                         }
-
-                        Image(
-                            painter = painterResource(id = R.drawable.bomb),
-                            contentDescription = "bomb for rocks",
-                            modifier = Modifier
-                                .size(60.dp)
-                                .dragAndDropSource {
-                                    detectTapGestures(
-                                        onPress = {
-                                            startTransfer(
-                                                DragAndDropTransferData(
-                                                    clipData = ClipData.newIntent(
-                                                        "foodItem",
-                                                        Intent("foodItemTransferAction"),
-                                                    )
-                                                )
-                                            )
-                                        }
-                                    )
-                                })
                         LevelInfoCard {
-                            Text(
-                                text = "Bomb Cost 2500",
-                                fontSize = 15.sp,
-                                modifier = Modifier.padding(vertical = 5.dp, horizontal = 15.dp)
-                            )
+                            Row {
+                                Image(
+                                    painter = painterResource(id = R.drawable.bomb),
+                                    contentDescription = "bomb for rocks",
+                                    modifier = Modifier
+                                        .size(60.dp)
+                                        .dragAndDropSource {
+                                            detectTapGestures(
+                                                onPress = {
+                                                    startTransfer(
+                                                        DragAndDropTransferData(
+                                                            clipData = ClipData.newIntent(
+                                                                "foodItem",
+                                                                Intent("foodItemTransferAction"),
+                                                            )
+                                                        )
+                                                    )
+                                                }
+                                            )
+                                        })
+
+                                Text(
+                                    text = bombCount.toString(),
+                                    fontSize = 25.sp,
+                                    modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp)
+                                )
+                            }
                         }
                     }
-
-
                 }
 
                 Box(modifier = Modifier.align(Alignment.CenterHorizontally)) {
@@ -255,6 +257,6 @@ fun PreviewMainScreen() {
         {},
         null,
         LevelData.LEVELS[8],
-        MainViewDialog.None, 66666
+        MainViewDialog.None, 66666, 4
     )
 }

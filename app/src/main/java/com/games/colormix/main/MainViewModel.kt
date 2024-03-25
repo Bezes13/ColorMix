@@ -38,6 +38,7 @@ class MainViewModel @Inject constructor(
     private var levelIndex: Int = savedStateHandle.get<String>("levelIndex")?.toInt() ?: 0
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+    private val BombGainMultiBlock = 7
 
     init {
         listenToEvent()
@@ -112,6 +113,7 @@ class MainViewModel @Inject constructor(
                 gameField = res,
                 currentLevel = level.copy(level = levelIndex + 1, moves = moves),
                 points = 0,
+                bombCount = 0,
                 dialog = MainViewDialog.None
             )
         }
@@ -134,7 +136,7 @@ class MainViewModel @Inject constructor(
     private fun destroyBlock(pos: Pair<Int, Int>) {
         val explode = _viewState.value.gameField[pos.first][pos.second]
 
-        if (explode != null && (_viewState.value.points < 2500 || explode.specialType == SpecialType.Box || explode.specialType == SpecialType.OpenBox)) {
+        if (explode != null && (_viewState.value.bombCount < 1 || explode.specialType == SpecialType.Box || explode.specialType == SpecialType.OpenBox)) {
             return
         }
 
@@ -153,7 +155,7 @@ class MainViewModel @Inject constructor(
                 gameField = gameBoard.mapIndexed { index, colorFields ->
                     colorFields.map { colorField -> colorField?.copy(animateTo = columns[index].indexOfFirst { it?.id == colorField.id }) }
                 },
-                points = state.points - 2500,
+                points = state.bombCount - 1,
                 currentLevel = state.currentLevel.copy(moves = state.currentLevel.moves - 1),
                 dialog = if (state.currentLevel.moves <= 1)
                     MainViewDialog.LevelFailed else MainViewDialog.None,
@@ -217,7 +219,8 @@ class MainViewModel @Inject constructor(
                         levelIndex.toString()
                     ) else if (state.currentLevel.moves <= 1)
                         MainViewDialog.LevelFailed else MainViewDialog.None,
-                    points = newPoints
+                    points = newPoints,
+                    bombCount = if(blockCount>= BombGainMultiBlock) state.bombCount+1 else state.bombCount
                 )
             }
         }
