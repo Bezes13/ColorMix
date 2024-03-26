@@ -1,18 +1,18 @@
 package com.games.colormix.main
 
+import com.games.colormix.constants.LEVEL_SIZE_X
+import com.games.colormix.constants.LEVEL_SIZE_Y
 import com.games.colormix.data.Animation
 import com.games.colormix.data.ColorField
 import com.games.colormix.data.LevelInfo
 import com.games.colormix.game.LevelData
 
-val LEVELSIZE = Pair(7, 8)
-
 data class MainViewState(
     val isLoading: Boolean = false,
     val dialog: MainViewDialog = MainViewDialog.None,
-    val gameField: List<List<ColorField?>> = (0 until LEVELSIZE.first).map {
+    val gameField: List<List<ColorField?>> = (0 until LEVEL_SIZE_X).map {
         arrayOfNulls<ColorField?>(
-            LEVELSIZE.second
+            LEVEL_SIZE_Y
         ).toList()
     },
     val animationAt: List<Animation> = listOf(),

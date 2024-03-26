@@ -6,11 +6,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.games.colormix.constants.BOMB_GAIN_MULTI_BLOCK
+import com.games.colormix.constants.RUBIK_GAIN_MULTI_BLOCK
 import com.games.colormix.data.Animation
 import com.games.colormix.data.ColorField
 import com.games.colormix.data.SpecialBlockPlacement
 import com.games.colormix.data.SpecialType
-import com.games.colormix.data.getMoveEstimation
+import com.games.colormix.data.estimateMoves
 import com.games.colormix.data.putOnRightPositionAfterAnimation
 import com.games.colormix.game.LevelData
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -38,8 +40,6 @@ class MainViewModel @Inject constructor(
     private var levelIndex: Int = savedStateHandle.get<String>("levelIndex")?.toInt() ?: 0
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
-    private val bombGainMultiBlock = 6
-    private val rubiksGainMultiBlock = 8
 
     init {
         listenToEvent()
@@ -69,13 +69,20 @@ class MainViewModel @Inject constructor(
     }
 
     private fun destroyColor(pos: Pair<Int, Int>) {
-        val explode = _viewState.value.gameField[pos.first][pos.second]?.color
-
-        if (_viewState.value.rubikCount <=0 || explode == null){
-            return
-        }
         _viewState.update { state ->
-            val list = state.gameField.mapIndexed { column, colorFields -> colorFields.mapIndexed { row, colorField -> if(colorField?.color == explode) Pair(column, row) else null }.filterNotNull() }.flatten()
+            val explode = state.gameField[pos.first][pos.second]?.color
+
+            if (state.rubikCount <= 0 || explode == null) {
+                return
+            }
+            val list = state.gameField.mapIndexed { column, colorFields ->
+                colorFields.mapIndexed { row, colorField ->
+                    if (colorField?.color == explode) Pair(
+                        column,
+                        row
+                    ) else null
+                }.filterNotNull()
+            }.flatten()
                 .toMutableList()
             val gameBoard = removeBlocksFromGameBoard(state.gameField, list)
 
@@ -136,11 +143,8 @@ class MainViewModel @Inject constructor(
                 columns,
                 level.specialBlocks
             )
-            var moves = 1
-            level.quests.forEach { moves += it.getMoveEstimation() }
-            moves += level.specialBlocks.filter { it.specialType == SpecialType.Rock }.size
-            moves += level.specialBlocks.filter { it.specialType == SpecialType.Box }.size * 1.5.toInt()
-            moves += (level.specialBlocks.filter { it.specialType == SpecialType.OpenBox }.size * 1)
+
+            val moves = level.estimateMoves()
             state.copy(
                 gameField = res,
                 currentLevel = level.copy(level = levelIndex + 1, moves = moves),
@@ -167,13 +171,12 @@ class MainViewModel @Inject constructor(
     }
 
     private fun destroyBlock(pos: Pair<Int, Int>) {
-        val explode = _viewState.value.gameField[pos.first][pos.second]
-
-        if (explode != null && (_viewState.value.bombCount < 1 || explode.specialType == SpecialType.Box || explode.specialType == SpecialType.OpenBox)) {
-            return
-        }
-
         _viewState.update { state ->
+            val explode = state.gameField[pos.first][pos.second]
+
+            if (explode != null && (state.bombCount < 1 || explode.specialType == SpecialType.Box || explode.specialType == SpecialType.OpenBox)) {
+                return
+            }
             val gameBoard = removeBlocksFromGameBoard(state.gameField, mutableListOf(pos))
 
             val columns = mutableListOf<List<ColorField?>>()
@@ -197,6 +200,7 @@ class MainViewModel @Inject constructor(
 
     // Is called when a Block is clicked
     private fun blockClicked(pos: Pair<Int, Int>) {
+        // TODO reduce viewState calls
         val blocksToDestroy = mutableListOf<Pair<Int, Int>>()
         val field = viewState.value.gameField[pos.first][pos.second]
         if (!getBlocksToDestroy(blocksToDestroy, pos)) {
@@ -243,7 +247,12 @@ class MainViewModel @Inject constructor(
                         moves = state.currentLevel.moves - 1,
                         quests = updatedQuests
                     ),
-                    animationAt = state.animationAt.plus(Animation(pos, field.color ?: Color.Transparent)),
+                    animationAt = state.animationAt.plus(
+                        Animation(
+                            pos,
+                            field.color ?: Color.Transparent
+                        )
+                    ),
                     gameField = gameBoard.mapIndexed { index, colorFields ->
                         colorFields.map { colorField -> colorField?.copy(animateTo = columns[index].indexOfFirst { it?.id == colorField.id }) }
                     },
@@ -252,8 +261,8 @@ class MainViewModel @Inject constructor(
                     ) else if (state.currentLevel.moves <= 1)
                         MainViewDialog.LevelFailed else MainViewDialog.None,
                     points = newPoints,
-                    bombCount = if(blockCount >= bombGainMultiBlock) state.bombCount+1 else state.bombCount,
-                    rubikCount = if(blockCount >= rubiksGainMultiBlock) state.rubikCount+1 else state.rubikCount
+                    bombCount = if (blockCount >= BOMB_GAIN_MULTI_BLOCK) state.bombCount + 1 else state.bombCount,
+                    rubikCount = if (blockCount >= RUBIK_GAIN_MULTI_BLOCK) state.rubikCount + 1 else state.rubikCount
                 )
             }
         }
@@ -292,16 +301,14 @@ class MainViewModel @Inject constructor(
                     if (gameField.size > column + 1 && colorField.color == gameField[column + 1][row]?.color) {
                         return false
                     }
-
                 }
-
             }
         }
         return true
     }
 
     private fun letTheBlocksFall() {
-        viewModelScope.launch {
+        viewModelScope.launch(ioDispatcher) {
             delay(10)
             _viewState.update {
                 it.copy(gameField = it.gameField.map { colorFields ->
@@ -320,7 +327,7 @@ class MainViewModel @Inject constructor(
                 colorFields.filterIndexed { index, colorField -> index != colorField?.animateTo }
                     .isEmpty()
             }) {
-            viewModelScope.launch {
+            viewModelScope.launch(ioDispatcher) {
                 delay(10)
                 updateBlocksAfterAnimation()
             }
@@ -364,7 +371,7 @@ class MainViewModel @Inject constructor(
         var anyMove = true
         while (anyMove) {
             anyMove = false
-            for (i in 0..<_viewState.value.gameField.size) {
+            for (i in 0..<list.size - 1) {
                 if (list[i] != null && list[i]?.specialType != SpecialType.Rock && list[i + 1] == null) {
                     anyMove = true
                     list[i + 1] = list[i]?.copy(spawned = true, animateTo = i + 1)
@@ -423,7 +430,7 @@ class MainViewModel @Inject constructor(
 sealed class MainViewEvent {
     data class SetDialog(val dialog: MainViewDialog) : MainViewEvent()
     data class FieldClicked(val pos: Pair<Int, Int>) : MainViewEvent()
-    data class RemoveAnimationAt(val pos: Pair<Int,Int>) : MainViewEvent()
+    data class RemoveAnimationAt(val pos: Pair<Int, Int>) : MainViewEvent()
     data class UseBomb(val pos: Pair<Int, Int>) : MainViewEvent()
     data class UseRubiks(val pos: Pair<Int, Int>) : MainViewEvent()
     data object SetBlocksAfterAnimation : MainViewEvent()

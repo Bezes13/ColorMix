@@ -8,6 +8,7 @@ import com.games.colormix.data.LevelInfo
 import com.games.colormix.data.LevelQuest
 import com.games.colormix.data.SpecialBlockPlacement
 import com.games.colormix.data.SpecialType
+import com.games.colormix.data.estimateMoves
 import com.games.colormix.data.generateObjectDefinition
 import com.games.colormix.data.getMoveEstimation
 import com.games.colormix.data.startColor
@@ -79,12 +80,7 @@ class StartViewModel @Inject constructor(
             ).toMutableList()
         }
         val level = LevelInfo(quests, specials)
-        var moves = 1
-        level.quests.forEach { moves += it.getMoveEstimation() }
-        moves += level.specialBlocks.filter { it.specialType == SpecialType.Rock }.size
-        moves += level.specialBlocks.filter { it.specialType == SpecialType.Box }.size * 2
-        moves += (level.specialBlocks.filter { it.specialType == SpecialType.OpenBox }.size * 1.5).toInt()
-        if (moves > 20 && !LevelData.LEVELS.contains(level))
+        if (level.estimateMoves() > 20 && !LevelData.LEVELS.contains(level))
             println(level.generateObjectDefinition())
         return level
     }

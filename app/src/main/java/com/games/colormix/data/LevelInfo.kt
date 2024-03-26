@@ -25,6 +25,15 @@ fun LevelInfo.generateObjectDefinition(): String {
     """.trimIndent()
 }
 
+fun LevelInfo.estimateMoves(): Int {
+    var moves = 1
+    this.quests.forEach { moves += it.getMoveEstimation() }
+    moves += this.specialBlocks.filter { it.specialType == SpecialType.Rock }.size
+    moves += this.specialBlocks.filter { it.specialType == SpecialType.Box }.size * 1.5.toInt()
+    moves += (this.specialBlocks.filter { it.specialType == SpecialType.OpenBox }.size * 1)
+    return moves
+}
+
 fun Color?.getColorName(): String {
     return when (this) {
         Color.Red -> "Color.Red"
