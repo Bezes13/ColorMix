@@ -16,7 +16,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 @Composable
-fun ExplosionAnimation(progress: Float) {
+fun BombAnimation(progress: Float) {
     val particles = (0 until 30).map {
         val angle = Math.random() * 2 * Math.PI
         val speed =  (progress*Math.random() * 30f).dp.toPx()
@@ -67,5 +67,5 @@ data class Particle(
 @Preview
 @Composable
 fun PreviewExplosionAnimation() {
-    ExplosionAnimation(1f)
+    BombAnimation(1f)
 }

@@ -41,8 +41,8 @@ fun DraggableItem(label: String, count: Int, @DrawableRes res: Int) {
                                 )
                             }
                         )
-                    })
-
+                    }
+            )
             Text(
                 text = count.toString(),
                 fontSize = 25.sp,

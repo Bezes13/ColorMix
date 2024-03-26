@@ -1,46 +1,10 @@
 package com.games.colormix.game
 
 import androidx.compose.ui.graphics.Color
+import com.games.colormix.data.LevelInfo
 import com.games.colormix.data.LevelQuest
 import com.games.colormix.data.SpecialBlockPlacement
 import com.games.colormix.data.SpecialType
-
-data class LevelInfo(
-    val quests: List<LevelQuest> = listOf(),
-    val specialBlocks: List<SpecialBlockPlacement> = listOf(),
-    val moves: Int = 100,
-    val level: Int = 100
-)
-
-fun generateObjectDefinition(levelInfo: LevelInfo): String {
-    val questsString = levelInfo.quests.joinToString(prefix = "listOf(", postfix = ")") {
-        "LevelQuest(SpecialType.${it.specialType}, ${getColorName(it.color)}, ${it.amount}, ${it.multiBlock})"
-    }
-    val specialBlocksString =
-        levelInfo.specialBlocks.joinToString(prefix = "listOf(", postfix = ")") {
-            "SpecialBlockPlacement(SpecialType.${it.specialType}, Pair(${it.pos.first},${it.pos.second}))"
-        }
-    return """
-        LevelInfo(
-            quests = $questsString,
-            specialBlocks = $specialBlocksString
-        ),
-    """.trimIndent()
-}
-
-fun getColorName(color: Color?): String {
-
-    return when (color) {
-        Color.Red -> "Color.Red"
-        Color.Yellow -> "Color.Yellow"
-        Color.Green -> "Color.Green"
-        Color.Blue -> "Color.Blue"
-        Color.Cyan -> "Color.Cyan"
-        else -> {
-            "null"
-        }
-    }
-}
 
 object LevelData {
     val LEVELS = listOf(
@@ -402,10 +366,8 @@ object LevelData {
                 SpecialBlockPlacement(SpecialType.Rock, Pair(0, 5)),
                 SpecialBlockPlacement(SpecialType.Rock, Pair(0, 4)),
                 SpecialBlockPlacement(SpecialType.Rock, Pair(0, 0)),
-                SpecialBlockPlacement(SpecialType.Rock, Pair(2, 6))
-            ),
-
-            ),
+                SpecialBlockPlacement(SpecialType.Rock, Pair(2, 6)))
+        ),
         LevelInfo(
             quests = listOf(
                 LevelQuest(SpecialType.None, Color.Red, 9, null),
@@ -417,9 +379,8 @@ object LevelData {
                 SpecialBlockPlacement(SpecialType.Rock, Pair(5, 5)),
                 SpecialBlockPlacement(SpecialType.Rock, Pair(0, 0)),
                 SpecialBlockPlacement(SpecialType.Rock, Pair(5, 0))
-            ),
-
-            ),
+            )
+        ),
         LevelInfo(
             quests = listOf(
                 LevelQuest(SpecialType.None, Color.Green, 4, null),

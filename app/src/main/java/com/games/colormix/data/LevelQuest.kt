@@ -10,15 +10,10 @@ data class LevelQuest(
 )
 
 fun LevelQuest.getMoveEstimation(): Int {
-    var factor = 0.75
-    if (this.specialType == SpecialType.Box) {
-        factor = 0.0
+    if (this.specialType == SpecialType.Box || this.specialType == SpecialType.OpenBox) {
+        return 0
     }
-    if (this.specialType == SpecialType.OpenBox) {
-        factor = 0.0
-    }
-    if (this.multiBlock != null) {
-        factor = multiBlock.toDouble()
-    }
+    val factor = if (this.multiBlock != null) multiBlock.toDouble() else 0.75
+
     return (amount * factor).toInt()
 }

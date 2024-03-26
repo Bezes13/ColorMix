@@ -47,9 +47,9 @@ fun AnimationGrid(
                         )
                             if (animation != null) {
                                 if (animation.color == Color.Black) {
-                                    ExplosionAnimation(progress)
+                                    BombAnimation(progress)
                                 } else {
-                                    Explosion(progress = progress, animation.color)
+                                    BlockExplosion(progress = progress, animation.color)
                                 }
                             }
                         }

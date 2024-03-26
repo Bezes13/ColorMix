@@ -19,11 +19,11 @@ import com.games.colormix.toPx
 import kotlin.math.roundToInt
 
 @Composable
-fun Explosion(progress: Float, color: Color) {
+fun BlockExplosion(progress: Float, color: Color) {
     val sizeDp = 200.dp
     val sizePx = sizeDp.toPx()
     val particles = remember {
-        List(5) {
+        List(10) {
             Particle(
                 color = color,
                 maxHorizontalDisplacement = sizePx * randomInRange(-0.9f, 0.9f),
