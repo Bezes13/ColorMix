@@ -4,12 +4,14 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
+import com.games.colormix.data.LevelInfo
 import com.games.colormix.data.LevelQuest
 import com.games.colormix.data.SpecialBlockPlacement
 import com.games.colormix.data.SpecialType
+import com.games.colormix.data.generateObjectDefinition
+import com.games.colormix.data.getMoveEstimation
 import com.games.colormix.data.startColor
-import com.games.colormix.game.LevelInfo
-import com.games.colormix.game.generateObjectDefinition
+import com.games.colormix.game.LevelData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -23,8 +25,8 @@ class StartViewModel @Inject constructor(
         context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
 
     init {
-        //for (i in 0..50)
-        //     generateNewLevel()
+        for (i in 0..100)
+            generateNewLevel()
     }
 
     private fun generateNewLevel(): LevelInfo {
@@ -77,7 +79,13 @@ class StartViewModel @Inject constructor(
             ).toMutableList()
         }
         val level = LevelInfo(quests, specials)
-        println(generateObjectDefinition(level))
+        var moves = 1
+        level.quests.forEach { moves += it.getMoveEstimation() }
+        moves += level.specialBlocks.filter { it.specialType == SpecialType.Rock }.size
+        moves += level.specialBlocks.filter { it.specialType == SpecialType.Box }.size * 2
+        moves += (level.specialBlocks.filter { it.specialType == SpecialType.OpenBox }.size * 1.5).toInt()
+        if (moves > 20 && !LevelData.LEVELS.contains(level))
+            println(level.generateObjectDefinition())
         return level
     }
 

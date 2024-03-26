@@ -39,7 +39,7 @@ class MainViewModel @Inject constructor(
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
     private val bombGainMultiBlock = 6
-    private val rubiksGainMultiBlock = 7
+    private val rubiksGainMultiBlock = 8
 
     init {
         listenToEvent()
@@ -139,8 +139,8 @@ class MainViewModel @Inject constructor(
             var moves = 1
             level.quests.forEach { moves += it.getMoveEstimation() }
             moves += level.specialBlocks.filter { it.specialType == SpecialType.Rock }.size
-            moves += level.specialBlocks.filter { it.specialType == SpecialType.Box }.size * 2
-            moves += (level.specialBlocks.filter { it.specialType == SpecialType.OpenBox }.size * 1.5).toInt()
+            moves += level.specialBlocks.filter { it.specialType == SpecialType.Box }.size * 1.5.toInt()
+            moves += (level.specialBlocks.filter { it.specialType == SpecialType.OpenBox }.size * 1)
             state.copy(
                 gameField = res,
                 currentLevel = level.copy(level = levelIndex + 1, moves = moves),

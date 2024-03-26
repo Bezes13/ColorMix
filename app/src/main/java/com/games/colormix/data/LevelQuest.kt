@@ -13,7 +13,7 @@ fun LevelQuest.getMoveEstimation(): Int {
     if (this.specialType == SpecialType.Box || this.specialType == SpecialType.OpenBox) {
         return 0
     }
-    val factor = if (this.multiBlock != null) multiBlock.toDouble() else 0.75
+    val factor = if (this.multiBlock != null) multiBlock.toDouble() * 0.5 else 0.75
 
     return (amount * factor).toInt()
 }

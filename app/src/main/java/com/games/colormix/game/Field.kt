@@ -90,10 +90,6 @@ fun Field(content: ColorField?, pos: Pair<Int, Int>, eventListener: (MainViewEve
                             eventListener(MainViewEvent.UseBomb(pos))
                         }else{
                             if (content.color != null && content.color != Color.Transparent){
-                                Toast.makeText(context, content.color.toString(), Toast.LENGTH_SHORT).show()
-                                println(content.color.toString())
-                                println(pos)
-                                println(offset)
                                 eventListener(MainViewEvent.UseRubiks(pos))
                             }else{
                                 Toast.makeText(context, "Use Rubik just on colored Blocks", Toast.LENGTH_SHORT).show()

@@ -33,13 +33,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.games.colormix.R
 import com.games.colormix.data.Animation
 import com.games.colormix.data.ColorField
+import com.games.colormix.data.LevelInfo
 import com.games.colormix.game.AnimationGrid
 import com.games.colormix.game.BorderedBox
 import com.games.colormix.game.DraggableItem
 import com.games.colormix.game.Field
 import com.games.colormix.game.LevelData
 import com.games.colormix.game.LevelDoneDialog
-import com.games.colormix.game.LevelInfo
 import com.games.colormix.game.LevelInfoCard
 import com.games.colormix.game.MovesInfo
 import com.games.colormix.game.QuestInfo
