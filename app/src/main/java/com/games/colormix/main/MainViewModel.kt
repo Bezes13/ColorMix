@@ -38,8 +38,8 @@ class MainViewModel @Inject constructor(
     private var levelIndex: Int = savedStateHandle.get<String>("levelIndex")?.toInt() ?: 0
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
-    private val bombGainMultiBlock = 7
-    private val rubiksGainMultiBlock = 8
+    private val bombGainMultiBlock = 6
+    private val rubiksGainMultiBlock = 7
 
     init {
         listenToEvent()
@@ -63,14 +63,19 @@ class MainViewModel @Inject constructor(
                 is MainViewEvent.NextLevel -> updateToNextLevel()
                 is MainViewEvent.Retry -> retryLevel()
                 is MainViewEvent.UseBomb -> destroyBlock(event.pos)
-                is MainViewEvent.UseRubiks -> destroyColor(event.color)
+                is MainViewEvent.UseRubiks -> destroyColor(event.pos)
             }
         }
     }
 
-    private fun destroyColor(color: Color) {
+    private fun destroyColor(pos: Pair<Int, Int>) {
+        val explode = _viewState.value.gameField[pos.first][pos.second]?.color
+
+        if (_viewState.value.rubikCount <=0 || explode == null){
+            return
+        }
         _viewState.update { state ->
-            val list = state.gameField.mapIndexed { column, colorFields -> colorFields.mapIndexed { row, colorField -> if(colorField?.color == color) Pair(column, row) else null }.filterNotNull() }.flatten()
+            val list = state.gameField.mapIndexed { column, colorFields -> colorFields.mapIndexed { row, colorField -> if(colorField?.color == explode) Pair(column, row) else null }.filterNotNull() }.flatten()
                 .toMutableList()
             val gameBoard = removeBlocksFromGameBoard(state.gameField, list)
 
@@ -82,11 +87,11 @@ class MainViewModel @Inject constructor(
             placeNewBlocks(columns)
 
             state.copy(
-                animationAt = list.map { Animation(it, color) },
+                animationAt = list.map { Animation(it, explode) },
                 gameField = gameBoard.mapIndexed { index, colorFields ->
                     colorFields.map { colorField -> colorField?.copy(animateTo = columns[index].indexOfFirst { it?.id == colorField.id }) }
                 },
-                points = state.bombCount - 1,
+                rubikCount = state.rubikCount - 1,
                 dialog = if (state.currentLevel.moves <= 1)
                     MainViewDialog.LevelFailed else MainViewDialog.None,
             )
@@ -183,7 +188,7 @@ class MainViewModel @Inject constructor(
                 gameField = gameBoard.mapIndexed { index, colorFields ->
                     colorFields.map { colorField -> colorField?.copy(animateTo = columns[index].indexOfFirst { it?.id == colorField.id }) }
                 },
-                points = state.bombCount - 1,
+                bombCount = state.bombCount - 1,
                 dialog = if (state.currentLevel.moves <= 1)
                     MainViewDialog.LevelFailed else MainViewDialog.None,
             )
@@ -420,7 +425,7 @@ sealed class MainViewEvent {
     data class FieldClicked(val pos: Pair<Int, Int>) : MainViewEvent()
     data class RemoveAnimationAt(val pos: Pair<Int,Int>) : MainViewEvent()
     data class UseBomb(val pos: Pair<Int, Int>) : MainViewEvent()
-    data class UseRubiks(val color: Color) : MainViewEvent()
+    data class UseRubiks(val pos: Pair<Int, Int>) : MainViewEvent()
     data object SetBlocksAfterAnimation : MainViewEvent()
     data object NextLevel : MainViewEvent()
     data object Retry : MainViewEvent()

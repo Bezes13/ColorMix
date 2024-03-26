@@ -2,7 +2,6 @@ package com.games.colormix.main
 
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateIntAsState
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -68,7 +67,6 @@ fun MainScreen(navigate: (String) -> Unit, mainViewModel: MainViewModel = hiltVi
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreenContent(
     navigate: (String) -> Unit,
