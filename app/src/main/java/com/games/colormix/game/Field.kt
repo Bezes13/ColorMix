@@ -1,6 +1,7 @@
 package com.games.colormix.game
 
 import android.content.ClipDescription
+import android.widget.Toast
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateIntOffsetAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -20,7 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draganddrop.DragAndDropEvent
 import androidx.compose.ui.draganddrop.DragAndDropTarget
 import androidx.compose.ui.draganddrop.mimeTypes
+import androidx.compose.ui.draganddrop.toAndroidDragEvent
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -61,7 +64,7 @@ fun Field(content: ColorField?, pos: Pair<Int, Int>, eventListener: (MainViewEve
         label = "offset",
         finishedListener = { }
     )
-
+    val context = LocalContext.current
     Card(
         colors = CardDefaults.cardColors(containerColor = content.color ?: Color.Transparent),
         modifier = Modifier
@@ -83,7 +86,15 @@ fun Field(content: ColorField?, pos: Pair<Int, Int>, eventListener: (MainViewEve
                 },
                 target = object : DragAndDropTarget {
                     override fun onDrop(event: DragAndDropEvent): Boolean {
-                        eventListener(MainViewEvent.UseBomb(pos))
+                        if (event.toAndroidDragEvent().clipData.description.label == "bomb"){
+                            eventListener(MainViewEvent.UseBomb(pos))
+                        }else{
+                            if (content.color != null && content.color != Color.Transparent){
+                                eventListener(MainViewEvent.UseRubiks(content.color))
+                            }else{
+                                Toast.makeText(context, "Use Rubik just on colored Blocks", Toast.LENGTH_SHORT).show()
+                            }
+                        }
                         return true
                     }
                 }

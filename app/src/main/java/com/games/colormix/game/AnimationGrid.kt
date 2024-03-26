@@ -22,17 +22,9 @@ import com.games.colormix.data.ColorField
 @Composable
 fun AnimationGrid(
     gameField: List<List<ColorField?>>,
-    animateAt: Animation?,
+    animateAt: List<Animation>,
     eventListener: (MainViewEvent) -> Unit,
 ) {
-    val progress by animateFloatAsState(
-        animationSpec = TweenSpec( if (animateAt?.color == Color.Black) 200 else 500),
-        targetValue = if (animateAt != null) 1f else 0f,
-        label = "progress",
-        finishedListener = {
-            eventListener(MainViewEvent.SetAnimateAt(null))
-        }
-    )
     Box {
         Row(
             horizontalArrangement = Arrangement.spacedBy(5.dp),
@@ -44,11 +36,20 @@ fun AnimationGrid(
                             modifier = Modifier.size(FieldSize),
                             contentAlignment = Alignment.Center
                         ) {
-                            if (Pair(i, j) == animateAt?.pos) {
-                                if (animateAt.color == Color.Black) {
+                            val animation = animateAt.firstOrNull { it.pos == Pair(i,j) }
+                            val progress by animateFloatAsState(
+                            animationSpec = TweenSpec( if (animation?.color == Color.Black) 200 else 500),
+                            targetValue = if (animation != null) 1f else 0f,
+                            label = "progress",
+                            finishedListener = {
+                                eventListener(MainViewEvent.RemoveAnimationAt(Pair(i,j)))
+                            }
+                        )
+                            if (animation != null) {
+                                if (animation.color == Color.Black) {
                                     ExplosionAnimation(progress)
                                 } else {
-                                    Explosion(progress = progress, animateAt.color)
+                                    Explosion(progress = progress, animation.color)
                                 }
                             }
                         }

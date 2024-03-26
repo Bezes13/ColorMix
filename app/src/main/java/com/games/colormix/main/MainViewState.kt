@@ -15,9 +15,10 @@ data class MainViewState(
             LEVELSIZE.second
         ).toList()
     },
-    val animationAt: Animation? = null,
+    val animationAt: List<Animation> = listOf(),
     val currentLevel: LevelInfo = LevelData.LEVELS[7],
     val points: Int = 0,
-    val bombCount: Int = 0
+    val bombCount: Int = 1,
+    val rubikCount: Int = 1
 )
 

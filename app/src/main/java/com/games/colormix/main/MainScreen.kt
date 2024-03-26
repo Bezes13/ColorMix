@@ -1,14 +1,9 @@
 package com.games.colormix.main
 
-import android.content.ClipData
-import android.content.Intent
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.draganddrop.dragAndDropSource
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Icon
@@ -29,8 +23,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draganddrop.DragAndDropTransferData
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -44,6 +36,7 @@ import com.games.colormix.data.Animation
 import com.games.colormix.data.ColorField
 import com.games.colormix.game.AnimationGrid
 import com.games.colormix.game.BorderedBox
+import com.games.colormix.game.DraggableItem
 import com.games.colormix.game.Field
 import com.games.colormix.game.LevelData
 import com.games.colormix.game.LevelDoneDialog
@@ -70,7 +63,8 @@ fun MainScreen(navigate: (String) -> Unit, mainViewModel: MainViewModel = hiltVi
         viewState.currentLevel,
         viewState.dialog,
         viewState.points,
-        viewState.bombCount
+        viewState.bombCount,
+        viewState.rubikCount
     )
 }
 
@@ -80,12 +74,20 @@ fun MainScreenContent(
     navigate: (String) -> Unit,
     gameField: List<List<ColorField?>>,
     eventListener: (MainViewEvent) -> Unit,
-    animateAt: Animation?,
+    animateAt: List<Animation>,
     currentLevel: LevelInfo,
     dialog: MainViewDialog,
     points: Int,
-    bombCount: Int
+    bombCount: Int,
+    rubikCount: Int
 ) {
+    val animatedPoints by animateIntAsState(
+        animationSpec = TweenSpec(500),
+        targetValue = points,
+        label = "points",
+        finishedListener = {}
+    )
+
     when (dialog) {
         is MainViewDialog.LevelComplete -> LevelDoneDialog(
             R.string.next_level,
@@ -155,7 +157,6 @@ fun MainScreenContent(
                 modifier = Modifier.padding(10.dp)
             )
         }
-
         BorderedBox {
             Column(
                 verticalArrangement = Arrangement.spacedBy(100.dp),
@@ -171,12 +172,6 @@ fun MainScreenContent(
                         MovesInfo(currentLevel)
                         QuestInfo(currentLevel)
                     }
-                    val animatedPoints by animateIntAsState(
-                        animationSpec = TweenSpec(500),
-                        targetValue = points,
-                        label = "points",
-                        finishedListener = {}
-                    )
                     Row(
                         modifier = Modifier.height(40.dp),
                         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -189,35 +184,8 @@ fun MainScreenContent(
                                 modifier = Modifier.padding(vertical = 5.dp, horizontal = 15.dp)
                             )
                         }
-                        LevelInfoCard {
-                            Row {
-                                Image(
-                                    painter = painterResource(id = R.drawable.bomb),
-                                    contentDescription = "bomb for rocks",
-                                    modifier = Modifier
-                                        .size(60.dp)
-                                        .dragAndDropSource {
-                                            detectTapGestures(
-                                                onPress = {
-                                                    startTransfer(
-                                                        DragAndDropTransferData(
-                                                            clipData = ClipData.newIntent(
-                                                                "foodItem",
-                                                                Intent("foodItemTransferAction"),
-                                                            )
-                                                        )
-                                                    )
-                                                }
-                                            )
-                                        })
-
-                                Text(
-                                    text = bombCount.toString(),
-                                    fontSize = 25.sp,
-                                    modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp)
-                                )
-                            }
-                        }
+                        DraggableItem("bomb", bombCount, R.drawable.bomb )
+                        DraggableItem(label = "rubik", count = rubikCount, R.drawable.rubik)
                     }
                 }
 
@@ -255,8 +223,8 @@ fun PreviewMainScreen() {
         {},
         (0 until 4).map { arrayOfNulls<ColorField?>(4).toList() },
         {},
-        null,
+        listOf(),
         LevelData.LEVELS[8],
-        MainViewDialog.None, 66666, 4
+        MainViewDialog.None, 66666, 4,7
     )
 }
