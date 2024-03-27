@@ -19,6 +19,7 @@ data class MainViewState(
     val currentLevel: LevelInfo = LevelData.LEVELS[7],
     val points: Int = 0,
     val bombCount: Int = 1,
-    val rubikCount: Int = 1
+    val rubikCount: Int = 1,
+    val blocksAcc: Int = 0
 )
 

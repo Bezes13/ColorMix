@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.games.colormix.R
+import com.games.colormix.constants.RUBIK_GAIN_MULTI_BLOCK
 import com.games.colormix.data.Animation
 import com.games.colormix.data.ColorField
 import com.games.colormix.data.LevelInfo
@@ -63,7 +64,8 @@ fun MainScreen(navigate: (String) -> Unit, mainViewModel: MainViewModel = hiltVi
         viewState.dialog,
         viewState.points,
         viewState.bombCount,
-        viewState.rubikCount
+        viewState.rubikCount,
+        viewState.blocksAcc
     )
 }
 
@@ -77,7 +79,8 @@ fun MainScreenContent(
     dialog: MainViewDialog,
     points: Int,
     bombCount: Int,
-    rubikCount: Int
+    rubikCount: Int,
+    blocksAcc: Int
 ) {
     val animatedPoints by animateIntAsState(
         animationSpec = TweenSpec(500),
@@ -183,7 +186,7 @@ fun MainScreenContent(
                             )
                         }
                         DraggableItem("bomb", bombCount, R.drawable.bomb )
-                        DraggableItem(label = "rubik", count = rubikCount, R.drawable.rubik)
+                        DraggableItem(label = "rubik", count = rubikCount, R.drawable.rubik, blocksAcc / RUBIK_GAIN_MULTI_BLOCK.toFloat())
                     }
                 }
 
@@ -223,6 +226,6 @@ fun PreviewMainScreen() {
         {},
         listOf(),
         LevelData.LEVELS[8],
-        MainViewDialog.None, 66666, 4,7
+        MainViewDialog.None, 66666, 4,7, 35
     )
 }

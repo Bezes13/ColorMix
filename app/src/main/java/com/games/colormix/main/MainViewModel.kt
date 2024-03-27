@@ -217,6 +217,7 @@ class MainViewModel @Inject constructor(
             val updatedQuests = updateQuests(state, blockCount, blocksToDestroy)
             placeNewBlocks(columns)
             val newPoints = getPointsAndSaveOnLevelDone(state, blockCount, updatedQuests)
+            val blocksAcc = state.blocksAcc + blockCount
             state.copy(
                 currentLevel = state.currentLevel.copy(
                     moves = state.currentLevel.moves - 1,
@@ -237,7 +238,8 @@ class MainViewModel @Inject constructor(
                     MainViewDialog.LevelFailed else MainViewDialog.None,
                 points = newPoints,
                 bombCount = if (blockCount >= BOMB_GAIN_MULTI_BLOCK) state.bombCount + 1 else state.bombCount,
-                rubikCount = if (blockCount >= RUBIK_GAIN_MULTI_BLOCK) state.rubikCount + 1 else state.rubikCount
+                rubikCount = if (blocksAcc >= RUBIK_GAIN_MULTI_BLOCK) state.rubikCount + 1 else state.rubikCount,
+                blocksAcc = blocksAcc - RUBIK_GAIN_MULTI_BLOCK
             )
         }
     }
