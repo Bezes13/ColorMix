@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun GainPowerUp(powerUpCount: Int, @DrawableRes res: Int) {
     var powerUp by remember { mutableStateOf(false) }
+    var previousPowerUpCount by remember { mutableStateOf(0) }
     val offset by animateIntOffsetAsState(
         targetValue = if (powerUp) IntOffset(0, -200) else IntOffset(0, 0),
         animationSpec = TweenSpec(2000),
@@ -31,9 +32,10 @@ fun GainPowerUp(powerUpCount: Int, @DrawableRes res: Int) {
         finishedListener = { powerUp = false }
     )
     LaunchedEffect(key1 = powerUpCount) {
-        if (powerUpCount > 0) {
+        if (powerUpCount > previousPowerUpCount) {
             powerUp = true
         }
+        previousPowerUpCount = powerUpCount
     }
     if (powerUp) {
         Box(contentAlignment = Alignment.Center) {
