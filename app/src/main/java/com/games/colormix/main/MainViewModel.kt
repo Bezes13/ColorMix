@@ -99,9 +99,7 @@ class MainViewModel @Inject constructor(
                 gameField = gameBoard.mapIndexed { index, colorFields ->
                     colorFields.map { colorField -> colorField?.copy(animateTo = columns[index].indexOfFirst { it?.id == colorField.id }) }
                 },
-                rubikCount = state.rubikCount - 1,
-                dialog = if (state.currentLevel.moves <= 1)
-                    MainViewDialog.LevelFailed else MainViewDialog.None,
+                rubikCount = state.rubikCount - 1
             )
         }
     }
@@ -152,6 +150,7 @@ class MainViewModel @Inject constructor(
                 points = 0,
                 bombCount = 0,
                 rubikCount = 0,
+                blocksAcc = 0,
                 dialog = MainViewDialog.None
             )
         }
@@ -193,8 +192,6 @@ class MainViewModel @Inject constructor(
                     colorFields.map { colorField -> colorField?.copy(animateTo = columns[index].indexOfFirst { it?.id == colorField.id }) }
                 },
                 bombCount = state.bombCount - 1,
-                dialog = if (state.currentLevel.moves <= 1)
-                    MainViewDialog.LevelFailed else MainViewDialog.None,
             )
         }
     }
@@ -239,7 +236,7 @@ class MainViewModel @Inject constructor(
                 points = newPoints,
                 bombCount = if (blockCount >= BOMB_GAIN_MULTI_BLOCK) state.bombCount + 1 else state.bombCount,
                 rubikCount = if (blocksAcc >= RUBIK_GAIN_MULTI_BLOCK) state.rubikCount + 1 else state.rubikCount,
-                blocksAcc = blocksAcc - RUBIK_GAIN_MULTI_BLOCK
+                blocksAcc = if (blocksAcc >= RUBIK_GAIN_MULTI_BLOCK) blocksAcc - RUBIK_GAIN_MULTI_BLOCK else blocksAcc
             )
         }
     }

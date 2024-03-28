@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -145,9 +146,16 @@ fun MainScreenContent(
                 ),
                 textAlign = TextAlign.Center
             )
-            IconButton(onClick = { navigate(Screen.HOME.name) }) {
-                Icon(Icons.Default.Menu, stringResource(R.string.menu))
+            Row {
+                IconButton(onClick = { eventListener(MainViewEvent.Retry) }) {
+                Icon(Icons.Default.Refresh, stringResource(R.string.menu))
             }
+                IconButton(onClick = { navigate(Screen.HOME.name) }) {
+                    Icon(Icons.Default.Menu, stringResource(R.string.menu))
+                }
+
+            }
+
         }
         LevelInfoCard {
             Text(
@@ -180,13 +188,13 @@ fun MainScreenContent(
                     ) {
                         LevelInfoCard {
                             Text(
-                                text = animatedPoints.toString(),
+                                text = animatedPoints.toString().padStart(6,'0'),
                                 fontSize = 25.sp,
                                 modifier = Modifier.padding(vertical = 5.dp, horizontal = 15.dp)
                             )
                         }
                         DraggableItem("bomb", bombCount, R.drawable.bomb )
-                        DraggableItem(label = "rubik", count = rubikCount, R.drawable.rubik, blocksAcc / RUBIK_GAIN_MULTI_BLOCK.toFloat())
+                        DraggableItem(label = "rubik", count = rubikCount, R.drawable.rubik, blocksAcc.toFloat() / RUBIK_GAIN_MULTI_BLOCK.toFloat())
                     }
                 }
 
