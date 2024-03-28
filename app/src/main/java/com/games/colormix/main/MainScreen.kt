@@ -40,12 +40,15 @@ import com.games.colormix.game.AnimationGrid
 import com.games.colormix.game.BorderedBox
 import com.games.colormix.game.DraggableItem
 import com.games.colormix.game.Field
+import com.games.colormix.game.GainPowerUp
 import com.games.colormix.game.LevelData
 import com.games.colormix.game.LevelDoneDialog
 import com.games.colormix.game.LevelInfoCard
 import com.games.colormix.game.MovesInfo
 import com.games.colormix.game.QuestInfo
 import com.games.colormix.navigation.Screen
+import com.games.colormix.tutorial.PowerUpTutorial
+import com.games.colormix.tutorial.QuestTutorial
 
 val FieldSize = 40.dp
 val VerticalPadding = 5.dp
@@ -55,6 +58,10 @@ fun MainScreen(navigate: (String) -> Unit, mainViewModel: MainViewModel = hiltVi
     val viewState: MainViewState by mainViewModel.viewState.collectAsState()
     if (viewState.currentLevel.level > LevelData.LEVELS.size) {
         navigate(Screen.LEVEL_SELECTION.name)
+    }
+    if (!mainViewModel.isTutorialShown()){
+        mainViewModel.sendEvent(MainViewEvent.SetDialog(MainViewDialog.QuestTutorial))
+        mainViewModel.setTutorialShown()
     }
     MainScreenContent(
         navigate,
@@ -101,7 +108,7 @@ fun MainScreenContent(
             )
         }
 
-        is MainViewDialog.LevelFailed -> LevelDoneDialog(
+        MainViewDialog.LevelFailed -> LevelDoneDialog(
             R.string.retry,
             R.string.level_failed,
             stringResource(id = R.string.level_failed_body)
@@ -112,7 +119,7 @@ fun MainScreenContent(
             )
         }
 
-        is MainViewDialog.NoMovesAvailable -> LevelDoneDialog(
+        MainViewDialog.NoMovesAvailable -> LevelDoneDialog(
             R.string.retry,
             R.string.no_more_moves,
             stringResource(id = R.string.no_more_moves_body)
@@ -123,7 +130,17 @@ fun MainScreenContent(
             )
         }
 
-        is MainViewDialog.None -> {}
+        MainViewDialog.None -> {}
+        MainViewDialog.PowerUpTutorial -> {
+            PowerUpTutorial {
+                eventListener(MainViewEvent.SetDialog(MainViewDialog.None))
+            }
+        }
+        MainViewDialog.QuestTutorial -> {
+            QuestTutorial {
+                eventListener(MainViewEvent.SetDialog(MainViewDialog.PowerUpTutorial))
+            }
+        }
     }
     Column(
         verticalArrangement = Arrangement.spacedBy(5.dp),
@@ -198,7 +215,7 @@ fun MainScreenContent(
                     }
                 }
 
-                Box(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                Box(modifier = Modifier.align(Alignment.CenterHorizontally),contentAlignment = Alignment.Center) {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(5.dp),
                         modifier = Modifier.padding(10.dp)
@@ -212,6 +229,8 @@ fun MainScreenContent(
                         }
                     }
                     AnimationGrid(gameField, animateAt, eventListener)
+                    GainPowerUp(rubikCount, R.drawable.rubik)
+                    GainPowerUp(bombCount, R.drawable.bomb)
                 }
             }
         }
@@ -221,6 +240,8 @@ fun MainScreenContent(
 sealed class MainViewDialog {
     data class LevelComplete(val info: String) : MainViewDialog()
     data object LevelFailed : MainViewDialog()
+    data object QuestTutorial : MainViewDialog()
+    data object PowerUpTutorial : MainViewDialog()
     data object None : MainViewDialog()
     data object NoMovesAvailable : MainViewDialog()
 }

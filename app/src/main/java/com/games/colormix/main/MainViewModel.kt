@@ -296,7 +296,7 @@ class MainViewModel @Inject constructor(
                 }
             }
             it.copy(
-                dialog = if (noMovesAvailable(newGameField)) MainViewDialog.NoMovesAvailable else it.dialog,
+                dialog = if (it.rubikCount == 0 && it.bombCount == 0 && noMovesAvailable(newGameField)) MainViewDialog.NoMovesAvailable else it.dialog,
                 gameField = newGameField
             )
         }
@@ -397,6 +397,15 @@ class MainViewModel @Inject constructor(
 
     private fun updateDialog(dialog: MainViewDialog) {
         _viewState.update { it.copy(dialog = dialog) }
+    }
+
+    fun isTutorialShown() : Boolean {
+        return sharedPreferences.getInt("tutorial", 0) == 1
+    }
+    fun setTutorialShown(){
+        val editor = sharedPreferences.edit()
+        editor.putInt("tutorial", 1)
+        editor.apply()
     }
 
     private fun isDestroyable(

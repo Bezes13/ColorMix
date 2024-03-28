@@ -14,5 +14,7 @@
     <string name="completed">Completed</string>
     <string name="no_more_moves">No more Moves</string>
     <string name="no_more_moves_body">There are no more moves available.</string>
+    <string name="okay">Okay</string>
+    <string name="tutorial">Tutorial</string>
 
 </resources>

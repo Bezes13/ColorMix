@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -33,6 +34,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.games.colormix.R
 import com.games.colormix.data.startColor
 import com.games.colormix.navigation.Screen
+import com.games.colormix.tutorial.PowerUpTutorial
+import com.games.colormix.tutorial.QuestTutorial
 
 @Composable
 fun StartScreen(navigate: (String) -> Unit, startViewModel: StartViewModel = hiltViewModel()) {
@@ -54,6 +57,7 @@ fun StartScreen(
         })
     }
     val activity = (LocalContext.current as? Activity)
+    var tutorial by remember { mutableStateOf(0) }
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(
             Modifier,
@@ -71,6 +75,15 @@ fun StartScreen(
                     }
                 }
             }
+        }
+        when (tutorial){
+            1 -> QuestTutorial {
+                tutorial = 2
+            }
+            2 -> PowerUpTutorial {
+                tutorial = 0
+            }
+            else -> {}
         }
 
         Column(
@@ -102,6 +115,7 @@ fun StartScreen(
             ) {
                 MenuButton(R.string.play) { navigate(Screen.Main.name + "/${getCurrentLevel()}") }
                 MenuButton(R.string.level_selection) { navigate(Screen.LEVEL_SELECTION.name) }
+                MenuButton(R.string.tutorial) { tutorial = 1 }
                 MenuButton(R.string.quit) { activity?.finish() }
             }
         }
