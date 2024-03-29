@@ -26,8 +26,8 @@ class StartViewModel @Inject constructor(
         context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
 
     init {
-        for (i in 0..100)
-            generateNewLevel()
+        //for (i in 0..1000)
+        //    generateNewLevel()
     }
 
     private fun generateNewLevel(): LevelInfo {
