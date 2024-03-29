@@ -16,7 +16,7 @@ data class MainViewState(
         ).toList()
     },
     val animationAt: List<Animation> = listOf(),
-    val currentLevel: LevelInfo = LevelData.LEVELS[7],
+    val currentLevel: LevelInfo = LevelData.LEVEL_GROUP1[7],
     val points: Int = 0,
     val bombCount: Int = 1,
     val rubikCount: Int = 1,

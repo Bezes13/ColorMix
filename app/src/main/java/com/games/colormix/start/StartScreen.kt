@@ -28,11 +28,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.games.colormix.R
 import com.games.colormix.data.startColor
+import com.games.colormix.game.LevelLists
 import com.games.colormix.navigation.Screen
 import com.games.colormix.tutorial.PowerUpTutorial
 import com.games.colormix.tutorial.QuestTutorial
@@ -118,6 +120,7 @@ fun StartScreen(
                 MenuButton(R.string.tutorial) { tutorial = 1 }
                 MenuButton(R.string.quit) { activity?.finish() }
             }
+            Text(text = LevelLists.levelList.size.toString() + " Level", modifier = Modifier.fillMaxWidth())
         }
     }
 }
@@ -135,5 +138,13 @@ private fun MenuButton(textId: Int, onClick: () -> Unit) {
         onClick = onClick
     ) {
         Text(text = stringResource(id = textId), fontSize = 30.sp, textAlign = TextAlign.Center)
+    }
+}
+
+@Preview
+@Composable
+fun StartPreview(){
+    StartScreen(navigate = {}) {
+        3
     }
 }

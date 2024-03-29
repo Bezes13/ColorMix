@@ -10,9 +10,8 @@ import com.games.colormix.data.SpecialBlockPlacement
 import com.games.colormix.data.SpecialType
 import com.games.colormix.data.estimateMoves
 import com.games.colormix.data.generateObjectDefinition
-import com.games.colormix.data.getMoveEstimation
 import com.games.colormix.data.startColor
-import com.games.colormix.game.LevelData
+import com.games.colormix.game.LevelLists
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -26,8 +25,8 @@ class StartViewModel @Inject constructor(
         context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
 
     init {
-        //for (i in 0..1000)
-        //    generateNewLevel()
+        //for (i in 0..200)
+        //  generateNewLevel()
     }
 
     private fun generateNewLevel(): LevelInfo {
@@ -80,7 +79,7 @@ class StartViewModel @Inject constructor(
             ).toMutableList()
         }
         val level = LevelInfo(quests, specials)
-        if (level.estimateMoves() > 20 && !LevelData.LEVELS.contains(level))
+        if (level.estimateMoves() > 20 && !LevelLists.levelList.contains(level))
             println(level.generateObjectDefinition())
         return level
     }

@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.games.colormix.R
-import com.games.colormix.game.LevelData
+import com.games.colormix.game.LevelLists
 import com.games.colormix.navigation.Screen
 
 @Composable
@@ -48,7 +48,7 @@ fun LevelSelectionScreen(currentLevel: Int, navigate: (String) -> Unit, getPoint
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.background(MaterialTheme.colorScheme.primaryContainer)
     ) {
-        for (i in 0..LevelData.LEVELS.size / 3) {
+        for (i in 0..LevelLists.levelList.size / 3) {
             item {
                 Row(
                     horizontalArrangement = Arrangement.SpaceEvenly,
@@ -58,7 +58,7 @@ fun LevelSelectionScreen(currentLevel: Int, navigate: (String) -> Unit, getPoint
                 ) {
                     for (j in 1..3) {
                         val level = (i * 3 + j)
-                        if (level <= LevelData.LEVELS.size) {
+                        if (level <= LevelLists.levelList.size) {
                             val mod =
                                 if (level <= currentLevel + 1) Modifier.clickable { navigate(Screen.Main.name + "/${level - 1}") } else Modifier
                             Card(

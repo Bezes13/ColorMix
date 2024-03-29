@@ -74,7 +74,7 @@ fun QuestInfoPreview() {
             .fillMaxWidth(0.95f)
             .height(80.dp)
     ) {
-        QuestInfo(currentLevel = LevelData.LEVELS[8])
+        QuestInfo(currentLevel = LevelData.LEVEL_GROUP1[8])
     }
 }
 
@@ -87,6 +87,6 @@ fun QuestInfoPreview2() {
             .fillMaxWidth(0.95f)
             .height(80.dp)
     ) {
-        QuestInfo(currentLevel = LevelData.LEVELS[15])
+        QuestInfo(currentLevel = LevelData.LEVEL_GROUP1[15])
     }
 }

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -117,10 +118,12 @@ private fun ColumnScope.PowerUpTutorialItem(title: String, explanation: String, 
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(text = title, fontWeight = FontWeight.Bold, textDecoration = TextDecoration.Underline)
-            Spacer(modifier = Modifier.size(10.dp))
-            Text(text = explanation)
+        LazyColumn(modifier = Modifier.weight(1f)) {
+            item {
+                Text(text = title, fontWeight = FontWeight.Bold, textDecoration = TextDecoration.Underline)
+                Spacer(modifier = Modifier.size(10.dp))
+                Text(text = explanation)
+            }
         }
         Box (modifier = Modifier.height(70.dp)){
             DraggableItem(title, 3, res, progress )

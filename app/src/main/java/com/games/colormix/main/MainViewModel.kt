@@ -15,7 +15,7 @@ import com.games.colormix.data.SpecialBlockPlacement
 import com.games.colormix.data.SpecialType
 import com.games.colormix.data.estimateMoves
 import com.games.colormix.data.putOnRightPositionAfterAnimation
-import com.games.colormix.game.LevelData
+import com.games.colormix.game.LevelLists
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
@@ -120,7 +120,7 @@ class MainViewModel @Inject constructor(
     }
 
     private fun fillGameField() {
-        if (levelIndex >= LevelData.LEVELS.size) {
+        if (levelIndex >= LevelLists.levelList.size) {
             _viewState.update { state ->
                 state.copy(
                     currentLevel = state.currentLevel.copy(level = levelIndex),
@@ -128,7 +128,7 @@ class MainViewModel @Inject constructor(
             }
             return
         }
-        val level = LevelData.LEVELS[levelIndex]
+        val level = LevelLists.levelList[levelIndex]
         _viewState.update { state ->
             val columns = mutableListOf<List<ColorField>>()
             state.gameField.forEach {

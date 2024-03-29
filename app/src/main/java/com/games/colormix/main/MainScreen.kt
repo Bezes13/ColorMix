@@ -44,6 +44,7 @@ import com.games.colormix.game.GainPowerUp
 import com.games.colormix.game.LevelData
 import com.games.colormix.game.LevelDoneDialog
 import com.games.colormix.game.LevelInfoCard
+import com.games.colormix.game.LevelLists
 import com.games.colormix.game.MovesInfo
 import com.games.colormix.game.QuestInfo
 import com.games.colormix.navigation.Screen
@@ -56,7 +57,7 @@ val VerticalPadding = 5.dp
 @Composable
 fun MainScreen(navigate: (String) -> Unit, mainViewModel: MainViewModel = hiltViewModel()) {
     val viewState: MainViewState by mainViewModel.viewState.collectAsState()
-    if (viewState.currentLevel.level > LevelData.LEVELS.size) {
+    if (viewState.currentLevel.level > LevelLists.levelList.size) {
         navigate(Screen.LEVEL_SELECTION.name)
     }
     if (!mainViewModel.isTutorialShown()){
@@ -254,7 +255,7 @@ fun PreviewMainScreen() {
         (0 until 4).map { arrayOfNulls<ColorField?>(4).toList() },
         {},
         listOf(),
-        LevelData.LEVELS[8],
+        LevelData.LEVEL_GROUP1[8],
         MainViewDialog.None, 66666, 4,7, 35
     )
 }
