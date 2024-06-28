@@ -102,6 +102,6 @@ class StartViewModel @Inject constructor(
 
 
     fun getCurrentMaxLevel(): Int {
-        return sharedPreferences.getInt("currentLevel", 0)
+        return sharedPreferences.getInt("currentLevel", 1)
     }
 }

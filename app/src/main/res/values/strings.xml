@@ -16,5 +16,6 @@
     <string name="no_more_moves_body">There are no more moves available.</string>
     <string name="okay">Okay</string>
     <string name="tutorial">Tutorial</string>
+    <string name="endless_mode">Endless Mode</string>
 
 </resources>

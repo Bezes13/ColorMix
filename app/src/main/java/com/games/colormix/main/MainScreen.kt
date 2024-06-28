@@ -97,6 +97,7 @@ fun MainScreenContent(
         label = "points",
         finishedListener = {}
     )
+    val endless = currentLevel.level == 0
 
     when (dialog) {
         is MainViewDialog.LevelComplete -> LevelDoneDialog(
@@ -176,8 +177,9 @@ fun MainScreenContent(
 
         }
         LevelInfoCard {
+
             Text(
-                stringResource(id = R.string.level, currentLevel.level),
+                if(endless) stringResource(id = R.string.endless_mode) else stringResource(id = R.string.level, currentLevel.level),
                 fontSize = 30.sp,
                 style = TextStyle(color = MaterialTheme.colorScheme.primary),
                 textAlign = TextAlign.Center,
@@ -190,6 +192,7 @@ fun MainScreenContent(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Column {
+                    if (!endless)
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         modifier = Modifier

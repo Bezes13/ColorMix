@@ -38,9 +38,9 @@ class MainViewModel @Inject constructor(
     private val _viewState = MutableStateFlow(MainViewState())
     val viewState = _viewState.asStateFlow()
     private var colorFieldNextId = 0
-    private var levelIndex: Int = savedStateHandle.get<String>("levelIndex")?.toInt() ?: 0
-    private val sharedPreferences: SharedPreferences =
-        context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+    private var levelIndex: Int = savedStateHandle.get<String>("levelIndex")?.toInt() ?: 1
+    private val sharedPreferences: SharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+    private val endless = levelIndex == 0
 
     init {
         listenToEvent()
@@ -146,7 +146,7 @@ class MainViewModel @Inject constructor(
             val moves = level.estimateMoves()
             state.copy(
                 gameField = res,
-                currentLevel = level.copy(level = levelIndex + 1, moves = moves),
+                currentLevel = level.copy(level = levelIndex, moves = moves),
                 points = 0,
                 bombCount = 0,
                 rubikCount = 0,
@@ -217,7 +217,7 @@ class MainViewModel @Inject constructor(
             val blocksAcc = state.blocksAcc + blockCount
             state.copy(
                 currentLevel = state.currentLevel.copy(
-                    moves = state.currentLevel.moves - 1,
+                    moves = if (endless)  state.currentLevel.moves + 1 else state.currentLevel.moves -1,
                     quests = updatedQuests
                 ),
                 animationAt = state.animationAt.plus(
@@ -229,9 +229,9 @@ class MainViewModel @Inject constructor(
                 gameField = gameBoard.mapIndexed { index, colorFields ->
                     colorFields.map { colorField -> colorField?.copy(animateTo = columns[index].indexOfFirst { it?.id == colorField.id }) }
                 },
-                dialog = if (updatedQuests.all { it.amount <= 0 }) MainViewDialog.LevelComplete(
+                dialog = if (updatedQuests.all { it.amount <= 0 } && !endless) MainViewDialog.LevelComplete(
                     levelIndex.toString()
-                ) else if (state.currentLevel.moves <= 1)
+                ) else if (state.currentLevel.moves <= 1 && !endless)
                     MainViewDialog.LevelFailed else MainViewDialog.None,
                 points = newPoints,
                 bombCount = if (blockCount >= BOMB_GAIN_MULTI_BLOCK) state.bombCount + 1 else state.bombCount,

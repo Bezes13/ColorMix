@@ -60,7 +60,7 @@ fun LevelSelectionScreen(currentLevel: Int, navigate: (String) -> Unit, getPoint
                         val level = (i * 3 + j)
                         if (level <= LevelLists.levelList.size) {
                             val mod =
-                                if (level <= currentLevel + 1) Modifier.clickable { navigate(Screen.Main.name + "/${level - 1}") } else Modifier
+                                if (level <= currentLevel + 1) Modifier.clickable { navigate(Screen.Main.name + "/${level}") } else Modifier
                             Card(
                                 modifier = mod.size(110.dp),
                                 border = BorderStroke(
