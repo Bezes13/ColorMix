@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun RowScope.LevelInfoCardRow(content: @Composable () -> Unit) {
     Card(
+        elevation =  CardDefaults.cardElevation(defaultElevation = 10.dp),
         modifier = Modifier
             .weight(1f)
             .fillMaxSize()

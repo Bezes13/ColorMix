@@ -1,6 +1,7 @@
 package com.games.colormix.start
 
 import android.app.Activity
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -26,7 +26,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RadialGradientShader
+import androidx.compose.ui.graphics.Shader
+import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -40,6 +45,7 @@ import com.games.colormix.data.startColor
 import com.games.colormix.navigation.Screen
 import com.games.colormix.tutorial.PowerUpTutorial
 import com.games.colormix.tutorial.QuestTutorial
+import java.lang.Float.max
 
 @Composable
 fun StartScreen(navigate: (String) -> Unit, startViewModel: StartViewModel = hiltViewModel()) {
@@ -72,9 +78,26 @@ fun StartScreen(
                 Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
                     row.forEach { block ->
                         Card(
+                            elevation =  CardDefaults.cardElevation(defaultElevation = 10.dp),
                             modifier = Modifier.size(45.dp),
-                            colors = CardDefaults.cardColors(containerColor = block)
                         ) {
+                            val largeRadialGradient = object : ShaderBrush() {
+                                override fun createShader(size: Size): Shader {
+                                    return RadialGradientShader(
+                                        colors = listOf(block, manipulateColor(color = block,0.5f)),
+                                        center = size.center,
+                                        radius = size.height,
+                                        colorStops = listOf(0f, 0.95f)
+                                    )
+                                }
+                            }
+
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(largeRadialGradient)
+                            )
+
                         }
                     }
                 }
@@ -101,8 +124,10 @@ fun StartScreen(
                     .padding(vertical = 60.dp)
             ) {
                 Card(
-                    modifier = Modifier.wrapContentSize(),
+                    modifier = Modifier.wrapContentSize()
+                        .border(width = 4.dp, color = Color.Black, shape = RoundedCornerShape(10.dp)),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+
                 ) {
                     Text(
                         stringResource(id = R.string.app_name),
@@ -131,8 +156,8 @@ fun StartScreen(
 private fun MenuButton(textId: Int, onClick: () -> Unit) {
     Button(
         modifier = Modifier
-            .height(100.dp)
-            .fillMaxWidth(0.7f).border(width = 4.dp, color = Color.Black, shape = RoundedCornerShape(50.dp)),
+            .fillMaxWidth(0.7f)
+            .border(width = 4.dp, color = Color.Black, shape = RoundedCornerShape(50.dp)),
         colors = ButtonDefaults.buttonColors(
             contentColor = MaterialTheme.colorScheme.secondary,
             containerColor = MaterialTheme.colorScheme.secondaryContainer
@@ -141,6 +166,17 @@ private fun MenuButton(textId: Int, onClick: () -> Unit) {
     ) {
         Text(text = stringResource(id = textId), fontSize = 30.sp, textAlign = TextAlign.Center)
     }
+}
+fun manipulateColor(color: Color, factor: Float): Color {
+    val r = (color.red * factor)
+    val g = (color.green * factor)
+    val b = (color.blue * factor)
+    return Color(
+        max(0.0f, r),
+        max(0.0f, g),
+        max(0.0f, b),
+        color.alpha
+    )
 }
 
 @Preview

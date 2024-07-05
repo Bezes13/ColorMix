@@ -26,6 +26,7 @@ fun QuestObject(quest: LevelQuest, modifier: Modifier = Modifier) {
     val brush = Brush.sweepGradient(startColors)
     val mod = if (quest.multiBlock != null) modifier.background(brush) else modifier
     Card(
+        elevation =  CardDefaults.cardElevation(defaultElevation = 10.dp),
         colors = CardDefaults.cardColors(
             containerColor = quest.color ?: Color.Transparent
         ),

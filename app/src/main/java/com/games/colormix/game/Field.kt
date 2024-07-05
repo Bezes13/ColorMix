@@ -6,6 +6,7 @@ import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateIntOffsetAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.draganddrop.dragAndDropTarget
 import androidx.compose.foundation.layout.Box
@@ -22,18 +23,25 @@ import androidx.compose.ui.draganddrop.DragAndDropEvent
 import androidx.compose.ui.draganddrop.DragAndDropTarget
 import androidx.compose.ui.draganddrop.mimeTypes
 import androidx.compose.ui.draganddrop.toAndroidDragEvent
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RadialGradientShader
+import androidx.compose.ui.graphics.Shader
+import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import com.games.colormix.R
 import com.games.colormix.data.ColorField
 import com.games.colormix.data.SpecialType
 import com.games.colormix.main.FieldSize
 import com.games.colormix.main.MainViewEvent
 import com.games.colormix.main.VerticalPadding
+import com.games.colormix.start.manipulateColor
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -66,7 +74,7 @@ fun Field(content: ColorField?, pos: Pair<Int, Int>, eventListener: (MainViewEve
     )
     val context = LocalContext.current
     Card(
-        colors = CardDefaults.cardColors(containerColor = content.color ?: Color.Transparent),
+        elevation =  CardDefaults.cardElevation(defaultElevation = 10.dp),
         modifier = Modifier
             .size(FieldSize)
             .offset {
@@ -114,6 +122,22 @@ fun Field(content: ColorField?, pos: Pair<Int, Int>, eventListener: (MainViewEve
                 modifier = Modifier.fillMaxSize()
             )
         }
+        val largeRadialGradient = object : ShaderBrush() {
+            override fun createShader(size: Size): Shader {
+                return RadialGradientShader(
+                    colors = listOf( content.color ?: Color.Transparent, manipulateColor(color =  content.color ?: Color.Transparent,0.5f)),
+                    center = size.center,
+                    radius = size.height,
+                    colorStops = listOf(0f, 0.95f)
+                )
+            }
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(largeRadialGradient)
+        )
     }
 }
 

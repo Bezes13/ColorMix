@@ -177,7 +177,6 @@ fun MainScreenContent(
 
         }
         LevelInfoCard {
-
             Text(
                 if(endless) stringResource(id = R.string.endless_mode) else stringResource(id = R.string.level, currentLevel.level),
                 fontSize = 30.sp,
@@ -192,15 +191,16 @@ fun MainScreenContent(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Column {
-                    if (!endless)
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier
-                            .fillMaxWidth(0.95f)
-                            .height(80.dp)
-                    ) {
-                        MovesInfo(currentLevel)
-                        QuestInfo(currentLevel)
+                    if (!endless) {
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier
+                                .fillMaxWidth(0.95f)
+                                .height(80.dp)
+                        ) {
+                            MovesInfo(currentLevel)
+                            QuestInfo(currentLevel)
+                        }
                     }
                     Row(
                         modifier = Modifier.height(40.dp),
