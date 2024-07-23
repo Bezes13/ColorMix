@@ -13,8 +13,8 @@ android {
         applicationId = "com.games.colormix"
         minSdk = 24
         targetSdk = 34
-        versionCode = 11
-        versionName = "1.1"
+        versionCode = 13
+        versionName = "1.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
