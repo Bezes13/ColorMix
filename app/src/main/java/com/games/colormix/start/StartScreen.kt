@@ -1,50 +1,45 @@
 package com.games.colormix.start
 
 import android.app.Activity
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RadialGradientShader
-import androidx.compose.ui.graphics.Shader
-import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.games.colormix.R
 import com.games.colormix.data.startColor
+import com.games.colormix.hackClassLoader
 import com.games.colormix.navigation.Screen
 import com.games.colormix.tutorial.PowerUpTutorial
 import com.games.colormix.tutorial.QuestTutorial
+import com.games.colormix.utils.MyText
 import java.lang.Float.max
 
 @Composable
@@ -67,96 +62,82 @@ fun StartScreen(
         })
     }
     val activity = (LocalContext.current as? Activity)
-    var tutorial by remember { mutableStateOf(0) }
+    var tutorial by remember { mutableIntStateOf(0) }
+    val context = LocalContext.current
+    val displayMetrics = context.resources.displayMetrics
+    val width = displayMetrics.widthPixels
+    val header = with(LocalDensity.current) { (width / 6).toDp() }
+    val headerTextSize = with(LocalDensity.current) { header.toSp() }
+    val menuItemSize = headerTextSize / 1.5f
+
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Column(
-            Modifier,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(5.dp)
-        ) {
-            backGround.forEach { row ->
-                Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-                    row.forEach { block ->
-                        Card(
-                            elevation =  CardDefaults.cardElevation(defaultElevation = 10.dp),
-                            modifier = Modifier.size(45.dp),
-                        ) {
-                            val largeRadialGradient = object : ShaderBrush() {
-                                override fun createShader(size: Size): Shader {
-                                    return RadialGradientShader(
-                                        colors = listOf(block, manipulateColor(color = block,0.5f)),
-                                        center = size.center,
-                                        radius = size.height,
-                                        colorStops = listOf(0f, 0.95f)
-                                    )
-                                }
-                            }
-
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(largeRadialGradient)
-                            )
-
-                        }
-                    }
-                }
-            }
-        }
-        when (tutorial){
+        Background(backGround)
+        when (tutorial) {
             1 -> QuestTutorial {
                 tutorial = 2
             }
+
             2 -> PowerUpTutorial {
                 tutorial = 0
             }
+
             else -> {}
         }
 
         Column(
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
-                modifier = Modifier
-                    .weight(0.3f)
-                    .padding(vertical = 60.dp)
-            ) {
-                Card(
-                    modifier = Modifier.wrapContentSize()
-                        .border(width = 4.dp, color = Color.Black, shape = RoundedCornerShape(10.dp)),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
 
-                ) {
-                    Text(
-                        stringResource(id = R.string.app_name),
-                        fontSize = 80.sp,
-                        style = TextStyle(color = MaterialTheme.colorScheme.primary),
-                        modifier = Modifier.padding(10.dp)
-                    )
-                }
-            }
-            Column(
-                verticalArrangement = Arrangement.spacedBy(20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.weight(0.8f)
+            Card(
+                modifier = Modifier
+                    .wrapContentSize()
+                    .border(
+                        width = 4.dp,
+                        color = Color.Black,
+                        shape = RoundedCornerShape(10.dp)
+                    ),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+
             ) {
-                MenuButton(R.string.play) { navigate(Screen.Main.name + "/${getCurrentLevel()}") }
-                MenuButton(R.string.level_selection) { navigate(Screen.LEVEL_SELECTION.name) }
-                MenuButton(R.string.endless_mode) { navigate(Screen.Main.name + "/${0}") }
-                MenuButton(R.string.tutorial) { tutorial = 1 }
-                MenuButton(R.string.quit) { activity?.finish() }
+
+                MyText(
+                    stringResource(id = R.string.app_name),
+                    fontSize = headerTextSize,
+                    style = TextStyle(color = MaterialTheme.colorScheme.primary),
+                    modifier = Modifier.padding(10.dp)
+                )
+            }
+
+            Column(
+                verticalArrangement = Arrangement.spacedBy(5.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                MenuButton(
+                    R.string.play,
+                    menuItemSize
+                ) { navigate(Screen.Main.name + "/${getCurrentLevel()}") }
+                MenuButton(
+                    R.string.level_selection,
+                    menuItemSize
+                ) { navigate(Screen.LEVEL_SELECTION.name) }
+                MenuButton(
+                    R.string.endless_mode,
+                    menuItemSize
+                ) { navigate(Screen.Main.name + "/${0}") }
+                MenuButton(R.string.tutorial, menuItemSize) { tutorial = 1 }
+                MenuButton(R.string.quit, menuItemSize) { activity?.finish() }
             }
         }
     }
 }
 
 @Composable
-private fun MenuButton(textId: Int, onClick: () -> Unit) {
-    Button(
+private fun MenuButton(textId: Int, size: TextUnit, onClick: () -> Unit) {
+    ElevatedButton(
         modifier = Modifier
-            .fillMaxWidth(0.7f)
+            .fillMaxWidth(0.8f)
             .border(width = 4.dp, color = Color.Black, shape = RoundedCornerShape(50.dp)),
         colors = ButtonDefaults.buttonColors(
             contentColor = MaterialTheme.colorScheme.secondary,
@@ -164,9 +145,15 @@ private fun MenuButton(textId: Int, onClick: () -> Unit) {
         ),
         onClick = onClick
     ) {
-        Text(text = stringResource(id = textId), fontSize = 30.sp, textAlign = TextAlign.Center)
+        MyText(
+            text = stringResource(id = textId),
+            lineHeight = size,
+            fontSize = size,
+            textAlign = TextAlign.Center
+        )
     }
 }
+
 fun manipulateColor(color: Color, factor: Float): Color {
     val r = (color.red * factor)
     val g = (color.green * factor)
@@ -181,7 +168,8 @@ fun manipulateColor(color: Color, factor: Float): Color {
 
 @Preview
 @Composable
-fun StartPreview(){
+fun StartPreview() {
+    hackClassLoader()
     StartScreen(navigate = {}) {
         3
     }
