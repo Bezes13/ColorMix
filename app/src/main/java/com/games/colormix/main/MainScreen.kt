@@ -41,12 +41,12 @@ import com.games.colormix.game.BorderedBox
 import com.games.colormix.game.DraggableItem
 import com.games.colormix.game.Field
 import com.games.colormix.game.GainPowerUp
-import com.games.colormix.game.LevelData
 import com.games.colormix.game.LevelDoneDialog
 import com.games.colormix.game.LevelInfoCard
 import com.games.colormix.game.LevelLists
 import com.games.colormix.game.MovesInfo
 import com.games.colormix.game.QuestInfo
+import com.games.colormix.hackClassLoader
 import com.games.colormix.navigation.Screen
 import com.games.colormix.tutorial.PowerUpTutorial
 import com.games.colormix.tutorial.QuestTutorial
@@ -185,7 +185,7 @@ fun MainScreenContent(
                 modifier = Modifier.padding(10.dp)
             )
         }
-        BorderedBox {
+        BorderedBox(modifier = Modifier.padding(5.dp)) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(100.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -193,9 +193,9 @@ fun MainScreenContent(
                 Column {
                     if (!endless) {
                         Row(
-                            horizontalArrangement = Arrangement.SpaceBetween,
+                            horizontalArrangement = Arrangement.Center,
                             modifier = Modifier
-                                .fillMaxWidth(0.95f)
+                                .fillMaxWidth()
                                 .height(80.dp)
                         ) {
                             MovesInfo(currentLevel)
@@ -253,12 +253,13 @@ sealed class MainViewDialog {
 @Composable
 @Preview
 fun PreviewMainScreen() {
+    hackClassLoader()
     MainScreenContent(
         {},
         (0 until 4).map { arrayOfNulls<ColorField?>(4).toList() },
         {},
         listOf(),
-        LevelData.LEVEL_GROUP1[8],
+        LevelInfo(),
         MainViewDialog.None, 66666, 4,7, 35
     )
 }
