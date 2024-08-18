@@ -126,7 +126,8 @@ private fun ColumnScope.PowerUpTutorialItem(title: String, explanation: String, 
             }
         }
         Box (modifier = Modifier.height(70.dp)){
-            DraggableItem(title, 3, res, progress )
+            //TODO
+            DraggableItem(title, 3, res, 60.dp, progress )
         }
 
 

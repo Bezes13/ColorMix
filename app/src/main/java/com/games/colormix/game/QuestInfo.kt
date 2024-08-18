@@ -12,14 +12,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.games.colormix.data.LevelInfo
+import com.games.colormix.data.LevelQuest
 import com.games.colormix.data.SpecialType
+import com.games.colormix.utils.MyText
 
 @Composable
-fun RowScope.QuestInfo(currentLevel: LevelInfo) {
+fun RowScope.QuestInfo(currentLevel: LevelInfo, fieldObjectSize: Dp) {
+    val infoTextSize = with(LocalDensity.current) { fieldObjectSize.toSp() }
+
     LevelInfoCardRow {
         Row(
             modifier = Modifier
@@ -37,23 +43,23 @@ fun RowScope.QuestInfo(currentLevel: LevelInfo) {
                             .weight(1f)
                             .fillMaxSize()
                     ) {
-                        Text(text = quest.amount.toString(), fontSize = 30.sp)
+                        MyText(text = quest.amount.toString(), fontSize = infoTextSize)
                         Box {
                             if (quest.multiBlock != null) {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.spacedBy(2.dp)
                                 ) {
-                                    Text(text = quest.multiBlock.toString() + "#", fontSize = 30.sp)
-                                    QuestObject(quest = quest)
-                                    QuestObject(quest = quest)
-                                    QuestObject(quest = quest)
+                                    Text(text = quest.multiBlock.toString() + "#", fontSize = infoTextSize)
+                                    QuestObject(quest = quest, fieldObjectSize)
+                                    QuestObject(quest = quest, fieldObjectSize)
+                                    QuestObject(quest = quest, fieldObjectSize)
                                 }
                             } else {
                                 Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                                    QuestObject(quest = quest)
+                                    QuestObject(quest = quest, fieldObjectSize)
                                     if (quest.specialType == SpecialType.None) {
-                                        QuestObject(quest = quest)
+                                        QuestObject(quest = quest, fieldObjectSize)
                                     }
                                 }
                             }
@@ -74,7 +80,7 @@ fun QuestInfoPreview() {
             .fillMaxWidth(0.95f)
             .height(80.dp)
     ) {
-        QuestInfo(currentLevel = LevelData.LEVEL_GROUP1[8])
+        QuestInfo(currentLevel = LevelInfo(listOf(LevelQuest(color = Color.Green, amount = 8))), 20.dp)
     }
 }
 
@@ -87,6 +93,6 @@ fun QuestInfoPreview2() {
             .fillMaxWidth(0.95f)
             .height(80.dp)
     ) {
-        QuestInfo(currentLevel = LevelData.LEVEL_GROUP1[15])
+        QuestInfo(currentLevel = LevelInfo(listOf(LevelQuest(amount = 8, multiBlock = 5))), 30.dp)
     }
 }

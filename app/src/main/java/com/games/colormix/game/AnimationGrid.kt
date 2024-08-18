@@ -12,8 +12,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.games.colormix.main.FieldSize
 import com.games.colormix.main.MainViewEvent
 import com.games.colormix.main.VerticalPadding
 import com.games.colormix.data.Animation
@@ -23,6 +23,7 @@ import com.games.colormix.data.ColorField
 fun AnimationGrid(
     gameField: List<List<ColorField?>>,
     animateAt: List<Animation>,
+    size: Dp,
     eventListener: (MainViewEvent) -> Unit,
 ) {
     Box {
@@ -33,7 +34,7 @@ fun AnimationGrid(
                 Column(verticalArrangement = Arrangement.spacedBy(VerticalPadding)) {
                     for (j in gameField[i].indices) {
                         Box(
-                            modifier = Modifier.size(FieldSize),
+                            modifier = Modifier.size(size),
                             contentAlignment = Alignment.Center
                         ) {
                             val animation = animateAt.firstOrNull { it.pos == Pair(i,j) }

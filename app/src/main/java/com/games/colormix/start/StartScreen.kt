@@ -73,7 +73,7 @@ fun StartScreen(
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Background(backGround)
         when (tutorial) {
-            1 -> QuestTutorial {
+            1 -> QuestTutorial(with(LocalDensity.current) { (width / 10).toDp() }) {
                 tutorial = 2
             }
 

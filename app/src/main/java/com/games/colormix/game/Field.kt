@@ -33,12 +33,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.games.colormix.R
 import com.games.colormix.data.ColorField
 import com.games.colormix.data.SpecialType
-import com.games.colormix.main.FieldSize
 import com.games.colormix.main.MainViewEvent
 import com.games.colormix.main.VerticalPadding
 import com.games.colormix.start.manipulateColor
@@ -46,17 +46,17 @@ import kotlin.math.roundToInt
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Field(content: ColorField?, pos: Pair<Int, Int>, eventListener: (MainViewEvent) -> Unit) {
+fun Field(content: ColorField?, size: Dp, pos: Pair<Int, Int>, eventListener: (MainViewEvent) -> Unit) {
     if (content == null) {
-        Box(modifier = Modifier.size(FieldSize))
+        Box(modifier = Modifier.size(size))
         return
     }
     val pxToMove = with(LocalDensity.current) {
-        ((FieldSize + VerticalPadding) * (content.animateTo - pos.second)).toPx().roundToInt()
+        ((size + VerticalPadding) * (content.animateTo - pos.second)).toPx().roundToInt()
     }
 
     val pxDrop = with(LocalDensity.current) {
-        (-(FieldSize + VerticalPadding) * (pos.second + 1)).toPx().roundToInt()
+        (-(size + VerticalPadding) * (pos.second + 1)).toPx().roundToInt()
     }
 
     val offset by animateIntOffsetAsState(
@@ -76,7 +76,7 @@ fun Field(content: ColorField?, pos: Pair<Int, Int>, eventListener: (MainViewEve
     Card(
         elevation =  CardDefaults.cardElevation(defaultElevation = 10.dp),
         modifier = Modifier
-            .size(FieldSize)
+            .size(size)
             .offset {
                 if (content.animateTo != pos.second) offset else if (content.dropped) IntOffset(
                     0,
@@ -144,11 +144,11 @@ fun Field(content: ColorField?, pos: Pair<Int, Int>, eventListener: (MainViewEve
 @Composable
 @Preview
 fun FieldPreview() {
-    Field(content = ColorField(2, animateTo = 2), Pair(2, 2), {})
+    Field(content = ColorField(2, animateTo = 2),40.dp, Pair(2, 2)) {}
 }
 
 @Composable
 @Preview
 fun FieldHighlightPreview() {
-    Field(content = ColorField(2, highlight = true, animateTo = 3), Pair(2, 2), {})
+    Field(content = ColorField(2, highlight = true, animateTo = 3),50.dp, Pair(2, 2)) {}
 }

@@ -5,16 +5,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.games.colormix.data.LevelInfo
+import com.games.colormix.utils.MyText
 
 @Composable
-fun RowScope.MovesInfo(currentLevel: LevelInfo) {
+fun RowScope.MovesInfo(currentLevel: LevelInfo, textSize: TextUnit) {
     LevelInfoCardRow {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -23,8 +23,8 @@ fun RowScope.MovesInfo(currentLevel: LevelInfo) {
                 .padding(10.dp)
                 .fillMaxSize()
         ) {
-            Text(text = "Moves:", fontSize = 20.sp)
-            Text(text = currentLevel.moves.toString(), fontSize = 20.sp)
+            MyText(text = "Moves:", fontSize = textSize)
+            MyText(text = currentLevel.moves.toString(), fontSize = textSize)
         }
     }
 }

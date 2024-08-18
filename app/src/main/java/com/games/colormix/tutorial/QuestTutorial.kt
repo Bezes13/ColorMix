@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -37,7 +38,7 @@ import com.games.colormix.data.SpecialType
 import com.games.colormix.game.QuestInfo
 
 @Composable
-fun QuestTutorial(dismiss: () -> Unit) {
+fun QuestTutorial(fieldSize: Dp, dismiss: () -> Unit) {
     Dialog(onDismissRequest = dismiss) {
         Card(
             colors = CardDefaults.cardColors(
@@ -58,19 +59,22 @@ fun QuestTutorial(dismiss: () -> Unit) {
                     QuestTutorialItem(
                         LevelQuest(SpecialType.None, Color.Green, 6),
                         "Destroy Color Blocks",
-                        "This means destroy 6 green Blocks"
+                        "This means destroy 6 green Blocks",
+                        fieldSize
                     )
                     Divider(color = MaterialTheme.colorScheme.secondary)
                     QuestTutorialItem(
                         LevelQuest(SpecialType.OpenBox, null, 3),
                         "Destroy Boxes",
-                        "Destroy Color Blocks next to Boxes to open/destroy them"
+                        "Destroy Color Blocks next to Boxes to open/destroy them",
+                        fieldSize
                     )
                     Divider(color = MaterialTheme.colorScheme.secondary)
                     QuestTutorialItem(
                         LevelQuest(SpecialType.None, null, 4, 5),
                         "Destroy Multiblocks",
-                        "Destroy multiple Color Blocks at the same time. \nThis 4 times 5 at the same time of any color."
+                        "Destroy multiple Color Blocks at the same time. \nThis 4 times 5 at the same time of any color.",
+                        fieldSize
                     )
                 }
                 Button(
@@ -90,7 +94,7 @@ fun QuestTutorial(dismiss: () -> Unit) {
 }
 
 @Composable
-private fun ColumnScope.QuestTutorialItem(quest: LevelQuest, title: String, explanation: String) {
+private fun ColumnScope.QuestTutorialItem(quest: LevelQuest, title: String, explanation: String, fieldSize: Dp) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -105,7 +109,7 @@ private fun ColumnScope.QuestTutorialItem(quest: LevelQuest, title: String, expl
                 Text(text = explanation)
             }
         }
-        QuestInfo(LevelInfo(listOf(quest)))
+        QuestInfo(LevelInfo(listOf(quest)), fieldSize )
 
     }
 }
@@ -113,7 +117,7 @@ private fun ColumnScope.QuestTutorialItem(quest: LevelQuest, title: String, expl
 @Preview
 @Composable
 fun QuestTutorialPreview() {
-    QuestTutorial {
+    QuestTutorial (30.dp){
 
     }
 }
