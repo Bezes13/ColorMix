@@ -52,14 +52,17 @@ fun StartScreen(navigate: (String) -> Unit, startViewModel: StartViewModel = hil
     val displayMetrics = context.resources.displayMetrics
     val width = displayMetrics.widthPixels
     val height = displayMetrics.heightPixels
-    val fieldSize =  (width / (LEVEL_SIZE_X +2))
-    startViewModel.backgroundSize = Pair(((height / fieldSize) - 1), ((width/fieldSize)-1))
+    val fieldSize = (width / (LEVEL_SIZE_X + 2))
+    val background = Pair(((height / fieldSize) - 1), ((width / fieldSize) - 1))
+    startViewModel.backgroundSize = background
 
     StartScreen(
         navigate,
         startViewModel::getCurrentMaxLevel,
         viewState.animateAt,
-        startViewModel::sendEvent
+        background,
+        width,
+        startViewModel::sendEvent,
     )
 }
 
@@ -67,24 +70,22 @@ fun StartScreen(navigate: (String) -> Unit, startViewModel: StartViewModel = hil
 fun StartScreen(
     navigate: (String) -> Unit,
     getCurrentLevel: () -> Int,
-    animateAt: List<Pair<Int,Int>>,
-    eventListener: (StartViewEvent)-> Unit
+    animateAt: List<Pair<Int, Int>>,
+    background: Pair<Int, Int>,
+    width: Int,
+    eventListener: (StartViewEvent) -> Unit,
 ) {
 
     val activity = (LocalContext.current as? Activity)
     var tutorial by remember { mutableIntStateOf(0) }
-    val context = LocalContext.current
-    val displayMetrics = context.resources.displayMetrics
-    val width = displayMetrics.widthPixels
-    val height = displayMetrics.heightPixels
     val density = LocalDensity.current
     val header = with(density) { (width / 6).toDp() }
     val headerTextSize = with(density) { header.toSp() }
     val menuItemSize = headerTextSize / 1.5f
-    val fieldSize =  (width / (LEVEL_SIZE_X +2))
+
     val backGround by remember {
-        mutableStateOf((0 until (height/fieldSize)-1).map {
-            Array((width/fieldSize)-1) { startColor() }
+        mutableStateOf((0 until background.first).map {
+            Array(background.second) { startColor() }
                 .toList()
         })
     }
@@ -190,5 +191,5 @@ fun manipulateColor(color: Color, factor: Float): Color {
 @Composable
 fun StartPreview() {
     hackClassLoader()
-    StartScreen(navigate = {},{3}, listOf()) {}
+    StartScreen(navigate = {}, { 3 }, listOf(), Pair(1, 2), 900) {}
 }
