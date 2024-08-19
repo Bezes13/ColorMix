@@ -1,6 +1,8 @@
 package com.games.colormix.game
 
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,11 +12,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RadialGradientShader
+import androidx.compose.ui.graphics.Shader
+import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.games.colormix.data.Particle
 import com.games.colormix.randomInRange
+import com.games.colormix.start.manipulateColor
 import com.games.colormix.toPx
 import kotlin.math.roundToInt
 
@@ -44,8 +52,24 @@ fun BlockExplosion(progress: Float, color: Color) {
                     )
                 }
                 .alpha(particle.alpha),
-            border = BorderStroke(1.dp, Color.Black),
-            shape = RoundedCornerShape(0.dp)
-        ) {}
+            shape = RoundedCornerShape(5.dp)
+        ) {
+            val largeRadialGradient = object : ShaderBrush() {
+                override fun createShader(size: Size): Shader {
+                    return RadialGradientShader(
+                        colors = listOf( color, manipulateColor(color =  color,0.5f)),
+                        center = size.center,
+                        radius = size.height,
+                        colorStops = listOf(0f, 0.95f)
+                    )
+                }
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(largeRadialGradient)
+            )
+        }
     }
 }
