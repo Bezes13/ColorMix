@@ -49,8 +49,8 @@ fun DraggableItem(
     cardSize: Dp,
     progress: Float? = null
 ) {
-    val textSize = with(LocalDensity.current){(cardSize/1.5f).toSp()}
-    LevelInfoCard (modifier = Modifier.height(cardSize)){
+    val textSize = with(LocalDensity.current) { (cardSize / 1.5f).toSp() }
+    LevelInfoCard(modifier = Modifier.height(cardSize)) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(3.dp)) {
             Image(
                 painter = painterResource(id = res),
@@ -85,7 +85,10 @@ fun DraggableItem(
                     finishedListener = {}
                 )
 
-                StripedProgressIndicator(progress = animatedPoints, size = DpSize(cardSize*1.5f, cardSize*0.7f))
+                StripedProgressIndicator(
+                    progress = animatedPoints,
+                    size = DpSize(cardSize * 1.5f, cardSize * 0.7f)
+                )
             }
         }
     }

@@ -193,8 +193,10 @@ fun MainScreenContent(
                             }
                         }
                         Row(
-                            modifier = Modifier.height(infoCardsHeight/2),
-                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            modifier = Modifier
+                                .height(infoCardsHeight / 2)
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             LevelInfoCard(modifier = Modifier.height(fieldSize)) {
@@ -204,14 +206,17 @@ fun MainScreenContent(
                                     modifier = Modifier.padding(vertical = 5.dp, horizontal = 15.dp)
                                 )
                             }
-                            DraggableItem("bomb", bombCount, R.drawable.bomb, fieldSize)
-                            DraggableItem(
-                                label = "rubik",
-                                count = rubikCount,
-                                R.drawable.rubik,
-                                fieldSize,
-                                blocksAcc.toFloat() / RUBIK_GAIN_MULTI_BLOCK.toFloat()
-                            )
+                            Row {
+                                DraggableItem("bomb", bombCount, R.drawable.bomb, fieldSize)
+                                DraggableItem(
+                                    label = "rubik",
+                                    count = rubikCount,
+                                    R.drawable.rubik,
+                                    fieldSize,
+                                    blocksAcc.toFloat() / RUBIK_GAIN_MULTI_BLOCK.toFloat()
+                                )
+                            }
+
                         }
                     }
 
