@@ -221,10 +221,10 @@ class MainViewModel @Inject constructor(
                     quests = updatedQuests
                 ),
                 animationAt = state.animationAt.plus(
-                    Animation(
-                        pos,
+                    blocksToDestroy.map { Animation(
+                        it,
                         field?.color ?: Color.Transparent
-                    )
+                    ) }
                 ),
                 gameField = gameBoard.mapIndexed { index, colorFields ->
                     colorFields.map { colorField -> colorField?.copy(animateTo = columns[index].indexOfFirst { it?.id == colorField.id }) }

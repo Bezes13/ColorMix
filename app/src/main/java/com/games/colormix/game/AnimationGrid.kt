@@ -33,30 +33,40 @@ fun AnimationGrid(
             for (i in gameField.indices) {
                 Column(verticalArrangement = Arrangement.spacedBy(VerticalPadding)) {
                     for (j in gameField[i].indices) {
-                        Box(
-                            modifier = Modifier.size(size),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            val animation = animateAt.firstOrNull { it.pos == Pair(i,j) }
-                            val progress by animateFloatAsState(
-                            animationSpec = TweenSpec( if (animation?.color == Color.Black) 200 else 500),
-                            targetValue = if (animation != null) 1f else 0f,
-                            label = "progress",
-                            finishedListener = {
-                                eventListener(MainViewEvent.RemoveAnimationAt(Pair(i,j)))
-                            }
-                        )
-                            if (animation != null) {
-                                if (animation.color == Color.Black) {
-                                    BombAnimation(progress)
-                                } else {
-                                    BlockExplosion(progress = progress, animation.color)
-                                }
-                            }
-                        }
-
+                        AnimationAt(size, animateAt, i, j, eventListener)
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun AnimationAt(
+    size: Dp,
+    animateAt: List<Animation>,
+    i: Int,
+    j: Int,
+    eventListener: (MainViewEvent) -> Unit
+) {
+    Box(
+        modifier = Modifier.size(size),
+        contentAlignment = Alignment.Center
+    ) {
+        val animation = animateAt.firstOrNull { it.pos == Pair(i, j) }
+        val progress by animateFloatAsState(
+            animationSpec = TweenSpec(if (animation?.color == Color.Black) 200 else 500),
+            targetValue = if (animation != null) 1f else 0f,
+            label = "progress",
+            finishedListener = {
+                eventListener(MainViewEvent.RemoveAnimationAt(Pair(i, j)))
+            }
+        )
+        if (animation != null) {
+            if (animation.color == Color.Black) {
+                BombAnimation(progress)
+            } else {
+                BlockExplosion(progress = progress, animation.color)
             }
         }
     }
