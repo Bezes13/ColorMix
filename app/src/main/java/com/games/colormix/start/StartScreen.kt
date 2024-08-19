@@ -16,6 +16,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -34,6 +35,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.games.colormix.R
+import com.games.colormix.constants.LEVEL_SIZE_X
 import com.games.colormix.data.startColor
 import com.games.colormix.hackClassLoader
 import com.games.colormix.navigation.Screen
@@ -44,36 +46,54 @@ import java.lang.Float.max
 
 @Composable
 fun StartScreen(navigate: (String) -> Unit, startViewModel: StartViewModel = hiltViewModel()) {
+    val viewState: StartViewState by startViewModel.viewState.collectAsState()
+
+    val context = LocalContext.current
+    val displayMetrics = context.resources.displayMetrics
+    val width = displayMetrics.widthPixels
+    val height = displayMetrics.heightPixels
+    val fieldSize =  (width / (LEVEL_SIZE_X +2))
+    startViewModel.backgroundSize = Pair(((height / fieldSize) - 1), ((width/fieldSize)-1))
+
     StartScreen(
         navigate,
-        startViewModel::getCurrentMaxLevel
+        startViewModel::getCurrentMaxLevel,
+        viewState.animateAt,
+        startViewModel::sendEvent
     )
 }
 
 @Composable
 fun StartScreen(
     navigate: (String) -> Unit,
-    getCurrentLevel: () -> Int
+    getCurrentLevel: () -> Int,
+    animateAt: List<Pair<Int,Int>>,
+    eventListener: (StartViewEvent)-> Unit
 ) {
-    val backGround by remember {
-        mutableStateOf((0 until 20).map {
-            Array(10) { startColor() }
-                .toList()
-        })
-    }
+
     val activity = (LocalContext.current as? Activity)
     var tutorial by remember { mutableIntStateOf(0) }
     val context = LocalContext.current
     val displayMetrics = context.resources.displayMetrics
     val width = displayMetrics.widthPixels
-    val header = with(LocalDensity.current) { (width / 6).toDp() }
-    val headerTextSize = with(LocalDensity.current) { header.toSp() }
+    val height = displayMetrics.heightPixels
+    val density = LocalDensity.current
+    val header = with(density) { (width / 6).toDp() }
+    val headerTextSize = with(density) { header.toSp() }
     val menuItemSize = headerTextSize / 1.5f
+    val fieldSize =  (width / (LEVEL_SIZE_X +2))
+    val backGround by remember {
+        mutableStateOf((0 until (height/fieldSize)-1).map {
+            Array((width/fieldSize)-1) { startColor() }
+                .toList()
+        })
+    }
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Background(backGround)
+        Background(backGround, animateAt, eventListener)
+
         when (tutorial) {
-            1 -> QuestTutorial(with(LocalDensity.current) { (width / 10).toDp() }) {
+            1 -> QuestTutorial(with(density) { (width / 10).toDp() }) {
                 tutorial = 2
             }
 
@@ -170,7 +190,5 @@ fun manipulateColor(color: Color, factor: Float): Color {
 @Composable
 fun StartPreview() {
     hackClassLoader()
-    StartScreen(navigate = {}) {
-        3
-    }
+    StartScreen(navigate = {},{3}, listOf()) {}
 }

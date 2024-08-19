@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.games.colormix.data.LevelInfo
 import com.games.colormix.data.LevelQuest
 import com.games.colormix.data.SpecialBlockPlacement
@@ -14,20 +15,63 @@ import com.games.colormix.data.startColor
 import com.games.colormix.game.LevelLists
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.random.Random
 
 @HiltViewModel
 class StartViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-) : ViewModel() {
+    private val ioDispatcher: CoroutineDispatcher,
+    ) : ViewModel() {
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
-
+    private val _event = MutableSharedFlow<StartViewEvent>()
+    private val _viewState = MutableStateFlow(StartViewState())
+    val viewState = _viewState.asStateFlow()
+    var backgroundSize = Pair(0,0)
     init {
-        //for (i in 0..200)
-        //  generateNewLevel()
+        listenToEvent()
+
+        viewModelScope.launch(ioDispatcher) {
+            delay(400)
+            _viewState.update {
+                 it.copy(animateAt = it.animateAt.plus(Pair(2,5)))
+            }
+        }
     }
+
+    fun sendEvent(event: StartViewEvent) {
+        viewModelScope.launch(ioDispatcher) {
+            _event.emit(event)
+        }
+    }
+
+    private fun listenToEvent() = viewModelScope.launch(ioDispatcher) {
+        _event.collect { event ->
+            when (event) {
+                is StartViewEvent.RemoveAnimationAt -> {
+                    viewModelScope.launch(ioDispatcher) {
+                        delay(400)
+                        _viewState.update { it.copy(animateAt = listOf(
+                            randomPair(),
+                            randomPair(),
+                            randomPair()
+                        )) }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun randomPair() =
+        Pair(Random.nextInt(0, backgroundSize.first), Random.nextInt(0, backgroundSize.second))
 
     private fun generateNewLevel(): LevelInfo {
         val questCount = if (Math.random() > 0.5) 1 else 2
@@ -104,4 +148,9 @@ class StartViewModel @Inject constructor(
     fun getCurrentMaxLevel(): Int {
         return sharedPreferences.getInt("currentLevel", 1)
     }
+}
+
+sealed class StartViewEvent {
+    data object RemoveAnimationAt : StartViewEvent()
+
 }
