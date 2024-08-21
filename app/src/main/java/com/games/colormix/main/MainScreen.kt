@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -57,7 +59,7 @@ fun MainScreen(navigate: (String) -> Unit, mainViewModel: MainViewModel = hiltVi
     if (viewState.currentLevel.level > LevelLists.levelList.size) {
         navigate(Screen.LEVEL_SELECTION.name)
     }
-    if (!mainViewModel.isTutorialShown()){
+    if (!mainViewModel.isTutorialShown()) {
         mainViewModel.sendEvent(MainViewEvent.SetDialog(MainViewDialog.QuestTutorial))
         mainViewModel.setTutorialShown()
     }
@@ -92,10 +94,10 @@ fun MainScreenContent(
     val displayMetrics = context.resources.displayMetrics
     val width = displayMetrics.widthPixels
     val height = displayMetrics.heightPixels
-    val fieldSize = with(LocalDensity.current) { (width / (LEVEL_SIZE_X+2)).toDp() }
-    val infoCardsHeight = with(LocalDensity.current){(height/8).toDp()}
+    val fieldSize = with(LocalDensity.current) { (width / (LEVEL_SIZE_X + 2)).toDp() }
+    val infoCardsHeight = with(LocalDensity.current) { (height / 8).toDp() }
     val levelTextSize = with(LocalDensity.current) { fieldSize.toSp() }
-    val infoTextSize = levelTextSize/2
+    val infoTextSize = levelTextSize / 2
 
     val animatedPoints by animateIntAsState(
         animationSpec = TweenSpec(500),
@@ -144,6 +146,7 @@ fun MainScreenContent(
                 eventListener(MainViewEvent.SetDialog(MainViewDialog.None))
             }
         }
+
         MainViewDialog.QuestTutorial -> {
             QuestTutorial(fieldSize) {
                 eventListener(MainViewEvent.SetDialog(MainViewDialog.PowerUpTutorial))
@@ -151,9 +154,8 @@ fun MainScreenContent(
         }
     }
     Scaffold(
-        topBar ={ TopAppBar(eventListener, navigate) },
-
-    ) {
+        topBar = { TopAppBar(eventListener, navigate) },
+        ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(5.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -162,7 +164,7 @@ fun MainScreenContent(
                 .padding(it)
                 .background(MaterialTheme.colorScheme.primaryContainer),
         ) {
-            LevelInfoCard(modifier = Modifier.height(fieldSize*1.5f)) {
+            LevelInfoCard(modifier = Modifier.height(fieldSize * 1.5f)) {
                 MyText(
                     if (endless) stringResource(id = R.string.endless_mode) else stringResource(
                         id = R.string.level,
@@ -189,7 +191,7 @@ fun MainScreenContent(
                                     .height(infoCardsHeight)
                             ) {
                                 MovesInfo(currentLevel, infoTextSize)
-                                QuestInfo(currentLevel, fieldSize*0.7f)
+                                QuestInfo(currentLevel, fieldSize * 0.7f)
                             }
                         }
                         Row(
@@ -202,7 +204,7 @@ fun MainScreenContent(
                             LevelInfoCard(modifier = Modifier.height(fieldSize)) {
                                 MyText(
                                     text = animatedPoints.toString().padStart(6, '0'),
-                                    fontSize = with(LocalDensity.current){(fieldSize/1.5f).toSp()},
+                                    fontSize = with(LocalDensity.current) { (fieldSize / 1.5f).toSp() },
                                     modifier = Modifier.padding(vertical = 5.dp, horizontal = 15.dp)
                                 )
                             }
@@ -228,12 +230,19 @@ fun MainScreenContent(
                             horizontalArrangement = Arrangement.spacedBy(5.dp),
                             modifier = Modifier.padding(10.dp)
                         ) {
-                            for (i in gameField.indices) {
-                                Column(verticalArrangement = Arrangement.spacedBy(VerticalPadding)) {
-                                    for (j in gameField[i].indices) {
-                                        Field(gameField[i][j], fieldSize, Pair(i, j), eventListener)
+                            gameField.forEachIndexed() { cIndex, column ->
+                                LazyColumn(
+                                    verticalArrangement = Arrangement.spacedBy(
+                                        VerticalPadding
+                                    )
+                                ) {
+                                    itemsIndexed(
+                                        items = column,
+                                        key = { _, item -> item?.id ?: -1 }) { rIndex, item ->
+                                        Field(item, fieldSize, Pair(cIndex, rIndex), eventListener, Modifier.animateItem())
                                     }
                                 }
+
                             }
                         }
                         AnimationGrid(gameField, animateAt, fieldSize, eventListener)
@@ -265,6 +274,6 @@ fun PreviewMainScreen() {
         {},
         listOf(),
         LevelInfo(),
-        MainViewDialog.None, 66666, 4,7, 35
+        MainViewDialog.None, 66666, 4, 7, 35
     )
 }

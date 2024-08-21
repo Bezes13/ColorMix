@@ -92,4 +92,5 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
 
     implementation ("androidx.lifecycle:lifecycle-runtime-compose:$lifecycle_version")
+    implementation("androidx.compose.foundation:foundation:1.7.0-beta07")
 }

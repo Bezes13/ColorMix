@@ -1,7 +1,6 @@
 package com.games.colormix
 
-import com.games.colormix.data.ColorField
-import com.games.colormix.data.putOnRightPositionAfterAnimation
+
 import org.junit.Test
 
 /**
@@ -11,20 +10,8 @@ import org.junit.Test
  */
 class ExampleUnitTest {
 
-    val gameField = DummyDaten.GameBoard
-    var colorFieldNextId = 100
     @Test
     fun addition_isCorrect() {
-        gameField.map { colorFields ->
-            var fromTop = true
-            colorFields.putOnRightPositionAfterAnimation().mapIndexed { idx, item ->
-                if (item == null && fromTop) {
-                    ColorField(colorFieldNextId++, animateTo = idx)
-                } else {
-                    fromTop = false
-                    item
-                }
-            }
-        }
+
     }
 }
