@@ -25,12 +25,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -47,13 +50,10 @@ import java.lang.Float.max
 @Composable
 fun StartScreen(navigate: (String) -> Unit, startViewModel: StartViewModel = hiltViewModel()) {
     val viewState: StartViewState by startViewModel.viewState.collectAsState()
-
-    val context = LocalContext.current
-    val displayMetrics = context.resources.displayMetrics
-    val width = displayMetrics.widthPixels
-    val height = displayMetrics.heightPixels
+    val width = LocalConfiguration.current.screenWidthDp.dp
+    val height = LocalConfiguration.current.screenHeightDp.dp
     val fieldSize = (width / (LEVEL_SIZE_X + 2))
-    val background = Pair(((height / fieldSize) - 1), ((width / fieldSize) - 1))
+    val background = IntSize(((height / fieldSize) - 1).toInt(), ((width / fieldSize) - 1).toInt())
     startViewModel.backgroundSize = background
 
     StartScreen(
@@ -71,21 +71,21 @@ fun StartScreen(
     navigate: (String) -> Unit,
     getCurrentLevel: () -> Int,
     animateAt: List<Pair<Int, Int>>,
-    background: Pair<Int, Int>,
-    width: Int,
+    background:IntSize,
+    width: Dp,
     eventListener: (StartViewEvent) -> Unit,
 ) {
 
     val activity = (LocalContext.current as? Activity)
     var tutorial by remember { mutableIntStateOf(0) }
     val density = LocalDensity.current
-    val header = with(density) { (width / 6).toDp() }
+    val header =  (width / 6)
     val headerTextSize = with(density) { header.toSp() }
     val menuItemSize = headerTextSize / 1.5f
 
     val backGround by remember {
-        mutableStateOf((0 until background.first).map {
-            Array(background.second) { startColor() }
+        mutableStateOf((0 until background.width).map {
+            Array(background.height) { startColor() }
                 .toList()
         })
     }
@@ -94,7 +94,7 @@ fun StartScreen(
         Background(backGround, animateAt, eventListener)
 
         when (tutorial) {
-            1 -> QuestTutorial(with(density) { (width / 10).toDp() }) {
+            1 -> QuestTutorial((width / 10)) {
                 tutorial = 2
             }
 
@@ -191,5 +191,5 @@ fun manipulateColor(color: Color, factor: Float): Color {
 @Composable
 fun StartPreview() {
     hackClassLoader()
-    StartScreen(navigate = {}, { 3 }, listOf(), Pair(1, 2), 900) {}
+    StartScreen(navigate = {}, { 3 }, listOf(), IntSize(1, 2), 90.dp) {}
 }

@@ -19,7 +19,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -91,14 +91,10 @@ fun MainScreenContent(
     rubikCount: Int,
     blocksAcc: Int
 ) {
-    // TODO check out
-    // val check = LocalConfiguration.current.screenHeightDp.dp
-    val context = LocalContext.current
-    val displayMetrics = context.resources.displayMetrics
-    val width = displayMetrics.widthPixels
-    val height = displayMetrics.heightPixels
-    val fieldSize = with(LocalDensity.current) { (width / (LEVEL_SIZE_X + 2)).toDp() }
-    val infoCardsHeight = with(LocalDensity.current) { (height / 8).toDp() }
+    val width = LocalConfiguration.current.screenWidthDp.dp
+    val height = LocalConfiguration.current.screenHeightDp.dp
+    val fieldSize = (width / (LEVEL_SIZE_X + 2))
+    val infoCardsHeight = (height / 8)
     val levelTextSize = with(LocalDensity.current) { fieldSize.toSp() }
     val infoTextSize = levelTextSize / 2
 

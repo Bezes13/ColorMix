@@ -3,6 +3,7 @@ package com.games.colormix.start
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.IntSize
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.games.colormix.data.LevelInfo
@@ -35,7 +36,7 @@ class StartViewModel @Inject constructor(
     private val _event = MutableSharedFlow<StartViewEvent>()
     private val _viewState = MutableStateFlow(StartViewState())
     val viewState = _viewState.asStateFlow()
-    var backgroundSize = Pair(0,0)
+    var backgroundSize = IntSize(0,0)
     init {
         listenToEvent()
 
@@ -71,7 +72,7 @@ class StartViewModel @Inject constructor(
     }
 
     private fun randomPair() =
-        Pair(Random.nextInt(0, backgroundSize.first), Random.nextInt(0, backgroundSize.second))
+        Pair(Random.nextInt(0, backgroundSize.width), Random.nextInt(0, backgroundSize.height))
 
     private fun generateNewLevel(): LevelInfo {
         val questCount = if (Math.random() > 0.5) 1 else 2
@@ -89,15 +90,15 @@ class StartViewModel @Inject constructor(
             }
             quests.add(quest)
         }
-        quests.forEach {
-            if (it.specialType == SpecialType.Box || it.specialType == SpecialType.OpenBox) {
-                for (i in 1..it.amount) {
+        quests.forEach { quest ->
+            if (quest.specialType == SpecialType.Box || quest.specialType == SpecialType.OpenBox) {
+                for (i in 1..quest.amount) {
                     var pos = Pair(Random.nextInt(0, 6), Random.nextInt(0, 7))
                     while (specials.any { it.pos == pos }) {
 
                         pos = Pair(Random.nextInt(0, 6), Random.nextInt(0, 7))
                     }
-                    specials.add(SpecialBlockPlacement(it.specialType, pos))
+                    specials.add(SpecialBlockPlacement(quest.specialType, pos))
                 }
             }
         }
