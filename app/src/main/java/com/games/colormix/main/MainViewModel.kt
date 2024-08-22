@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.games.colormix.constants.BOMB_GAIN_MULTI_BLOCK
 import com.games.colormix.constants.LEVEL_SIZE_X
+import com.games.colormix.constants.LEVEL_SIZE_Y
 import com.games.colormix.constants.RUBIK_GAIN_MULTI_BLOCK
 import com.games.colormix.data.Animation
 import com.games.colormix.data.ColorField
@@ -92,11 +93,7 @@ class MainViewModel @Inject constructor(
 
             state.copy(
                 animationAt = list.map { Animation(it, explode) },
-                gameField = columns.map {
-                    it.map { block ->
-                        block ?: ColorField(colorFieldNextId++)
-                    }
-                },
+                gameField = fillEmptySpace(columns),
                 rubikCount = state.rubikCount - 1
             )
         }
@@ -129,7 +126,7 @@ class MainViewModel @Inject constructor(
             val columns = mutableListOf<List<ColorField>>()
             for(i in 1..LEVEL_SIZE_X) {
                 val row = mutableListOf<ColorField>()
-                for(j in 1..LEVEL_SIZE_X) {
+                for(j in 1..LEVEL_SIZE_Y) {
                     row.add(ColorField(colorFieldNextId++))
                 }
                 columns.add(row)
@@ -182,13 +179,23 @@ class MainViewModel @Inject constructor(
 
             state.copy(
                 animationAt = state.animationAt.plus(Animation(pos, Color.Black)),
-                gameField = columns.map {
-                    it.map { block ->
-                        block ?: ColorField(colorFieldNextId++)
-                    }
-                },
+                gameField = fillEmptySpace(columns),
                 bombCount = state.bombCount - 1,
             )
+        }
+    }
+
+    private fun fillEmptySpace(gameField: List<List<ColorField?>>): List<List<ColorField>> {
+        return gameField.map { columns ->
+            var fromTop = true
+            columns.map {item ->
+                if (item == null && fromTop) {
+                    ColorField(colorFieldNextId++)
+                } else {
+                    fromTop = false
+                    item ?: ColorField(colorFieldNextId++, color = Color.Transparent)
+                }
+            }
         }
     }
 
@@ -205,11 +212,7 @@ class MainViewModel @Inject constructor(
             for (i in gameBoard.indices) {
                 columns.add(pushBlocksDown(gameBoard[i].toMutableList()))
             }
-            val newField:List<List<ColorField>> = columns.map {
-                it.map { block ->
-                    block ?: ColorField(colorFieldNextId++)
-                }
-            }
+
 
             val blockCount =
                 blocksToDestroy.filter { pos -> state.gameField[pos.first][pos.second].specialType == SpecialType.None }.size
@@ -230,7 +233,7 @@ class MainViewModel @Inject constructor(
                         )
                     }
                 ),
-                gameField = newField,
+                gameField = fillEmptySpace(columns),
                 dialog = if (updatedQuests.all { it.amount <= 0 } && !endless) MainViewDialog.LevelComplete(
                     levelIndex.toString()
                 ) else if (state.currentLevel.moves <= 1 && !endless)

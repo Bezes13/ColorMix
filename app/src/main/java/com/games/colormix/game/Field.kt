@@ -38,15 +38,24 @@ import com.games.colormix.start.manipulateColor
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Field(content: ColorField?, size: Dp, pos: Pair<Int, Int>, eventListener: (MainViewEvent) -> Unit, modifier: Modifier = Modifier) {
-    if (content == null) {
-        Box(modifier = Modifier.size(size))
+fun Field(
+    content: ColorField,
+    size: Dp,
+    pos: Pair<Int, Int>,
+    eventListener: (MainViewEvent) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    if (content.specialType == SpecialType.None && content.color == Color.Transparent) {
+        Box(modifier = modifier.size(size))
         return
     }
 
     val context = LocalContext.current
     Card(
-        elevation =  CardDefaults.cardElevation(defaultElevation = 10.dp),
+        elevation = if (content.specialType != SpecialType.None) CardDefaults.cardElevation() else CardDefaults.cardElevation(
+            defaultElevation = 10.dp
+        ),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
         modifier = modifier
             .size(size)
             .clickable(onClick = {
@@ -60,13 +69,19 @@ fun Field(content: ColorField?, size: Dp, pos: Pair<Int, Int>, eventListener: (M
                 },
                 target = object : DragAndDropTarget {
                     override fun onDrop(event: DragAndDropEvent): Boolean {
-                        if (event.toAndroidDragEvent().clipData.description.label == "bomb"){
+                        if (event.toAndroidDragEvent().clipData.description.label == "bomb") {
                             eventListener(MainViewEvent.UseBomb(pos))
-                        }else{
-                            if (content.color != null && content.color != Color.Transparent){
+                        } else {
+                            if (content.color != null && content.color != Color.Transparent) {
                                 eventListener(MainViewEvent.UseRubiks(pos))
-                            }else{
-                                Toast.makeText(context, "Use Rubik just on colored Blocks", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast
+                                    .makeText(
+                                        context,
+                                        "Use Rubik just on colored Blocks",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                    .show()
                             }
                         }
                         return true
@@ -87,34 +102,38 @@ fun Field(content: ColorField?, size: Dp, pos: Pair<Int, Int>, eventListener: (M
                 alignment = Alignment.Center,
                 modifier = Modifier.fillMaxSize()
             )
-        }
-        val largeRadialGradient = object : ShaderBrush() {
-            override fun createShader(size: Size): Shader {
-                return RadialGradientShader(
-                    colors = listOf( content.color ?: Color.Transparent, manipulateColor(color =  content.color ?: Color.Transparent,0.5f)),
-                    center = size.center,
-                    radius = size.height,
-                    colorStops = listOf(0f, 0.95f)
-                )
+        } else {
+            val largeRadialGradient = object : ShaderBrush() {
+                override fun createShader(size: Size): Shader {
+                    return RadialGradientShader(
+                        colors = listOf(
+                            content.color ?: Color.Transparent,
+                            manipulateColor(color = content.color ?: Color.Transparent, 0.5f)
+                        ),
+                        center = size.center,
+                        radius = size.height,
+                        colorStops = listOf(0f, 0.95f)
+                    )
+                }
             }
-        }
 
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(largeRadialGradient)
-        )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(largeRadialGradient)
+            )
+        }
     }
 }
 
 @Composable
 @Preview
 fun FieldPreview() {
-    Field(content = ColorField(2),40.dp, Pair(2, 2), {})
+    Field(content = ColorField(2), 40.dp, Pair(2, 2), {})
 }
 
 @Composable
 @Preview
 fun FieldHighlightPreview() {
-    Field(content = ColorField(2),50.dp, Pair(2, 2), {})
+    Field(content = ColorField(2), 50.dp, Pair(2, 2), {})
 }
