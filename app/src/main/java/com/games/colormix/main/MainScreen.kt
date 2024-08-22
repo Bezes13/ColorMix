@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -40,11 +38,14 @@ import com.games.colormix.game.BorderedBox
 import com.games.colormix.game.DraggableItem
 import com.games.colormix.game.Field
 import com.games.colormix.game.GainPowerUp
+import com.games.colormix.game.LazyAnimatedColumn
 import com.games.colormix.game.LevelDoneDialog
 import com.games.colormix.game.LevelInfoCard
 import com.games.colormix.game.LevelLists
 import com.games.colormix.game.MovesInfo
 import com.games.colormix.game.QuestInfo
+import com.games.colormix.game.defaultEnterTransition
+import com.games.colormix.game.defaultExitTransition
 import com.games.colormix.hackClassLoader
 import com.games.colormix.navigation.Screen
 import com.games.colormix.tutorial.PowerUpTutorial
@@ -80,7 +81,7 @@ fun MainScreen(navigate: (String) -> Unit, mainViewModel: MainViewModel = hiltVi
 @Composable
 fun MainScreenContent(
     navigate: (String) -> Unit,
-    gameField: List<List<ColorField?>>,
+    gameField: List<List<ColorField>>,
     eventListener: (MainViewEvent) -> Unit,
     animateAt: List<Animation>,
     currentLevel: LevelInfo,
@@ -90,6 +91,8 @@ fun MainScreenContent(
     rubikCount: Int,
     blocksAcc: Int
 ) {
+    // TODO check out
+    // val check = LocalConfiguration.current.screenHeightDp.dp
     val context = LocalContext.current
     val displayMetrics = context.resources.displayMetrics
     val width = displayMetrics.widthPixels
@@ -155,7 +158,7 @@ fun MainScreenContent(
     }
     Scaffold(
         topBar = { TopAppBar(eventListener, navigate) },
-        ) {
+    ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(5.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -230,19 +233,23 @@ fun MainScreenContent(
                             horizontalArrangement = Arrangement.spacedBy(5.dp),
                             modifier = Modifier.padding(10.dp)
                         ) {
-                            gameField.forEachIndexed() { cIndex, column ->
-                                LazyColumn(
-                                    verticalArrangement = Arrangement.spacedBy(
-                                        VerticalPadding
-                                    )
-                                ) {
-                                    itemsIndexed(
-                                        items = column,
-                                        key = { _, item -> item?.id ?: -1 }) { rIndex, item ->
-                                        Field(item, fieldSize, Pair(cIndex, rIndex), eventListener, Modifier.animateItem())
-                                    }
-                                }
+                            gameField.forEachIndexed { cIndex, column ->
 
+                                LazyAnimatedColumn(
+                                    items = column,
+                                    keyProvider = { item -> item.toString() },
+                                    lazyModifier = { Modifier.animateItem() },
+                                    enterTransition = defaultEnterTransition ,
+                                    exitTransition = defaultExitTransition
+                                ) { _, item ->
+                                    Field(
+                                        item,
+                                        fieldSize,
+                                        Pair(cIndex, column.indexOf(item)),
+                                        eventListener,
+                                        Modifier.padding(bottom = VerticalPadding)
+                                    )
+                                }
                             }
                         }
                         AnimationGrid(gameField, animateAt, fieldSize, eventListener)
@@ -270,7 +277,7 @@ fun PreviewMainScreen() {
     hackClassLoader()
     MainScreenContent(
         {},
-        (0 until 4).map { arrayOfNulls<ColorField?>(4).toList() },
+        (0 until 4).map { arrayOf<ColorField>().toList() },
         {},
         listOf(),
         LevelInfo(),
