@@ -1,4 +1,4 @@
-package com.games.colormix.game
+package com.games.colormix.main.components.Animation
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
@@ -22,9 +22,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
-import com.games.colormix.game.VisibilityState.Initial
-import com.games.colormix.game.VisibilityState.ToClose
-import com.games.colormix.game.VisibilityState.ToPopUp
+import com.games.colormix.main.components.Animation.VisibilityState.Initial
+import com.games.colormix.main.components.Animation.VisibilityState.ToClose
+import com.games.colormix.main.components.Animation.VisibilityState.ToPopUp
 import kotlinx.coroutines.delay
 
 @Stable

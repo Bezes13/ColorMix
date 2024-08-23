@@ -1,4 +1,4 @@
-package com.games.colormix.main
+package com.games.colormix.main.components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -11,6 +11,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.games.colormix.R
+import com.games.colormix.main.MainViewEvent
 import com.games.colormix.navigation.Screen
 import com.games.colormix.utils.MyText
 
@@ -21,7 +22,12 @@ fun TopAppBar(
     navigate: (String) -> Unit
 ) {
     androidx.compose.material3.TopAppBar(
-        title = { MyText(text = stringResource(id = R.string.app_name), fontSize = MaterialTheme.typography.headlineLarge.fontSize) },
+        title = {
+            MyText(
+                text = stringResource(id = R.string.app_name),
+                fontSize = MaterialTheme.typography.headlineLarge.fontSize
+            )
+        },
         actions = {
             IconButton(onClick = { eventListener(MainViewEvent.Retry) }) {
                 Icon(Icons.Default.Refresh, stringResource(R.string.menu))

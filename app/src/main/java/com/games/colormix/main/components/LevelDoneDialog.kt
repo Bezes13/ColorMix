@@ -1,4 +1,4 @@
-package com.games.colormix.game
+package com.games.colormix.main.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -11,15 +11,16 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.games.colormix.constants.BorderWidth
+import com.games.colormix.constants.Padding
+import com.games.colormix.utils.MyText
 
 @Composable
 fun LevelDoneDialog(
@@ -37,27 +38,27 @@ fun LevelDoneDialog(
             border = BorderStroke(5.dp, MaterialTheme.colorScheme.secondary)
         ) {
             Column(
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-                modifier = Modifier.padding(10.dp),
+                verticalArrangement = Arrangement.spacedBy(Padding.L),
+                modifier = Modifier.padding(Padding.L),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
+                MyText(
                     text = stringResource(id = headerTextId),
-                    fontSize = 30.sp,
+                    fontSize = MaterialTheme.typography.headlineMedium.fontSize,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
                 Divider(color = MaterialTheme.colorScheme.secondary)
-                Text(text = bodyText)
+                MyText(text = bodyText)
                 Button(
                     onClick = onConfirm,
                     colors = ButtonDefaults.buttonColors(
                         contentColor = MaterialTheme.colorScheme.tertiary,
                         containerColor = MaterialTheme.colorScheme.tertiaryContainer
                     ),
-                    border = BorderStroke(3.dp, MaterialTheme.colorScheme.tertiary)
+                    border = BorderStroke(BorderWidth, MaterialTheme.colorScheme.tertiary)
                 ) {
-                    Text(text = stringResource(id = buttonTextId))
+                    MyText(text = stringResource(id = buttonTextId))
                 }
             }
         }

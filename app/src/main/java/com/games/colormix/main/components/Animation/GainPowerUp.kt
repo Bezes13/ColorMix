@@ -1,4 +1,4 @@
-package com.games.colormix.game
+package com.games.colormix.main.components.Animation
 
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.TweenSpec

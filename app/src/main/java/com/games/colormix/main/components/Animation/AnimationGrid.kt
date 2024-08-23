@@ -1,4 +1,4 @@
-package com.games.colormix.game
+package com.games.colormix.main.components.Animation
 
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateFloatAsState
@@ -13,11 +13,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-import com.games.colormix.main.MainViewEvent
-import com.games.colormix.main.VerticalPadding
+import com.games.colormix.constants.BlockAnimationDuration
+import com.games.colormix.constants.ExplosionDuration
+import com.games.colormix.constants.Padding
 import com.games.colormix.data.Animation
 import com.games.colormix.data.ColorField
+import com.games.colormix.main.MainViewEvent
 
 @Composable
 fun AnimationGrid(
@@ -28,12 +29,12 @@ fun AnimationGrid(
 ) {
     Box {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(5.dp),
+            horizontalArrangement = Arrangement.spacedBy(Padding.M),
         ) {
             for (i in gameField.indices) {
-                Column(verticalArrangement = Arrangement.spacedBy(VerticalPadding)) {
+                Column(verticalArrangement = Arrangement.spacedBy(Padding.M)) {
                     for (j in gameField[i].indices) {
-                        AnimationAt(size, animateAt, i, j, eventListener)
+                        AnimationAt(size, animateAt, Pair(i, j), eventListener)
                     }
                 }
             }
@@ -45,21 +46,20 @@ fun AnimationGrid(
 private fun AnimationAt(
     size: Dp,
     animateAt: List<Animation>,
-    i: Int,
-    j: Int,
+    pos: Pair<Int, Int>,
     eventListener: (MainViewEvent) -> Unit
 ) {
     Box(
         modifier = Modifier.size(size),
         contentAlignment = Alignment.Center
     ) {
-        val animation = animateAt.firstOrNull { it.pos == Pair(i, j) }
+        val animation = animateAt.firstOrNull { it.pos == pos }
         val progress by animateFloatAsState(
-            animationSpec = TweenSpec(if (animation?.color == Color.Black) 200 else 500),
+            animationSpec = TweenSpec(if (animation?.color == Color.Black) ExplosionDuration else BlockAnimationDuration),
             targetValue = if (animation != null) 1f else 0f,
             label = "progress",
             finishedListener = {
-                eventListener(MainViewEvent.RemoveAnimationAt(Pair(i, j)))
+                eventListener(MainViewEvent.RemoveAnimationAt(pos))
             }
         )
         if (animation != null) {

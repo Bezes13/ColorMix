@@ -1,4 +1,4 @@
-package com.games.colormix.game
+package com.games.colormix.main.components
 
 import android.content.ClipDescription
 import android.widget.Toast
@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Shader
 import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -34,7 +35,7 @@ import com.games.colormix.R
 import com.games.colormix.data.ColorField
 import com.games.colormix.data.SpecialType
 import com.games.colormix.main.MainViewEvent
-import com.games.colormix.start.manipulateColor
+import com.games.colormix.manipulateColor
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -51,6 +52,7 @@ fun Field(
     }
 
     val context = LocalContext.current
+    val bombString = stringResource(id = R.string.bomb_item)
     Card(
         elevation = if (content.specialType != SpecialType.None) CardDefaults.cardElevation() else CardDefaults.cardElevation(
             defaultElevation = 10.dp
@@ -69,7 +71,8 @@ fun Field(
                 },
                 target = object : DragAndDropTarget {
                     override fun onDrop(event: DragAndDropEvent): Boolean {
-                        if (event.toAndroidDragEvent().clipData.description.label == "bomb") {
+                        if (event.toAndroidDragEvent().clipData.description.label == bombString
+                        ) {
                             eventListener(MainViewEvent.UseBomb(pos))
                         } else {
                             if (content.color != null && content.color != Color.Transparent) {
@@ -78,7 +81,7 @@ fun Field(
                                 Toast
                                     .makeText(
                                         context,
-                                        "Use Rubik just on colored Blocks",
+                                        context.getString(R.string.use_rubik_error),
                                         Toast.LENGTH_SHORT
                                     )
                                     .show()
@@ -92,13 +95,13 @@ fun Field(
     {
         if (content.specialType != SpecialType.None) {
             Image(
-                painter = when (content.specialType) {
-                    SpecialType.Rock -> painterResource(id = R.drawable.rock)
-                    SpecialType.Box -> painterResource(id = R.drawable.box)
-                    SpecialType.OpenBox -> painterResource(id = R.drawable.boxopen)
-                    else -> painterResource(id = R.drawable.ic_launcher_foreground)
-                },
-                contentDescription = "SpecialType",
+                painter = painterResource(id = when (content.specialType) {
+                    SpecialType.Rock -> R.drawable.rock
+                    SpecialType.Box -> R.drawable.box
+                    SpecialType.OpenBox -> R.drawable.boxopen
+                    else -> R.drawable.ic_launcher_foreground
+                }),
+                contentDescription = stringResource(R.string.specialtype),
                 alignment = Alignment.Center,
                 modifier = Modifier.fillMaxSize()
             )

@@ -6,6 +6,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.IntSize
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.games.colormix.constants.BackgroundBlocks
+import com.games.colormix.constants.CurrentLevelString
 import com.games.colormix.data.ColorField
 import com.games.colormix.data.LevelInfo
 import com.games.colormix.data.LevelQuest
@@ -38,7 +40,7 @@ class StartViewModel @Inject constructor(
     private val _event = MutableSharedFlow<StartViewEvent>()
     private val _viewState = MutableStateFlow(StartViewState())
     val viewState = _viewState.asStateFlow()
-    var backgroundSize = IntSize(9,18)
+    var backgroundSize = IntSize(BackgroundBlocks,BackgroundBlocks*2)
     private var colorFieldNextId = 0
 
     init {
@@ -134,7 +136,7 @@ class StartViewModel @Inject constructor(
         hasSameColor(
             Pair(pos.first, pos.second - 1), field
         )?.let { if (!fieldsToDestroy.contains(it)) fieldsToDestroy.add(it) }
-        return fieldsToDestroy.filter { board[it.first][it.second]?.specialType == SpecialType.None }.size > 1
+        return fieldsToDestroy.size > 1
     }
 
     private fun hasSameColor(pair: Pair<Int, Int>, field: ColorField?): Pair<Int, Int>? {
@@ -144,9 +146,7 @@ class StartViewModel @Inject constructor(
             pair.first >= 0 &&
             pair.second >= 0 &&
             pair.first < gameBoard.size &&
-            pair.second < gameBoard[pair.first].size && (gameBoard[pair.first][pair.second].color == field.color ||
-                    gameBoard[pair.first][pair.second].specialType == SpecialType.Box ||
-                    gameBoard[pair.first][pair.second].specialType == SpecialType.OpenBox)
+            pair.second < gameBoard[pair.first].size && (gameBoard[pair.first][pair.second].color == field.color)
         )
             pair else null
     }
@@ -247,7 +247,7 @@ class StartViewModel @Inject constructor(
 
 
     fun getCurrentMaxLevel(): Int {
-        return sharedPreferences.getInt("currentLevel", 1)
+        return sharedPreferences.getInt(CurrentLevelString, 1)
     }
 
     fun fillBackground() {

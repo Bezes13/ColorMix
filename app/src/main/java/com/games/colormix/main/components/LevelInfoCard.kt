@@ -1,4 +1,4 @@
-package com.games.colormix.game
+package com.games.colormix.main.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.games.colormix.constants.BorderWidth
 
 @Composable
 fun RowScope.LevelInfoCardRow(content: @Composable () -> Unit) {
@@ -23,7 +24,23 @@ fun RowScope.LevelInfoCardRow(content: @Composable () -> Unit) {
             .weight(1f)
             .fillMaxSize()
             .padding(horizontal = 0.dp),
-        border = BorderStroke(3.dp, MaterialTheme.colorScheme.secondary),
+        border = BorderStroke(BorderWidth, MaterialTheme.colorScheme.secondary),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = MaterialTheme.colorScheme.secondary
+        )
+    ) {
+        content()
+    }
+}
+
+@Composable
+fun LevelInfoCardColumn(content: @Composable () -> Unit) {
+    Card(
+        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
+        modifier = Modifier
+            .padding(horizontal = 0.dp),
+        border = BorderStroke(BorderWidth, MaterialTheme.colorScheme.secondary),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer,
             contentColor = MaterialTheme.colorScheme.secondary
@@ -37,7 +54,7 @@ fun RowScope.LevelInfoCardRow(content: @Composable () -> Unit) {
 fun LevelInfoCard(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
     Card(
         modifier = modifier.wrapContentWidth(),
-        border = BorderStroke(3.dp, MaterialTheme.colorScheme.secondary),
+        border = BorderStroke(BorderWidth, MaterialTheme.colorScheme.secondary),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer,
             contentColor = MaterialTheme.colorScheme.secondary

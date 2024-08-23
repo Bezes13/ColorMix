@@ -1,4 +1,4 @@
-package com.games.colormix.game
+package com.games.colormix.main.components.Animation
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable
@@ -11,15 +11,16 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.games.colormix.constants.ParticleCount
 import com.games.colormix.toPx
 import kotlin.math.cos
 import kotlin.math.sin
 
 @Composable
 fun BombAnimation(progress: Float) {
-    val particles = (0 until 30).map {
+    val particles = (0 until ParticleCount).map {
         val angle = Math.random() * 2 * Math.PI
-        val speed =  (progress*Math.random() * 30f).dp.toPx()
+        val speed = (progress * Math.random() * 30).dp.toPx()
         val xSpeed = cos(angle) * speed
         val ySpeed = sin(angle) * speed
         mutableStateOf(

@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -17,21 +18,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RadialGradientShader
 import androidx.compose.ui.graphics.Shader
 import androidx.compose.ui.graphics.ShaderBrush
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.games.colormix.constants.Padding
 import com.games.colormix.data.ColorField
-import com.games.colormix.game.LazyAnimatedColumn
-import com.games.colormix.game.defaultEnterTransition
-import com.games.colormix.game.defaultExitTransition
-import com.games.colormix.main.VerticalPadding
+import com.games.colormix.main.components.Animation.LazyAnimatedColumn
+import com.games.colormix.main.components.Animation.defaultEnterTransition
+import com.games.colormix.main.components.Animation.defaultExitTransition
+import com.games.colormix.manipulateColor
 
 
 @Composable
 fun Background(
+    fieldSize: Dp,
     backGround: List<List<ColorField>>,
 ) {
         Row(
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            modifier = Modifier.fillMaxSize()
+            horizontalArrangement = Arrangement.spacedBy(Padding.M),
+            modifier = Modifier.fillMaxHeight()
         ) {
             backGround.forEachIndexed { _, column ->
                 LazyAnimatedColumn(
@@ -43,7 +47,7 @@ fun Background(
                 ) { _, item ->
                     Card(
                         elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
-                        modifier = Modifier.size(45.dp).padding(bottom = VerticalPadding),
+                        modifier = Modifier.size(fieldSize).padding(bottom = Padding.M),
                     ) {
                         val largeRadialGradient = object : ShaderBrush() {
                             override fun createShader(size: Size): Shader {

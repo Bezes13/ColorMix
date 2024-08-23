@@ -1,4 +1,4 @@
-package com.games.colormix.game
+package com.games.colormix.main.components.Animation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -21,8 +21,8 @@ import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.games.colormix.data.Particle
+import com.games.colormix.manipulateColor
 import com.games.colormix.randomInRange
-import com.games.colormix.start.manipulateColor
 import com.games.colormix.toPx
 import kotlin.math.roundToInt
 

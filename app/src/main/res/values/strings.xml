@@ -17,5 +17,24 @@
     <string name="okay">Okay</string>
     <string name="tutorial">Tutorial</string>
     <string name="endless_mode">Endless Mode</string>
+    <string name="bomb_item">bomb</string>
+    <string name="rubik_item">rubik</string>
+    <string name="use_rubik_error">Use Rubik just on colored Blocks</string>
+    <string name="specialtype">SpecialType</string>
+    <string name="bomb">Bomb</string>
+    <string name="tuturial_bomb">Drag this on Single Blocks to destroy it.\n</string>
+    <string name="tutorial_bomb2">You gain Bombs by destroying 6 or more Color Blocks at the same time.</string>
+    <string name="rubik_s_cube">Rubik\'s Cube</string>
+    <string name="tutorial_rubik">"Drag this on a Color Block to destroy all Blocks with the same Color.\n\n "</string>
+    <string name="tutorial_rubik1">You gain Cubes after every 50th destroyed Block.\n</string>
+    <string name="tutorial_rubik2">The Progressbar shows you when you get a new Cube.</string>
+    <string name="rock">Rock</string>
+    <string name="tutorial_rock">Obstacle which doesn\'t move. It can only be destroyed by a bomb.</string>
+    <string name="destroy_color_blocks">Destroy Color Blocks</string>
+    <string name="tutorial_colored">This means destroy 6 green Blocks</string>
+    <string name="destroy_boxes">Destroy Boxes</string>
+    <string name="tutorial_box">Destroy Color Blocks next to Boxes to open/destroy them</string>
+    <string name="destroy_multiblocks">Destroy Multiblocks</string>
+    <string name="tutorial_multi">Destroy multiple Color Blocks at the same time. \nThis 4 times 5 at the same time of any color.</string>
 
 </resources>

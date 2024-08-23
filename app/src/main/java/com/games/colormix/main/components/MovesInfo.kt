@@ -1,4 +1,4 @@
-package com.games.colormix.game
+package com.games.colormix.main.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.dp
+import com.games.colormix.constants.Padding
 import com.games.colormix.data.LevelInfo
 import com.games.colormix.utils.MyText
 
@@ -20,7 +20,7 @@ fun RowScope.MovesInfo(currentLevel: LevelInfo, textSize: TextUnit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
-                .padding(10.dp)
+                .padding(Padding.L)
                 .fillMaxSize()
         ) {
             MyText(text = "Moves:", fontSize = textSize)

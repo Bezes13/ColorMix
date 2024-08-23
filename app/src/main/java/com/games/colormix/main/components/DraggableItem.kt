@@ -1,4 +1,4 @@
-package com.games.colormix.game
+package com.games.colormix.main.components
 
 import android.content.ClipData
 import android.content.Intent
@@ -38,6 +38,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.games.colormix.R
+import com.games.colormix.constants.BlockAnimationDuration
+import com.games.colormix.constants.Padding
 import com.games.colormix.utils.MyText
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -75,11 +77,11 @@ fun DraggableItem(
             MyText(
                 text = count.toString(),
                 fontSize = textSize,
-                modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp)
+                modifier = Modifier.padding(vertical = Padding.M, horizontal = Padding.L)
             )
             if (progress != null) {
                 val animatedPoints by animateFloatAsState(
-                    animationSpec = TweenSpec(500),
+                    animationSpec = TweenSpec(BlockAnimationDuration),
                     targetValue = progress,
                     label = "points",
                     finishedListener = {}
@@ -107,7 +109,7 @@ fun StripedProgressIndicator(
     Box(
         modifier = modifier
             .clip(clipShape)
-            .background(createStripeBrush(stripeColor, stripeColorSecondary, 5.dp))
+            .background(createStripeBrush(stripeColor, stripeColorSecondary, Padding.M))
             .height(size.height)
             .width(size.width)
     ) {

@@ -7,7 +7,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.TextUnit
 
 @Composable
@@ -23,7 +25,9 @@ fun MyText(
     minLines: Int = 1,
     onTextLayout: (TextLayoutResult) -> Unit = {},
     lineHeight: TextUnit = TextUnit.Unspecified,
-) {
+    textDecoration: TextDecoration? = null,
+    fontWeight: FontWeight? = null,
+    ) {
     Text(
         text = text,
         fontFamily = lonelyCoffeeFamily,
@@ -36,6 +40,8 @@ fun MyText(
         maxLines = maxLines,
         minLines = minLines,
         onTextLayout = onTextLayout,
-        lineHeight = lineHeight
+        lineHeight = lineHeight,
+        textDecoration = textDecoration,
+        fontWeight = fontWeight
     )
 }

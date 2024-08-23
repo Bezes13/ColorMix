@@ -38,24 +38,26 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.games.colormix.R
-import com.games.colormix.constants.LEVEL_SIZE_X
+import com.games.colormix.constants.BackgroundBlocks
+import com.games.colormix.constants.BorderWidthLarge
+import com.games.colormix.constants.MenuButtonShape
+import com.games.colormix.constants.Padding
 import com.games.colormix.data.ColorField
 import com.games.colormix.hackClassLoader
 import com.games.colormix.navigation.Screen
 import com.games.colormix.tutorial.PowerUpTutorial
 import com.games.colormix.tutorial.QuestTutorial
 import com.games.colormix.utils.MyText
-import java.lang.Float.max
 
 @Composable
 fun StartScreen(navigate: (String) -> Unit, startViewModel: StartViewModel = hiltViewModel()) {
     val viewState: StartViewState by startViewModel.viewState.collectAsState()
     val width = LocalConfiguration.current.screenWidthDp.dp
     val height = LocalConfiguration.current.screenHeightDp.dp
-
+    val fieldSize = (width / BackgroundBlocks)
 
     LaunchedEffect(Unit) {
-        val fieldSize = (width / (LEVEL_SIZE_X + 2))
+
         val backgroundSize = IntSize(((width / fieldSize) - 1).toInt(), ((height / fieldSize)  +2).toInt())
         startViewModel.backgroundSize = backgroundSize
         startViewModel.fillBackground()
@@ -64,6 +66,7 @@ fun StartScreen(navigate: (String) -> Unit, startViewModel: StartViewModel = hil
         navigate,
         startViewModel::getCurrentMaxLevel,
         width,
+        fieldSize,
         viewState.gameField
     )
 }
@@ -73,6 +76,7 @@ fun StartScreen(
     navigate: (String) -> Unit,
     getCurrentLevel: () -> Int,
     width: Dp,
+    fieldSize: Dp,
     backGround: List<List<ColorField>>,
 ) {
     val activity = (LocalContext.current as? Activity)
@@ -83,7 +87,7 @@ fun StartScreen(
     val menuItemSize = headerTextSize / 1.5f
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Background(backGround)
+        Background(fieldSize, backGround)
 
         when (tutorial) {
             1 -> QuestTutorial((width / 10)) {
@@ -107,9 +111,9 @@ fun StartScreen(
                 modifier = Modifier
                     .wrapContentSize()
                     .border(
-                        width = 4.dp,
+                        width = BorderWidthLarge,
                         color = Color.Black,
-                        shape = RoundedCornerShape(10.dp)
+                        shape = RoundedCornerShape(Padding.L)
                     ),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
 
@@ -119,12 +123,12 @@ fun StartScreen(
                     stringResource(id = R.string.app_name),
                     fontSize = headerTextSize,
                     style = TextStyle(color = MaterialTheme.colorScheme.primary),
-                    modifier = Modifier.padding(10.dp)
+                    modifier = Modifier.padding(Padding.L)
                 )
             }
 
             Column(
-                verticalArrangement = Arrangement.spacedBy(5.dp),
+                verticalArrangement = Arrangement.spacedBy(Padding.M),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 MenuButton(
@@ -151,7 +155,7 @@ private fun MenuButton(textId: Int, size: TextUnit, onClick: () -> Unit) {
     ElevatedButton(
         modifier = Modifier
             .fillMaxWidth(0.8f)
-            .border(width = 4.dp, color = Color.Black, shape = RoundedCornerShape(50.dp)),
+            .border(width = BorderWidthLarge, color = Color.Black, shape = MenuButtonShape),
         colors = ButtonDefaults.buttonColors(
             contentColor = MaterialTheme.colorScheme.secondary,
             containerColor = MaterialTheme.colorScheme.secondaryContainer
@@ -167,21 +171,16 @@ private fun MenuButton(textId: Int, size: TextUnit, onClick: () -> Unit) {
     }
 }
 
-fun manipulateColor(color: Color, factor: Float): Color {
-    val r = (color.red * factor)
-    val g = (color.green * factor)
-    val b = (color.blue * factor)
-    return Color(
-        max(0.0f, r),
-        max(0.0f, g),
-        max(0.0f, b),
-        color.alpha
-    )
-}
 
 @Preview
 @Composable
 fun StartPreview() {
     hackClassLoader()
-    //StartScreen(navigate = {}, { 3 }, listOf(), IntSize(1, 2), 90.dp) {}
+    StartScreen(
+        navigate = {},
+        getCurrentLevel = { 3 },
+        width = 1500.dp,
+        fieldSize = 90.dp,
+        backGround = listOf(),
+    )
 }

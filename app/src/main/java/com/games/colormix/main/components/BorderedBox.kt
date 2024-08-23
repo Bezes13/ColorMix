@@ -1,25 +1,25 @@
-package com.games.colormix.game
+package com.games.colormix.main.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.unit.dp
+import com.games.colormix.constants.BorderWidth
 
 @Composable
 fun BorderedBox(
     modifier: Modifier = Modifier,
     borderStroke: BorderStroke = BorderStroke(
-        3.dp,
+        BorderWidth,
         MaterialTheme.colorScheme.primary.copy(0.3f)
     ),
-    shape: Shape = RoundedCornerShape(8.dp),
+    shape: Shape = CardDefaults.shape,
     content: @Composable () -> Unit
 ) {
     Box(

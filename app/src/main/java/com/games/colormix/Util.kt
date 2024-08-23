@@ -1,6 +1,7 @@
 package com.games.colormix
 
 import android.content.res.Resources
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import java.net.URL
 import kotlin.random.Random
@@ -15,12 +16,27 @@ fun Float.dpToPx() = this * Resources.getSystem().displayMetrics.density
 
 private val random = Random(1232)
 fun Float.randomTillZero() = this * random.nextFloat()
-fun randomInRange(min:Float,max:Float) = min + (max - min).randomTillZero()
-fun randomBoolean(trueProbabilityPercentage: Int) = random.nextFloat() < trueProbabilityPercentage/100f
+fun randomInRange(min: Float, max: Float) = min + (max - min).randomTillZero()
+fun randomBoolean(trueProbabilityPercentage: Int) =
+    random.nextFloat() < trueProbabilityPercentage / 100f
 
 fun hackClassLoader() {
     val classLoader = ClassLoader.getSystemClassLoader()
     val addURL = classLoader.javaClass.getMethod("addURL", URL::class.java)
     addURL.isAccessible = true
     addURL.invoke(classLoader, URL("file:///path/to/dir/with/resources"))
+}
+
+fun getLevelString(level: Int) = "LEVEL$level"
+
+fun manipulateColor(color: Color, factor: Float): Color {
+    val r = (color.red * factor)
+    val g = (color.green * factor)
+    val b = (color.blue * factor)
+    return Color(
+        r,
+        g,
+        b,
+        color.alpha
+    )
 }

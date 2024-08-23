@@ -30,29 +30,28 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.games.colormix.R
 import com.games.colormix.constants.LEVEL_SIZE_X
 import com.games.colormix.constants.RUBIK_GAIN_MULTI_BLOCK
+import com.games.colormix.constants.Padding
+import com.games.colormix.constants.infoCardHeightMultiplier
 import com.games.colormix.data.Animation
 import com.games.colormix.data.ColorField
 import com.games.colormix.data.LevelInfo
-import com.games.colormix.game.AnimationGrid
-import com.games.colormix.game.BorderedBox
-import com.games.colormix.game.DraggableItem
-import com.games.colormix.game.Field
-import com.games.colormix.game.GainPowerUp
-import com.games.colormix.game.LazyAnimatedColumn
-import com.games.colormix.game.LevelDoneDialog
-import com.games.colormix.game.LevelInfoCard
+import com.games.colormix.main.components.Animation.AnimationGrid
+import com.games.colormix.main.components.BorderedBox
+import com.games.colormix.main.components.DraggableItem
+import com.games.colormix.main.components.Field
+import com.games.colormix.main.components.Animation.GainPowerUp
+import com.games.colormix.main.components.Animation.LazyAnimatedColumn
+import com.games.colormix.main.components.LevelDoneDialog
+import com.games.colormix.main.components.LevelInfoCard
 import com.games.colormix.game.LevelLists
-import com.games.colormix.game.MovesInfo
-import com.games.colormix.game.QuestInfo
-import com.games.colormix.game.defaultEnterTransition
-import com.games.colormix.game.defaultExitTransition
+import com.games.colormix.main.components.MovesInfo
+import com.games.colormix.main.components.QuestInfo
 import com.games.colormix.hackClassLoader
+import com.games.colormix.main.components.TopAppBar
 import com.games.colormix.navigation.Screen
 import com.games.colormix.tutorial.PowerUpTutorial
 import com.games.colormix.tutorial.QuestTutorial
 import com.games.colormix.utils.MyText
-
-val VerticalPadding = 5.dp
 
 @Composable
 fun MainScreen(navigate: (String) -> Unit, mainViewModel: MainViewModel = hiltViewModel()) {
@@ -94,7 +93,7 @@ fun MainScreenContent(
     val width = LocalConfiguration.current.screenWidthDp.dp
     val height = LocalConfiguration.current.screenHeightDp.dp
     val fieldSize = (width / (LEVEL_SIZE_X + 2))
-    val infoCardsHeight = (height / 8)
+    val infoCardsHeight = (height / infoCardHeightMultiplier)
     val levelTextSize = with(LocalDensity.current) { fieldSize.toSp() }
     val infoTextSize = levelTextSize / 2
 
@@ -104,6 +103,7 @@ fun MainScreenContent(
         label = "points",
         finishedListener = {}
     )
+
     val endless = currentLevel.level == 0
 
     when (dialog) {
@@ -152,18 +152,21 @@ fun MainScreenContent(
             }
         }
     }
+    val sizeMultiplier = 1.5f
+    val questInfoMultiplier = 0.7f
+    val pointDigits = 6
     Scaffold(
         topBar = { TopAppBar(eventListener, navigate) },
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(5.dp),
+            verticalArrangement = Arrangement.spacedBy(Padding.M),
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(it)
                 .background(MaterialTheme.colorScheme.primaryContainer),
         ) {
-            LevelInfoCard(modifier = Modifier.height(fieldSize * 1.5f)) {
+            LevelInfoCard(modifier = Modifier.height(fieldSize * sizeMultiplier)) {
                 MyText(
                     if (endless) stringResource(id = R.string.endless_mode) else stringResource(
                         id = R.string.level,
@@ -190,7 +193,7 @@ fun MainScreenContent(
                                     .height(infoCardsHeight)
                             ) {
                                 MovesInfo(currentLevel, infoTextSize)
-                                QuestInfo(currentLevel, fieldSize * 0.7f)
+                                QuestInfo(currentLevel, fieldSize * questInfoMultiplier)
                             }
                         }
                         Row(
@@ -202,15 +205,15 @@ fun MainScreenContent(
                         ) {
                             LevelInfoCard(modifier = Modifier.height(fieldSize)) {
                                 MyText(
-                                    text = animatedPoints.toString().padStart(6, '0'),
-                                    fontSize = with(LocalDensity.current) { (fieldSize / 1.5f).toSp() },
-                                    modifier = Modifier.padding(vertical = 5.dp, horizontal = 15.dp)
+                                    text = animatedPoints.toString().padStart(pointDigits, '0'),
+                                    fontSize = with(LocalDensity.current) { (fieldSize / sizeMultiplier).toSp() },
+                                    modifier = Modifier.padding(vertical = Padding.M, horizontal = Padding.XL)
                                 )
                             }
                             Row {
-                                DraggableItem("bomb", bombCount, R.drawable.bomb, fieldSize)
+                                DraggableItem(stringResource(R.string.bomb_item), bombCount, R.drawable.bomb, fieldSize)
                                 DraggableItem(
-                                    label = "rubik",
+                                    label = stringResource(R.string.rubik_item),
                                     count = rubikCount,
                                     R.drawable.rubik,
                                     fieldSize,
@@ -226,8 +229,8 @@ fun MainScreenContent(
                         contentAlignment = Alignment.Center
                     ) {
                         Row(
-                            horizontalArrangement = Arrangement.spacedBy(5.dp),
-                            modifier = Modifier.padding(10.dp)
+                            horizontalArrangement = Arrangement.spacedBy(Padding.M),
+                            modifier = Modifier.padding(Padding.L)
                         ) {
                             gameField.forEachIndexed { cIndex, column ->
 
@@ -235,15 +238,13 @@ fun MainScreenContent(
                                     items = column,
                                     keyProvider = { item -> item.toString() },
                                     lazyModifier = { Modifier.animateItem() },
-                                    enterTransition = defaultEnterTransition ,
-                                    exitTransition = defaultExitTransition
                                 ) { _, item ->
                                     Field(
                                         item,
                                         fieldSize,
                                         Pair(cIndex, column.indexOf(item)),
                                         eventListener,
-                                        Modifier.padding(bottom = VerticalPadding)
+                                        Modifier.padding(bottom = Padding.M)
                                     )
                                 }
                             }
