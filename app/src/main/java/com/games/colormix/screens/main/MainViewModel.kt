@@ -166,7 +166,7 @@ class MainViewModel @Inject constructor(
                 state.bombCount < 1 ||
                 explode.specialType == SpecialType.Box ||
                 explode.specialType == SpecialType.OpenBox
-                ) {
+            ) {
                 return
             }
             val gameBoard = removeBlocksFromGameBoard(state.gameField, mutableListOf(pos))
@@ -249,7 +249,8 @@ class MainViewModel @Inject constructor(
                         } else {
                             quest.amount - blocksToDestroy.filter { pos ->
                                 state.gameField[pos.first][pos.second].specialType == quest.specialType &&
-                                        state.gameField[pos.first][pos.second].color == quest.color }.size
+                                        state.gameField[pos.first][pos.second].color == quest.color
+                            }.size
 
                         }
                     )
@@ -312,8 +313,8 @@ class MainViewModel @Inject constructor(
         }
 
         val columns = mutableListOf<List<ColorField?>>()
-        for (i in gameField.indices) {
-            columns.add(pushBlocksDown(gameField[i].toMutableList()))
+        gameField.forEach {
+            columns.add(pushBlocksDown(it.toMutableList()))
         }
 
         return fillEmptySpace(columns)
@@ -345,7 +346,12 @@ class MainViewModel @Inject constructor(
         while (anyMove) {
             anyMove = false
             for (i in 0..<list.size - 1) {
-                if (list[i] != null && list[i]?.specialType != SpecialType.Rock && list[i + 1] == null) {
+                if (list[i] != null &&
+                    list[i]?.specialType != SpecialType.Rock &&
+                    (list[i + 1] == null ||
+                            (list[i + 1]?.color == Color.Transparent &&
+                                    list[i + 1]?.specialType == SpecialType.None)))
+                {
                     anyMove = true
                     list[i + 1] = list[i]
                     list[i] = null
