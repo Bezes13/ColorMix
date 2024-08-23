@@ -57,8 +57,7 @@ fun StartScreen(navigate: (String) -> Unit, startViewModel: StartViewModel = hil
     val fieldSize = (width / BackgroundBlocks)
 
     LaunchedEffect(Unit) {
-
-        val backgroundSize = IntSize(((width / fieldSize) - 1).toInt(), ((height / fieldSize)  +2).toInt())
+        val backgroundSize = IntSize(((width / fieldSize) - 1).toInt(), ((height / fieldSize)).toInt())
         startViewModel.backgroundSize = backgroundSize
         startViewModel.fillBackground()
     }
