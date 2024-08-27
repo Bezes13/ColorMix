@@ -34,7 +34,7 @@ import com.games.colormix.constants.BackgroundBlocks
 import com.games.colormix.constants.ItemRowCount
 import com.games.colormix.constants.Padding
 import com.games.colormix.data.ColorField
-import com.games.colormix.data.startColor
+import com.games.colormix.data.randomBlock
 import com.games.colormix.game.LevelLists
 import com.games.colormix.navigation.Screen
 import com.games.colormix.screens.start.Background
@@ -55,7 +55,7 @@ fun LevelSelectionScreen(currentLevel: Int, navigate: (String) -> Unit, getPoint
     var id = 0
     val background by remember {
         mutableStateOf((1 until BackgroundBlocks).map {
-            Array(BackgroundBlocks * 2) { ColorField(id++, startColor()) }
+            Array(BackgroundBlocks * 2) { ColorField(id++, randomBlock()) }
                 .toList()
         })
     }

@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.Dp
 import com.games.colormix.constants.Padding
 import com.games.colormix.data.LevelInfo
@@ -32,7 +31,6 @@ fun QuestTutorialItem(quest: LevelQuest, title: String, explanation: String, fie
                 MyText(
                     text = title,
                     fontWeight = FontWeight.Bold,
-                    textDecoration = TextDecoration.Underline,
                     fontSize = MaterialTheme.typography.headlineSmall.fontSize
                 )
                 Spacer(modifier = Modifier.size(Padding.L))

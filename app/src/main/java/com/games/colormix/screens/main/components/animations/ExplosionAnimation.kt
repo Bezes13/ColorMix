@@ -1,4 +1,4 @@
-package com.games.colormix.screens.main.components.Animation
+package com.games.colormix.screens.main.components.animations
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable

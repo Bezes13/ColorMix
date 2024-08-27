@@ -8,19 +8,19 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.games.colormix.constants.Padding
+import com.games.colormix.data.BlockType
 import com.games.colormix.data.LevelInfo
 import com.games.colormix.data.LevelQuest
-import com.games.colormix.data.SpecialType
 import com.games.colormix.utils.MyText
 
 @Composable
@@ -70,19 +70,21 @@ private fun QuestInfoItem(
                 MyText(text = quest.amount.toString(), fontSize = infoTextSize)
                 Box {
                     if (quest.multiBlock != null) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(Padding.S)
-                        ) {
-                            MyText(text = quest.multiBlock.toString() + "#", fontSize = infoTextSize)
-                            QuestObject(quest = quest, fieldObjectSize)
-                            QuestObject(quest = quest, fieldObjectSize)
-                            QuestObject(quest = quest, fieldObjectSize)
+                        BorderedBox {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(Padding.S),
+                                modifier = Modifier.padding(Padding.M)
+                            ) {
+                                MyText(text = quest.multiBlock.toString(), fontSize = infoTextSize)
+                                QuestObject(quest = quest, fieldObjectSize)
+                            }
                         }
+
                     } else {
                         Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
                             QuestObject(quest = quest, fieldObjectSize)
-                            if (quest.specialType == SpecialType.None) {
+                            if (!quest.block.special) {
                                 QuestObject(quest = quest, fieldObjectSize)
                             }
                         }
@@ -102,7 +104,7 @@ fun QuestInfoPreview() {
             .fillMaxWidth(0.95f)
             .height(80.dp)
     ) {
-        QuestInfo(currentLevel = LevelInfo(listOf(LevelQuest(color = Color.Green, amount = 8))), 20.dp)
+        QuestInfo(currentLevel = LevelInfo(listOf(LevelQuest(BlockType.Earth, amount = 8))), 20.dp)
     }
 }
 
@@ -115,6 +117,6 @@ fun QuestInfoPreview2() {
             .fillMaxWidth(0.95f)
             .height(80.dp)
     ) {
-        QuestInfo(currentLevel = LevelInfo(listOf(LevelQuest(amount = 8, multiBlock = 5))), 30.dp)
+        QuestInfo(currentLevel = LevelInfo(listOf(LevelQuest(BlockType.Empty, amount = 8, multiBlock = 5))), 30.dp)
     }
 }

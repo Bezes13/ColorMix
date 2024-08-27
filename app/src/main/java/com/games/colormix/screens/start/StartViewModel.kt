@@ -2,21 +2,20 @@ package com.games.colormix.screens.start
 
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.IntSize
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.games.colormix.constants.BackgroundBlocks
 import com.games.colormix.constants.CurrentLevelString
+import com.games.colormix.data.BlockType
 import com.games.colormix.data.ColorField
 import com.games.colormix.data.LevelInfo
 import com.games.colormix.data.LevelQuest
 import com.games.colormix.data.SpecialBlockPlacement
-import com.games.colormix.data.SpecialType
 import com.games.colormix.data.estimateMoves
 import com.games.colormix.data.generateObjectDefinition
 import com.games.colormix.data.pushBlocksDown
-import com.games.colormix.data.startColor
+import com.games.colormix.data.randomBlock
 import com.games.colormix.game.LevelLists
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -103,25 +102,24 @@ class StartViewModel @Inject constructor(
     }
 
     private fun removeBlocksFromGameBoard(
-        gameBoard: List<List<ColorField?>>,
+        gameBoard: List<List<ColorField>>,
         blocksToDestroy: MutableList<Pair<Int, Int>>
     ) = gameBoard.mapIndexed { column, colorFields ->
         colorFields.mapIndexed { row, colorField ->
-            if (colorField == null) null else
-                if (blocksToDestroy.contains(Pair(column, row))
-                ) if (colorField.specialType == SpecialType.Box) colorField.copy(
-                    specialType = SpecialType.OpenBox
-                ) else null else colorField
+            if (blocksToDestroy.contains(Pair(column, row))
+            ) if (colorField.type == BlockType.Box) colorField.copy(
+                type = BlockType.FallingBox
+            ) else null else colorField
         }
     }
 
     private fun isDestroyable(
         pos: Pair<Int, Int>,
         fieldsToDestroy: MutableList<Pair<Int, Int>>,
-        board: List<List<ColorField?>>
+        board: List<List<ColorField>>
     ): Boolean {
         val field = board[pos.first][pos.second]
-        if (field?.specialType != SpecialType.None) {
+        if (field.type.special) {
             return false
         }
         hasSameColor(
@@ -146,7 +144,7 @@ class StartViewModel @Inject constructor(
             pair.first >= 0 &&
             pair.second >= 0 &&
             pair.first < gameBoard.size &&
-            pair.second < gameBoard[pair.first].size && (gameBoard[pair.first][pair.second].color == field.color)
+            pair.second < gameBoard[pair.first].size && (gameBoard[pair.first][pair.second].type == field.type)
         )
             pair else null
     }
@@ -154,7 +152,7 @@ class StartViewModel @Inject constructor(
     private fun getBlocksToDestroy(
         blocksToDestroy: MutableList<Pair<Int, Int>>,
         pos: Pair<Int, Int>,
-        board: List<List<ColorField?>>
+        board: List<List<ColorField>>
     ): Boolean {
         blocksToDestroy.add(pos)
         if (!isDestroyable(pos, blocksToDestroy, board)) {
@@ -182,7 +180,7 @@ class StartViewModel @Inject constructor(
             var typeRandom = Math.random()
             var quest =
                 if (typeRandom < 0.33) createColorQuest() else if (typeRandom < 0.66) createMultiQuest() else createBoxQuest()
-            while (quests.any { it.specialType == quest.specialType && it.color == quest.color }) {
+            while (quests.any { it.block == quest.block }) {
 
                 typeRandom = Math.random()
                 quest =
@@ -191,14 +189,14 @@ class StartViewModel @Inject constructor(
             quests.add(quest)
         }
         quests.forEach { quest ->
-            if (quest.specialType == SpecialType.Box || quest.specialType == SpecialType.OpenBox) {
+            if (quest.block == BlockType.Box || quest.block == BlockType.FallingBox) {
                 for (i in 1..quest.amount) {
                     var pos = Pair(Random.nextInt(0, 6), Random.nextInt(0, 7))
                     while (specials.any { it.pos == pos }) {
 
                         pos = Pair(Random.nextInt(0, 6), Random.nextInt(0, 7))
                     }
-                    specials.add(SpecialBlockPlacement(quest.specialType, pos))
+                    specials.add(SpecialBlockPlacement(quest.block, pos))
                 }
             }
         }
@@ -208,16 +206,15 @@ class StartViewModel @Inject constructor(
 
                 pos = Pair(Random.nextInt(0, 6), Random.nextInt(0, 7))
             }
-            specials.add(SpecialBlockPlacement(SpecialType.Rock, pos))
+            specials.add(SpecialBlockPlacement(BlockType.Blocker, pos))
         }
         quests =
-            quests.map { if (it.specialType == SpecialType.Box) it.copy(specialType = SpecialType.OpenBox) else it }
+            quests.map { if (it.block == BlockType.Box) it.copy(block = BlockType.FallingBox) else it }
                 .toMutableList()
-        if (quests.size == 2 && quests[0].specialType == SpecialType.OpenBox && quests[1].specialType == SpecialType.OpenBox) {
+        if (quests.size == 2 && quests[0].block == BlockType.FallingBox && quests[1].block == BlockType.FallingBox) {
             quests = listOf(
                 LevelQuest(
-                    SpecialType.OpenBox,
-                    Color.Transparent,
+                    BlockType.FallingBox,
                     quests[0].amount + quests[1].amount,
                     null
                 )
@@ -231,18 +228,17 @@ class StartViewModel @Inject constructor(
 
     private fun createBoxQuest(): LevelQuest {
         return LevelQuest(
-            if (Math.random() > 0.5) SpecialType.OpenBox else SpecialType.Box,
-            null,
+            if (Math.random() > 0.5) BlockType.FallingBox else BlockType.Box,
             Random.nextInt(1, 10)
         )
     }
 
     private fun createMultiQuest(): LevelQuest {
-        return LevelQuest(SpecialType.None, null, Random.nextInt(1, 10), Random.nextInt(5, 10))
+        return LevelQuest(BlockType.Empty, Random.nextInt(1, 10), Random.nextInt(5, 10))
     }
 
     private fun createColorQuest(): LevelQuest {
-        return LevelQuest(SpecialType.None, startColor(), Random.nextInt(4, 20), null)
+        return LevelQuest(randomBlock(), Random.nextInt(4, 20), null)
     }
 
 

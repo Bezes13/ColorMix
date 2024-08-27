@@ -1,7 +1,5 @@
 package com.games.colormix.data
 
-
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.games.colormix.utils.mapInRange
 import com.games.colormix.utils.randomBoolean
@@ -10,7 +8,6 @@ import com.games.colormix.utils.toPx
 import kotlin.math.pow
 
 class Particle(
-    val color: Color,
     val maxHorizontalDisplacement: Float,
     val maxVerticalDisplacement: Float,
 ) {

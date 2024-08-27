@@ -2,7 +2,6 @@ package com.games.colormix.screens.main
 
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,10 +12,10 @@ import com.games.colormix.constants.LEVEL_SIZE_Y
 import com.games.colormix.constants.RUBIK_GAIN_MULTI_BLOCK
 import com.games.colormix.constants.TutorialString
 import com.games.colormix.data.Animation
+import com.games.colormix.data.BlockType
 import com.games.colormix.data.ColorField
 import com.games.colormix.data.LevelQuest
 import com.games.colormix.data.SpecialBlockPlacement
-import com.games.colormix.data.SpecialType
 import com.games.colormix.data.estimateMoves
 import com.games.colormix.game.LevelLists
 import com.games.colormix.utils.getLevelString
@@ -73,14 +72,14 @@ class MainViewModel @Inject constructor(
 
     private fun destroyColor(pos: Pair<Int, Int>) {
         _viewState.update { state ->
-            val explodeColor = state.gameField[pos.first][pos.second].color
+            val explodeBlock = state.gameField[pos.first][pos.second].type
 
-            if (state.rubikCount <= 0 || explodeColor == null) {
+            if (state.rubikCount <= 0 || explodeBlock.special) {
                 return
             }
             val blocksToRemove = state.gameField.mapIndexed { column, colorFields ->
                 colorFields.mapIndexed { row, colorField ->
-                    if (colorField.color == explodeColor) Pair(
+                    if (colorField.type == explodeBlock) Pair(
                         column,
                         row
                     ) else null
@@ -89,7 +88,7 @@ class MainViewModel @Inject constructor(
             val gameBoard = removeBlocksFromGameBoard(state.gameField, blocksToRemove)
 
             state.copy(
-                animationAt = blocksToRemove.map { Animation(it, explodeColor) },
+                animationAt = blocksToRemove.map { Animation(it, explodeBlock) },
                 gameField = gameBoard,
                 rubikCount = state.rubikCount - 1
             )
@@ -151,8 +150,7 @@ class MainViewModel @Inject constructor(
         return columns.mapIndexed { index, row ->
             row.mapIndexed { inner, item ->
                 if (specialBlocks.any { it.pos == Pair(index, inner) }) item.copy(
-                    specialType = specialBlocks.first { it.pos == Pair(index, inner) }.specialType,
-                    color = null
+                    type = specialBlocks.first { it.pos == Pair(index, inner) }.specialType,
                 ) else item
             }
         }
@@ -164,15 +162,25 @@ class MainViewModel @Inject constructor(
 
             if (
                 state.bombCount < 1 ||
-                explode.specialType == SpecialType.Box ||
-                explode.specialType == SpecialType.OpenBox
+                explode.type == BlockType.Empty ||
+                explode.type == BlockType.Box ||
+                explode.type == BlockType.FallingBox
             ) {
                 return
             }
-            val gameBoard = removeBlocksFromGameBoard(state.gameField, mutableListOf(pos))
+
+            val blocksToDestroy = mutableListOf(pos)
+            if (explode.type == BlockType.Blocker){
+                state.gameField[pos.first].forEachIndexed { index, block ->
+                    if (index>pos.second && state.gameField[pos.first][index].type == BlockType.Empty){
+                        blocksToDestroy.add(Pair(pos.first, index))
+                    }
+                }
+            }
+            val gameBoard = removeBlocksFromGameBoard(state.gameField, blocksToDestroy)
 
             state.copy(
-                animationAt = state.animationAt.plus(Animation(pos, Color.Black)),
+                animationAt = state.animationAt.plus(Animation(pos, explode.type)),
                 gameField = gameBoard,
                 bombCount = state.bombCount - 1,
             )
@@ -187,7 +195,8 @@ class MainViewModel @Inject constructor(
                     ColorField(colorFieldNextId++)
                 } else {
                     fromTop = false
-                    item ?: ColorField(colorFieldNextId++, color = Color.Transparent)
+                    if (item == null)
+                    ColorField(colorFieldNextId++, type = BlockType.Empty) else item
                 }
             }
         }
@@ -202,7 +211,7 @@ class MainViewModel @Inject constructor(
             }
             val gameBoard = removeBlocksFromGameBoard(state.gameField, blocksToDestroy)
             val blockCount =
-                blocksToDestroy.filter { pos -> state.gameField[pos.first][pos.second].specialType == SpecialType.None }.size
+                blocksToDestroy.filter { pos -> !state.gameField[pos.first][pos.second].type.special }.size
             val updatedQuests = updateQuests(state, blockCount, blocksToDestroy)
 
             val newPoints = getPointsAndSaveOnLevelDone(state, blockCount, updatedQuests)
@@ -214,7 +223,7 @@ class MainViewModel @Inject constructor(
                 ),
                 animationAt = state.animationAt.plus(
                     blocksToDestroy.map {
-                        Animation(it, field.color ?: Color.Transparent)
+                        Animation(it, field.type)
                     }
                 ),
                 gameField = gameBoard,
@@ -248,8 +257,7 @@ class MainViewModel @Inject constructor(
                             quest.amount - 1
                         } else {
                             quest.amount - blocksToDestroy.filter { pos ->
-                                state.gameField[pos.first][pos.second].specialType == quest.specialType &&
-                                        state.gameField[pos.first][pos.second].color == quest.color
+                                state.gameField[pos.first][pos.second].type == quest.block
                             }.size
 
                         }
@@ -284,11 +292,11 @@ class MainViewModel @Inject constructor(
     private fun noMovesAvailable(gameField: List<List<ColorField>>): Boolean {
         gameField.forEachIndexed { column, colorFields ->
             colorFields.forEachIndexed { row, colorField ->
-                if (colorField.specialType == SpecialType.None) {
-                    if (gameField[column].size > row + 1 && colorField.color == gameField[column][row + 1].color) {
+                if (!colorField.type.special) {
+                    if (gameField[column].size > row + 1 && colorField.type == gameField[column][row + 1].type) {
                         return false
                     }
-                    if (gameField.size > column + 1 && colorField.color == gameField[column + 1][row].color) {
+                    if (gameField.size > column + 1 && colorField.type == gameField[column + 1][row].type) {
                         return false
                     }
                 }
@@ -304,11 +312,16 @@ class MainViewModel @Inject constructor(
 
         val gameField = gameBoard.mapIndexed { column, colorFields ->
             colorFields.mapIndexed { row, colorField ->
-                if (colorField == null) null else
+                if (colorField == null) {
+                    null
+                } else
                     if (blocksToDestroy.contains(Pair(column, row))
-                    ) if (colorField.specialType == SpecialType.Box) colorField.copy(
-                        specialType = SpecialType.OpenBox
-                    ) else null else colorField
+                    ) {
+                        if (colorField.type == BlockType.Box)
+                            colorField.copy(type = BlockType.FallingBox) else null
+                    } else {
+                        colorField
+                    }
             }
         }
 
@@ -323,7 +336,7 @@ class MainViewModel @Inject constructor(
     private fun getBlocksToDestroy(
         blocksToDestroy: MutableList<Pair<Int, Int>>,
         pos: Pair<Int, Int>,
-        board: List<List<ColorField?>>
+        board: List<List<ColorField>>
     ): Boolean {
         blocksToDestroy.add(pos)
         if (!isDestroyable(pos, blocksToDestroy, board)) {
@@ -347,10 +360,8 @@ class MainViewModel @Inject constructor(
             anyMove = false
             for (i in 0..<list.size - 1) {
                 if (list[i] != null &&
-                    list[i]?.specialType != SpecialType.Rock &&
-                    (list[i + 1] == null ||
-                            (list[i + 1]?.color == Color.Transparent &&
-                                    list[i + 1]?.specialType == SpecialType.None)))
+                    list[i]?.type != BlockType.Blocker &&
+                    (list[i + 1] == null ))//|| (list[i + 1]?.type == BlockType.Empty)))
                 {
                     anyMove = true
                     list[i + 1] = list[i]
@@ -378,10 +389,10 @@ class MainViewModel @Inject constructor(
     private fun isDestroyable(
         pos: Pair<Int, Int>,
         fieldsToDestroy: MutableList<Pair<Int, Int>>,
-        board: List<List<ColorField?>>
+        board: List<List<ColorField>>
     ): Boolean {
         val field = board[pos.first][pos.second]
-        if (field?.specialType != SpecialType.None) {
+        if (field.type.special) {
             return false
         }
         hasSameColor(
@@ -396,7 +407,7 @@ class MainViewModel @Inject constructor(
         hasSameColor(
             Pair(pos.first, pos.second - 1), field
         )?.let { if (!fieldsToDestroy.contains(it)) fieldsToDestroy.add(it) }
-        return fieldsToDestroy.filter { board[it.first][it.second]?.specialType == SpecialType.None }.size > 1
+        return fieldsToDestroy.filter { !board[it.first][it.second].type.special }.size > 1
     }
 
     private fun hasSameColor(pair: Pair<Int, Int>, field: ColorField?): Pair<Int, Int>? {
@@ -406,9 +417,9 @@ class MainViewModel @Inject constructor(
             pair.first >= 0 &&
             pair.second >= 0 &&
             pair.first < gameBoard.size &&
-            pair.second < gameBoard[pair.first].size && (gameBoard[pair.first][pair.second].color == field.color ||
-                    gameBoard[pair.first][pair.second].specialType == SpecialType.Box ||
-                    gameBoard[pair.first][pair.second].specialType == SpecialType.OpenBox)
+            pair.second < gameBoard[pair.first].size && (gameBoard[pair.first][pair.second].type == field.type ||
+                    gameBoard[pair.first][pair.second].type == BlockType.Box ||
+                    gameBoard[pair.first][pair.second].type == BlockType.FallingBox)
         )
             pair else null
     }

@@ -64,7 +64,7 @@ fun PowerUpTutorial(dismiss: () -> Unit) {
                             stringResource(R.string.bomb),
                             stringResource(R.string.tuturial_bomb) +
                                     stringResource(R.string.tutorial_bomb2),
-                            R.drawable.bomb
+                            R.drawable.meteor
                         )
                     }
                     Divider(color = MaterialTheme.colorScheme.secondary)
@@ -80,7 +80,7 @@ fun PowerUpTutorial(dismiss: () -> Unit) {
                             stringResource(R.string.tutorial_rubik) +
                                     stringResource(R.string.tutorial_rubik1) +
                                     stringResource(R.string.tutorial_rubik2),
-                            R.drawable.rubik,
+                            R.drawable.gun,
                             0.3f
                         )
                     }
@@ -103,7 +103,7 @@ fun PowerUpTutorial(dismiss: () -> Unit) {
                             MyText(text = stringResource(R.string.tutorial_rock))
                         }
                         Image(
-                            painter = painterResource(id = R.drawable.rock),
+                            painter = painterResource(id = R.drawable.alien),
                             contentDescription = "Rock",
                         )
                     }

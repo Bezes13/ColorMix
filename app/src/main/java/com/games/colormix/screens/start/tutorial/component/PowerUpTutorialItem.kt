@@ -8,7 +8,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.games.colormix.constants.Padding
 import com.games.colormix.screens.main.components.DraggableItem
@@ -19,7 +18,7 @@ fun PowerUpTutorialItem(title: String, explanation: String, @DrawableRes res: In
 
         LazyColumn {
             item {
-                MyText(text = title, fontWeight = FontWeight.Bold, textDecoration = TextDecoration.Underline, fontSize = MaterialTheme.typography.headlineMedium.fontSize)
+                MyText(text = title, fontWeight = FontWeight.Bold, fontSize = MaterialTheme.typography.headlineMedium.fontSize)
                 Spacer(modifier = Modifier.size(Padding.L))
                 MyText(text = explanation)
             }

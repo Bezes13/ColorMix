@@ -1,4 +1,4 @@
-package com.games.colormix.screens.main.components.Animation
+package com.games.colormix.screens.main.components.animations
 
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateFloatAsState
@@ -11,12 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import com.games.colormix.constants.BlockAnimationDuration
 import com.games.colormix.constants.ExplosionDuration
 import com.games.colormix.constants.Padding
 import com.games.colormix.data.Animation
+import com.games.colormix.data.BlockType
 import com.games.colormix.data.ColorField
 import com.games.colormix.screens.main.MainViewEvent
 
@@ -55,7 +55,7 @@ private fun AnimationAt(
     ) {
         val animation = animateAt.firstOrNull { it.pos == pos }
         val progress by animateFloatAsState(
-            animationSpec = TweenSpec(if (animation?.color == Color.Black) ExplosionDuration else BlockAnimationDuration),
+            animationSpec = TweenSpec(if (animation?.block == BlockType.Blocker) ExplosionDuration else BlockAnimationDuration),
             targetValue = if (animation != null) 1f else 0f,
             label = "progress",
             finishedListener = {
@@ -63,10 +63,10 @@ private fun AnimationAt(
             }
         )
         if (animation != null) {
-            if (animation.color == Color.Black) {
+            if (animation.block == BlockType.Blocker) {
                 BombAnimation(progress)
             } else {
-                BlockExplosion(progress = progress, animation.color)
+                BlockExplosion(progress = progress, animation.block)
             }
         }
     }

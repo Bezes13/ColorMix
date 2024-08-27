@@ -38,9 +38,9 @@ import com.games.colormix.data.LevelInfo
 import com.games.colormix.game.LevelLists
 import com.games.colormix.utils.hackClassLoader
 import com.games.colormix.navigation.Screen
-import com.games.colormix.screens.main.components.Animation.AnimationGrid
-import com.games.colormix.screens.main.components.Animation.GainPowerUp
-import com.games.colormix.screens.main.components.Animation.LazyAnimatedColumn
+import com.games.colormix.screens.main.components.animations.AnimationGrid
+import com.games.colormix.screens.main.components.animations.GainPowerUp
+import com.games.colormix.screens.main.components.animations.LazyAnimatedColumn
 import com.games.colormix.screens.main.components.BorderedBox
 import com.games.colormix.screens.main.components.DraggableItem
 import com.games.colormix.screens.main.components.Field
@@ -92,7 +92,7 @@ fun MainScreenContent(
 ) {
     val width = LocalConfiguration.current.screenWidthDp.dp
     val height = LocalConfiguration.current.screenHeightDp.dp
-    val fieldSize = (width / (LEVEL_SIZE_X + 2))
+    val fieldSize = (width / (LEVEL_SIZE_X + 1))
     val infoCardsHeight = (height / infoCardHeightMultiplier)
     val levelTextSize = with(LocalDensity.current) { fieldSize.toSp() }
     val infoTextSize = levelTextSize / 2
@@ -211,11 +211,11 @@ fun MainScreenContent(
                                 )
                             }
                             Row {
-                                DraggableItem(stringResource(R.string.bomb_item), bombCount, R.drawable.bomb, fieldSize)
+                                DraggableItem(stringResource(R.string.bomb_item), bombCount, R.drawable.meteor, fieldSize)
                                 DraggableItem(
                                     label = stringResource(R.string.rubik_item),
                                     count = rubikCount,
-                                    R.drawable.rubik,
+                                    R.drawable.gun,
                                     fieldSize,
                                     blocksAcc.toFloat() / RUBIK_GAIN_MULTI_BLOCK.toFloat()
                                 )
@@ -229,7 +229,7 @@ fun MainScreenContent(
                         contentAlignment = Alignment.Center
                     ) {
                         Row(
-                            horizontalArrangement = Arrangement.spacedBy(Padding.M),
+                            horizontalArrangement = Arrangement.Center,
                             modifier = Modifier.padding(Padding.L)
                         ) {
                             gameField.forEachIndexed { cIndex, column ->
@@ -244,14 +244,14 @@ fun MainScreenContent(
                                         fieldSize,
                                         Pair(cIndex, column.indexOf(item)),
                                         eventListener,
-                                        Modifier.padding(bottom = Padding.M)
+                                        Modifier
                                     )
                                 }
                             }
                         }
                         AnimationGrid(gameField, animateAt, fieldSize, eventListener)
-                        GainPowerUp(rubikCount, R.drawable.rubik)
-                        GainPowerUp(bombCount, R.drawable.bomb)
+                        GainPowerUp(rubikCount, R.drawable.meteor)
+                        GainPowerUp(bombCount, R.drawable.gun)
                     }
                 }
             }

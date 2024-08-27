@@ -1,20 +1,13 @@
 package com.games.colormix.data
 
-import androidx.compose.ui.graphics.Color
+import com.games.colormix.R
 
 data class ColorField(
     val id: Int,
-    val color: Color? = startColor(),
-    val specialType: SpecialType = SpecialType.None,
+    val type: BlockType = randomBlock(),
 )
 
-enum class SpecialType {
-    None, Rock, Box, OpenBox
-}
-
-val startColors = listOf(Color.Yellow, Color.Green, Color.Blue, Color.Red, Color.Cyan)
-
-fun startColor() = startColors.random()
+fun randomBlock() = BlockType.entries.filter { !it.special }.random()
 
 fun pushBlocksDown(list: MutableList<ColorField?>): List<ColorField?> {
     // [B, null, G, Null] -> [null, null, B, G]
@@ -30,4 +23,16 @@ fun pushBlocksDown(list: MutableList<ColorField?>): List<ColorField?> {
         }
     }
     return list
+}
+
+enum class BlockType(val drawId:Int,val special: Boolean){
+    Earth(R.drawable.earth, false),
+    Mercury(R.drawable.merkur, false),
+    Moon(R.drawable.moon, false),
+    Saturn(R.drawable.saturn, false),
+    Uranus(R.drawable.uranus, false),
+    Blocker(R.drawable.alien, true),
+    Box(R.drawable.sonde, true),
+    FallingBox(R.drawable.sonde2, true),
+    Empty(R.drawable.solar, true)
 }

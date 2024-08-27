@@ -1,16 +1,14 @@
 package com.games.colormix.data
 
-import androidx.compose.ui.graphics.Color
 
 data class LevelQuest(
-    val specialType: SpecialType = SpecialType.None,
-    val color: Color? = null,
+    val block: BlockType = BlockType.Empty,
     val amount: Int,
     val multiBlock: Int? = null
 )
 
 fun LevelQuest.getMoveEstimation(): Int {
-    if (this.specialType == SpecialType.Box || this.specialType == SpecialType.OpenBox) {
+    if (this.block == BlockType.Box || this.block == BlockType.FallingBox) {
         return 0
     }
     val factor = if (this.multiBlock != null) multiBlock.toDouble() * 0.5 else 0.75

@@ -15,7 +15,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,8 +25,8 @@ import com.games.colormix.R
 import com.games.colormix.constants.BorderWidth
 import com.games.colormix.constants.BorderWidthLarge
 import com.games.colormix.constants.Padding
+import com.games.colormix.data.BlockType
 import com.games.colormix.data.LevelQuest
-import com.games.colormix.data.SpecialType
 import com.games.colormix.screens.start.tutorial.component.QuestTutorialItem
 import com.games.colormix.utils.MyText
 
@@ -54,21 +53,21 @@ fun QuestTutorial(fieldSize: Dp, dismiss: () -> Unit) {
                     verticalArrangement = Arrangement.SpaceEvenly
                 ) {
                     QuestTutorialItem(
-                        LevelQuest(SpecialType.None, Color.Green, 6),
+                        LevelQuest(BlockType.Earth, 6),
                         stringResource(R.string.destroy_color_blocks),
                         stringResource(R.string.tutorial_colored),
                         fieldSize
                     )
                     Divider(color = MaterialTheme.colorScheme.secondary)
                     QuestTutorialItem(
-                        LevelQuest(SpecialType.OpenBox, null, 3),
+                        LevelQuest(BlockType.FallingBox, 3),
                         stringResource(R.string.destroy_boxes),
                         stringResource(R.string.tutorial_box),
                         fieldSize
                     )
                     Divider(color = MaterialTheme.colorScheme.secondary)
                     QuestTutorialItem(
-                        LevelQuest(SpecialType.None, null, 4, 5),
+                        LevelQuest(BlockType.Empty, 4, 5),
                         stringResource(R.string.destroy_multiblocks),
                         stringResource(R.string.tutorial_multi),
                         fieldSize
