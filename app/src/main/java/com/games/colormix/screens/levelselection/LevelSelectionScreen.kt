@@ -95,7 +95,7 @@ fun LevelSelectionScreen(currentLevel: Int, navigate: (String) -> Unit, getPoint
                         ) {
                             levels.forEachIndexed { cIndex, _ ->
                                 LevelSelectionField(
-                                    Pair(rIndex, cIndex),
+                                    Pair(rIndex, cIndex+1),
                                     currentLevel,
                                     width / (ItemRowCount + 1),
                                     navigate,
