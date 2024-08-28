@@ -1,6 +1,7 @@
 package com.games.colormix.screens.main.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,10 +15,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.games.colormix.R
 import com.games.colormix.constants.BorderWidth
 import com.games.colormix.constants.Padding
 import com.games.colormix.utils.MyText
@@ -50,6 +54,7 @@ fun LevelDoneDialog(
                 )
                 Divider(color = MaterialTheme.colorScheme.secondary)
                 MyText(text = bodyText)
+                Image(painterResource(id =  R.drawable.goal), contentDescription = "" )
                 Button(
                     onClick = onConfirm,
                     colors = ButtonDefaults.buttonColors(
@@ -62,5 +67,14 @@ fun LevelDoneDialog(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewLevelDone(){
+    LevelDoneDialog(buttonTextId = R.string.next_level, headerTextId = R.string.completed, bodyText = stringResource(
+        id = R.string.level_complete_body,5)) {
+
     }
 }
