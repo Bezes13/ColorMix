@@ -114,7 +114,7 @@ fun StartScreen(
                         color = Color.Black,
                         shape = RoundedCornerShape(Padding.L)
                     ),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f))
 
             ) {
 
@@ -122,7 +122,9 @@ fun StartScreen(
                     stringResource(id = R.string.app_name),
                     fontSize = headerTextSize,
                     style = TextStyle(color = MaterialTheme.colorScheme.primary),
-                    modifier = Modifier.padding(Padding.L)
+                    modifier = Modifier.padding(Padding.L),
+                    textAlign = TextAlign.Center,
+                    color = Color.Black
                 )
             }
 
@@ -156,8 +158,7 @@ private fun MenuButton(textId: Int, size: TextUnit, onClick: () -> Unit) {
             .fillMaxWidth(0.8f)
             .border(width = BorderWidthLarge, color = Color.Black, shape = MenuButtonShape),
         colors = ButtonDefaults.buttonColors(
-            contentColor = MaterialTheme.colorScheme.secondary,
-            containerColor = MaterialTheme.colorScheme.secondaryContainer
+            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.7f)
         ),
         onClick = onClick
     ) {
@@ -165,7 +166,8 @@ private fun MenuButton(textId: Int, size: TextUnit, onClick: () -> Unit) {
             text = stringResource(id = textId),
             lineHeight = size,
             fontSize = size,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            color = Color.Black
         )
     }
 }
