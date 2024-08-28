@@ -199,8 +199,7 @@ class MainViewModel @Inject constructor(
                     ColorField(colorFieldNextId++)
                 } else {
                     fromTop = false
-                    if (item == null)
-                    ColorField(colorFieldNextId++, type = BlockType.Empty) else item
+                    item ?: ColorField(colorFieldNextId++, type = BlockType.Empty)
                 }
             }
         }
