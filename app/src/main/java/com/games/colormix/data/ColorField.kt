@@ -32,7 +32,7 @@ enum class BlockType(val drawId:Int,val special: Boolean){
     Saturn(R.drawable.saturn, false),
     Uranus(R.drawable.uranus, false),
     Blocker(R.drawable.alien, true),
-    Box(R.drawable.sonde, true),
-    FallingBox(R.drawable.sonde2, true),
+    Box(R.drawable.box, true),
+    FallingBox(R.drawable.boxopen, true),
     Empty(R.drawable.solar, true)
 }

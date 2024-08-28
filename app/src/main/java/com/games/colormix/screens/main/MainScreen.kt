@@ -250,8 +250,8 @@ fun MainScreenContent(
                             }
                         }
                         AnimationGrid(gameField, animateAt, fieldSize, eventListener)
-                        GainPowerUp(rubikCount, R.drawable.meteor)
-                        GainPowerUp(bombCount, R.drawable.gun)
+                        GainPowerUp(rubikCount, R.drawable.gun)
+                        GainPowerUp(bombCount, R.drawable.meteor)
                     }
                 }
             }

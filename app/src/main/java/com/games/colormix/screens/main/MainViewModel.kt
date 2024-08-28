@@ -171,8 +171,12 @@ class MainViewModel @Inject constructor(
 
             val blocksToDestroy = mutableListOf(pos)
             if (explode.type == BlockType.Blocker){
+                var blocker = false
                 state.gameField[pos.first].forEachIndexed { index, block ->
-                    if (index>pos.second && state.gameField[pos.first][index].type == BlockType.Empty){
+                    if (index > pos.second && block.type == BlockType.Blocker){
+                        blocker = true
+                    }
+                    if (!blocker && index > pos.second && block.type == BlockType.Empty){
                         blocksToDestroy.add(Pair(pos.first, index))
                     }
                 }
