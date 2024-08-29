@@ -2,6 +2,7 @@ package com.games.colormix.screens.main
 
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,8 +20,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -155,103 +159,121 @@ fun MainScreenContent(
     val sizeMultiplier = 1.5f
     val questInfoMultiplier = 0.7f
     val pointDigits = 6
+    Box {
+        Image(
+            painter = painterResource(id = R.drawable.back),
+            contentDescription = stringResource(R.string.specialtype),
+            alignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.FillHeight
+        )
     Scaffold(
         topBar = { TopAppBar(eventListener, navigate) },
+        containerColor = Color.Transparent
     ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(Padding.M),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it)
-                .background(MaterialTheme.colorScheme.primaryContainer),
-        ) {
-            LevelInfoCard(modifier = Modifier.height(fieldSize * sizeMultiplier)) {
-                MyText(
-                    if (endless) stringResource(id = R.string.endless_mode) else stringResource(
-                        id = R.string.level,
-                        currentLevel.level
-                    ),
-                    fontSize = levelTextSize,
-                    style = TextStyle(color = MaterialTheme.colorScheme.primary),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(10.dp)
-                )
-            }
-            BorderedBox(modifier = Modifier.padding(5.dp)) {
-                Column(
-                    modifier = Modifier.fillMaxHeight(),
-                    verticalArrangement = Arrangement.SpaceBetween,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Column {
-                        if (!endless) {
-                            Row(
-                                horizontalArrangement = Arrangement.Center,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(infoCardsHeight)
-                            ) {
-                                MovesInfo(currentLevel, infoTextSize)
-                                QuestInfo(currentLevel, fieldSize * questInfoMultiplier)
-                            }
-                        }
-                        Row(
-                            modifier = Modifier
-                                .height(infoCardsHeight / 2)
-                                .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            LevelInfoCard(modifier = Modifier.height(fieldSize)) {
-                                MyText(
-                                    text = animatedPoints.toString().padStart(pointDigits, '0'),
-                                    fontSize = with(LocalDensity.current) { (fieldSize / sizeMultiplier).toSp() },
-                                    modifier = Modifier.padding(vertical = Padding.M, horizontal = Padding.XL)
-                                )
-                            }
-                            Row {
-                                DraggableItem(stringResource(R.string.bomb_item), bombCount, R.drawable.meteor, fieldSize)
-                                DraggableItem(
-                                    label = stringResource(R.string.rubik_item),
-                                    count = rubikCount,
-                                    R.drawable.gun,
-                                    fieldSize,
-                                    blocksAcc.toFloat() / RUBIK_GAIN_MULTI_BLOCK.toFloat()
-                                )
-                            }
-
-                        }
-                    }
-
-                    Box(
-                        modifier = Modifier.align(Alignment.CenterHorizontally),
-                        contentAlignment = Alignment.Center
+            Column(
+                verticalArrangement = Arrangement.spacedBy(Padding.M),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(it)
+                    .background(Color.Transparent),
+            ) {
+                LevelInfoCard(modifier = Modifier.height(fieldSize * sizeMultiplier)) {
+                    MyText(
+                        if (endless) stringResource(id = R.string.endless_mode) else stringResource(
+                            id = R.string.level,
+                            currentLevel.level
+                        ),
+                        fontSize = levelTextSize,
+                        style = TextStyle(color = MaterialTheme.colorScheme.primary),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(10.dp)
+                    )
+                }
+                BorderedBox(modifier = Modifier.padding(5.dp)) {
+                    Column(
+                        modifier = Modifier.fillMaxHeight(),
+                        verticalArrangement = Arrangement.SpaceBetween,
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        Row(
-                            horizontalArrangement = Arrangement.Center,
-                            modifier = Modifier.padding(Padding.L)
-                        ) {
-                            gameField.forEachIndexed { cIndex, column ->
-
-                                LazyAnimatedColumn(
-                                    items = column,
-                                    keyProvider = { item -> item.toString() },
-                                    lazyModifier = { Modifier.animateItem() },
-                                ) { _, item ->
-                                    Field(
-                                        item,
-                                        fieldSize,
-                                        Pair(cIndex, column.indexOf(item)),
-                                        eventListener,
-                                        Modifier
-                                    )
+                        Column {
+                            if (!endless) {
+                                Row(
+                                    horizontalArrangement = Arrangement.Center,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(infoCardsHeight)
+                                ) {
+                                    MovesInfo(currentLevel, infoTextSize)
+                                    QuestInfo(currentLevel, fieldSize * questInfoMultiplier)
                                 }
                             }
+                            Row(
+                                modifier = Modifier
+                                    .height(infoCardsHeight / 2)
+                                    .fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                LevelInfoCard(modifier = Modifier.height(fieldSize)) {
+                                    MyText(
+                                        text = animatedPoints.toString().padStart(pointDigits, '0'),
+                                        fontSize = with(LocalDensity.current) { (fieldSize / sizeMultiplier).toSp() },
+                                        modifier = Modifier.padding(
+                                            vertical = Padding.M,
+                                            horizontal = Padding.XL
+                                        )
+                                    )
+                                }
+                                Row {
+                                    DraggableItem(
+                                        stringResource(R.string.bomb_item),
+                                        bombCount,
+                                        R.drawable.meteor,
+                                        fieldSize
+                                    )
+                                    DraggableItem(
+                                        label = stringResource(R.string.rubik_item),
+                                        count = rubikCount,
+                                        R.drawable.gun,
+                                        fieldSize,
+                                        blocksAcc.toFloat() / RUBIK_GAIN_MULTI_BLOCK.toFloat()
+                                    )
+                                }
+
+                            }
                         }
-                        AnimationGrid(gameField, animateAt, fieldSize, eventListener)
-                        GainPowerUp(rubikCount, R.drawable.gun)
-                        GainPowerUp(bombCount, R.drawable.meteor)
+
+                        Box(
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Row(
+                                horizontalArrangement = Arrangement.Center,
+                                modifier = Modifier.padding(Padding.L)
+                            ) {
+                                gameField.forEachIndexed { cIndex, column ->
+
+                                    LazyAnimatedColumn(
+                                        items = column,
+                                        keyProvider = { item -> item.toString() },
+                                        lazyModifier = { Modifier.animateItem() },
+                                    ) { _, item ->
+                                        Field(
+                                            item,
+                                            fieldSize,
+                                            Pair(cIndex, column.indexOf(item)),
+                                            eventListener,
+                                            Modifier
+                                        )
+                                    }
+                                }
+                            }
+                            AnimationGrid(gameField, animateAt, fieldSize, eventListener)
+                            GainPowerUp(rubikCount, R.drawable.gun)
+                            GainPowerUp(bombCount, R.drawable.meteor)
+                        }
                     }
                 }
             }

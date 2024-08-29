@@ -124,7 +124,6 @@ fun StartScreen(
                     style = TextStyle(color = MaterialTheme.colorScheme.primary),
                     modifier = Modifier.padding(Padding.L),
                     textAlign = TextAlign.Center,
-                    color = Color.Black
                 )
             }
 
@@ -167,7 +166,6 @@ private fun MenuButton(textId: Int, size: TextUnit, onClick: () -> Unit) {
             lineHeight = size,
             fontSize = size,
             textAlign = TextAlign.Center,
-            color = Color.Black
         )
     }
 }

@@ -24,6 +24,9 @@ object Padding {
     val XL = 15.dp
 }
 
+// Alpha
+const val CardAlpha = 0.6f
+
 val MenuButtonShape = RoundedCornerShape(50.dp)
 
 // Border

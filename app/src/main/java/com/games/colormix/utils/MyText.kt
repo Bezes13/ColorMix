@@ -19,7 +19,6 @@ fun MyText(
     fontSize: TextUnit = TextUnit.Unspecified,
     style: TextStyle = LocalTextStyle.current,
     textAlign: TextAlign? = null,
-    color: Color = Color.Unspecified,
     softWrap: Boolean = true,
     maxLines: Int = Int.MAX_VALUE,
     minLines: Int = 1,
@@ -31,7 +30,7 @@ fun MyText(
     Text(
         text = text,
         fontFamily = lonelyCoffeeFamily,
-        color = color,
+        color = Color.Black,
         fontSize = fontSize,
         style = style,
         modifier = modifier,

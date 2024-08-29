@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.games.colormix.R
 import com.games.colormix.constants.BackgroundBlocks
+import com.games.colormix.constants.CardAlpha
 import com.games.colormix.constants.ItemRowCount
 import com.games.colormix.constants.Padding
 import com.games.colormix.data.ColorField
@@ -73,7 +74,11 @@ fun LevelSelectionScreen(currentLevel: Int, navigate: (String) -> Unit, getPoint
                         Icon(Icons.Filled.ArrowBack, stringResource(R.string.menu))
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(
+                        alpha = CardAlpha
+                    )
+                )
             )
         }
     ) {
@@ -95,7 +100,7 @@ fun LevelSelectionScreen(currentLevel: Int, navigate: (String) -> Unit, getPoint
                         ) {
                             levels.forEachIndexed { cIndex, _ ->
                                 LevelSelectionField(
-                                    Pair(rIndex, cIndex+1),
+                                    Pair(rIndex, cIndex + 1),
                                     currentLevel,
                                     width / (ItemRowCount + 1),
                                     navigate,

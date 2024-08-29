@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.games.colormix.constants.BorderWidth
+import com.games.colormix.constants.CardAlpha
 
 @Composable
 fun RowScope.LevelInfoCardRow(content: @Composable () -> Unit) {
@@ -26,7 +27,7 @@ fun RowScope.LevelInfoCardRow(content: @Composable () -> Unit) {
             .padding(horizontal = 0.dp),
         border = BorderStroke(BorderWidth, MaterialTheme.colorScheme.secondary),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(CardAlpha),
             contentColor = MaterialTheme.colorScheme.secondary
         )
     ) {
@@ -42,7 +43,7 @@ fun LevelInfoCardColumn(content: @Composable () -> Unit) {
             .padding(horizontal = 0.dp),
         border = BorderStroke(BorderWidth, MaterialTheme.colorScheme.secondary),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(CardAlpha),
             contentColor = MaterialTheme.colorScheme.secondary
         )
     ) {
@@ -56,7 +57,7 @@ fun LevelInfoCard(modifier: Modifier = Modifier, content: @Composable () -> Unit
         modifier = modifier.wrapContentWidth(),
         border = BorderStroke(BorderWidth, MaterialTheme.colorScheme.secondary),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(CardAlpha),
             contentColor = MaterialTheme.colorScheme.secondary
         )
     ) {

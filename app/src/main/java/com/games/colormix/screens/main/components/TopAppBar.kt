@@ -11,6 +11,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.games.colormix.R
+import com.games.colormix.constants.CardAlpha
 import com.games.colormix.navigation.Screen
 import com.games.colormix.screens.main.MainViewEvent
 import com.games.colormix.utils.MyText
@@ -36,6 +37,6 @@ fun TopAppBar(
                 Icon(Icons.Default.Menu, stringResource(R.string.menu))
             }
         },
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(CardAlpha))
     )
 }

@@ -27,19 +27,21 @@ fun AnimationGrid(
     size: Dp,
     eventListener: (MainViewEvent) -> Unit,
 ) {
-    Box {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(Padding.M),
-        ) {
-            for (i in gameField.indices) {
-                Column(verticalArrangement = Arrangement.spacedBy(Padding.M)) {
-                    for (j in gameField[i].indices) {
-                        AnimationAt(size, animateAt, Pair(i, j), eventListener)
-                    }
+    if (animateAt.isEmpty()){
+        return
+    }
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(Padding.M),
+    ) {
+        for (i in gameField.indices) {
+            Column(verticalArrangement = Arrangement.spacedBy(Padding.M)) {
+                for (j in gameField[i].indices) {
+                    AnimationAt(size, animateAt, Pair(i, j), eventListener)
                 }
             }
         }
     }
+
 }
 
 @Composable
