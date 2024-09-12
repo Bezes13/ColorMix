@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.games.colormix.navigation.AppNavHost
 import com.games.colormix.ui.theme.ColorMixTheme
+import com.google.firebase.FirebaseApp
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -19,6 +20,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             ColorMixTheme {
+                FirebaseApp.initializeApp(this)
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,

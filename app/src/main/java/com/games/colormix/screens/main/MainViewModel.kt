@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.games.colormix.FirebaseRepository
 import com.games.colormix.constants.BOMB_GAIN_MULTI_BLOCK
 import com.games.colormix.constants.CurrentLevelString
 import com.games.colormix.constants.LEVEL_SIZE_X
@@ -34,6 +35,7 @@ import kotlin.math.max
 class MainViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val ioDispatcher: CoroutineDispatcher,
+    private val firebaseRepository: FirebaseRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private val _event = MutableSharedFlow<MainViewEvent>()
@@ -48,6 +50,9 @@ class MainViewModel @Inject constructor(
     init {
         listenToEvent()
         fillGameField()
+        viewModelScope.launch {
+        firebaseRepository.addOrUpdatePlayer("Alex", 1)
+        }
     }
 
     fun sendEvent(event: MainViewEvent) {

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "297189405973",
+    "project_id": "colormix-86bd0",
+    "storage_bucket": "colormix-86bd0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:297189405973:android:6752d46d1595681586651c",
+        "android_client_info": {
+          "package_name": "com.games.colormix"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8fWBGlrgWUkjQ7bX-1tGITIKhPkJjq_U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

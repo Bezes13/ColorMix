@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -54,7 +55,8 @@ android {
 dependencies {
 
     // Core AndroidX Libraries
-    implementation("androidx.core:core-ktx:1.12.0") // Kotlin extensions for core Android APIs
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("com.google.firebase:firebase-common-ktx:21.0.0") // Kotlin extensions for core Android APIs
 
 // Lifecycle Libraries
     val lifecycleVersion = "2.7.0"
@@ -100,5 +102,9 @@ dependencies {
 // Additional Libraries
     implementation("androidx.graphics:graphics-shapes-android:1.0.0") // AndroidX graphics shapes library
     implementation("com.google.code.gson:gson:2.10") // GSON for JSON serialization/deserialization
+
+// Firebase
+    implementation(platform("com.google.firebase:firebase-bom:33.2.0"))
+    implementation("com.google.firebase:firebase-firestore")
 
 }
