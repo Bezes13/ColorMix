@@ -3,21 +3,17 @@ package com.games.colormix.screens.main.components
 import android.content.ClipDescription
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.draganddrop.dragAndDropTarget
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draganddrop.DragAndDropEvent
 import androidx.compose.ui.draganddrop.DragAndDropTarget
 import androidx.compose.ui.draganddrop.mimeTypes
 import androidx.compose.ui.draganddrop.toAndroidDragEvent
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -26,6 +22,7 @@ import com.games.colormix.R
 import com.games.colormix.data.BlockType.Empty
 import com.games.colormix.data.ColorField
 import com.games.colormix.screens.main.MainViewEvent
+import com.games.colormix.utils.FieldDesign
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -34,6 +31,7 @@ fun Field(
     size: Dp,
     pos: Pair<Int, Int>,
     eventListener: (MainViewEvent) -> Unit,
+    simpleDesign: Boolean,
     modifier: Modifier = Modifier
 ) {
     if (block.type == Empty) {
@@ -79,23 +77,18 @@ fun Field(
             ),
     )
     {
-        Image(
-            painter = painterResource(id = block.type.drawId),
-            contentDescription = stringResource(R.string.specialtype),
-            alignment = Alignment.Center,
-            modifier = Modifier.fillMaxSize()
-        )
+        FieldDesign(simpleDesign, size, block.type)
     }
 }
 
 @Composable
 @Preview
 fun FieldPreview() {
-    Field(block = ColorField(2), 40.dp, Pair(2, 2), {})
+    Field(block = ColorField(2), 40.dp, Pair(2, 2), {}, false)
 }
 
 @Composable
 @Preview
 fun FieldHighlightPreview() {
-    Field(block = ColorField(2), 50.dp, Pair(2, 2), {})
+    Field(block = ColorField(2), 50.dp, Pair(2, 2), {}, true)
 }

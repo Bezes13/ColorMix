@@ -36,5 +36,13 @@
     <string name="tutorial_box">Destroy Planets next to Packages to open/destroy them.</string>
     <string name="destroy_multiblocks">Destroy Multiple Planets</string>
     <string name="tutorial_multi">Destroy multiple Planets at the same time. \n This means destroy 4 times 5 Planets at the same time.</string>
+    <string name="leaderboard">Leaderboard</string>
+    <string name="leaderboard_button">Leader\n Board</string>
+    <string name="reload">Reload</string>
+    <string name="points">Points</string>
+    <string name="completed_level">Completed Level</string>
+    <string name="levels">Levels</string>
+    <string name="design">Design</string>
+    <string name="game_start">Game Start</string>
 
 </resources>

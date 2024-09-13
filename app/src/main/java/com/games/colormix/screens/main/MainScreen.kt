@@ -1,5 +1,7 @@
 package com.games.colormix.screens.main
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.Image
@@ -15,14 +17,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -35,6 +42,7 @@ import com.games.colormix.R
 import com.games.colormix.constants.LEVEL_SIZE_X
 import com.games.colormix.constants.RUBIK_GAIN_MULTI_BLOCK
 import com.games.colormix.constants.Padding
+import com.games.colormix.constants.TutorialString
 import com.games.colormix.constants.infoCardHeightMultiplier
 import com.games.colormix.data.Animation
 import com.games.colormix.data.ColorField
@@ -63,9 +71,12 @@ fun MainScreen(navigate: (String) -> Unit, mainViewModel: MainViewModel = hiltVi
     if (viewState.currentLevel.level > LevelLists.levelList.size) {
         navigate(Screen.LEVEL_SELECTION.name)
     }
-    if (!mainViewModel.isTutorialShown()) {
+    val sharedPreferences: SharedPreferences = LocalContext.current.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+    if (sharedPreferences.getInt(TutorialString, 0) == 0) {
         mainViewModel.sendEvent(MainViewEvent.SetDialog(MainViewDialog.QuestTutorial))
-        mainViewModel.setTutorialShown()
+        val editor = sharedPreferences.edit()
+        editor.putInt(TutorialString, 1)
+        editor.apply()
     }
     MainScreenContent(
         navigate,
@@ -100,7 +111,8 @@ fun MainScreenContent(
     val infoCardsHeight = (height / infoCardHeightMultiplier)
     val levelTextSize = with(LocalDensity.current) { fieldSize.toSp() }
     val infoTextSize = levelTextSize / 2
-
+    val sharedPreferences: SharedPreferences = LocalContext.current.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+    var simpleDesign by remember { mutableStateOf(sharedPreferences.getBoolean("Design", false)) }
     val animatedPoints by animateIntAsState(
         animationSpec = TweenSpec(500),
         targetValue = points,
@@ -179,18 +191,30 @@ fun MainScreenContent(
                     .padding(it)
                     .background(Color.Transparent),
             ) {
-                LevelInfoCard(modifier = Modifier.height(fieldSize * sizeMultiplier)) {
-                    MyText(
-                        if (endless) stringResource(id = R.string.endless_mode) else stringResource(
-                            id = R.string.level,
-                            currentLevel.level
-                        ),
-                        fontSize = levelTextSize,
-                        style = TextStyle(color = MaterialTheme.colorScheme.primary),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(10.dp)
-                    )
+                Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
+
+                    LevelInfoCard(modifier = Modifier.height(fieldSize * sizeMultiplier)) {
+                        MyText(
+                            if (endless) stringResource(id = R.string.endless_mode) else stringResource(
+                                id = R.string.level,
+                                currentLevel.level
+                            ),
+                            fontSize = levelTextSize,
+                            style = TextStyle(color = MaterialTheme.colorScheme.primary),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(10.dp)
+                        )
+                    }
+                    Row (verticalAlignment = Alignment.CenterVertically){
+                        Switch(checked = simpleDesign , onCheckedChange = { checked ->
+                            simpleDesign = checked
+                            val editor = sharedPreferences.edit()
+                            editor.putBoolean("Design", simpleDesign)
+                            editor.apply()
+                        })
+                    }
                 }
+
                 BorderedBox(modifier = Modifier.padding(5.dp)) {
                     Column(
                         modifier = Modifier.fillMaxHeight(),
@@ -250,11 +274,10 @@ fun MainScreenContent(
                             contentAlignment = Alignment.Center
                         ) {
                             Row(
-                                horizontalArrangement = Arrangement.Center,
+                                horizontalArrangement = if (simpleDesign) Arrangement.spacedBy(Padding.M) else Arrangement.Center,
                                 modifier = Modifier.padding(Padding.L)
                             ) {
                                 gameField.forEachIndexed { cIndex, column ->
-
                                     LazyAnimatedColumn(
                                         items = column,
                                         keyProvider = { item -> item.toString() },
@@ -262,9 +285,10 @@ fun MainScreenContent(
                                     ) { _, item ->
                                         Field(
                                             item,
-                                            fieldSize,
+                                            if (simpleDesign) fieldSize*0.95f else fieldSize,
                                             Pair(cIndex, column.indexOf(item)),
                                             eventListener,
+                                            simpleDesign,
                                             Modifier
                                         )
                                     }

@@ -1,12 +1,10 @@
 package com.games.colormix.screens.start
 
-import android.content.Context
-import android.content.SharedPreferences
 import androidx.compose.ui.unit.IntSize
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.games.colormix.FirebaseRepository
 import com.games.colormix.constants.BackgroundBlocks
-import com.games.colormix.constants.CurrentLevelString
 import com.games.colormix.data.BlockType
 import com.games.colormix.data.ColorField
 import com.games.colormix.data.LevelInfo
@@ -17,8 +15,9 @@ import com.games.colormix.data.generateObjectDefinition
 import com.games.colormix.data.pushBlocksDown
 import com.games.colormix.data.randomBlock
 import com.games.colormix.game.LevelLists
+import com.games.colormix.model.Score
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -31,16 +30,20 @@ import kotlin.random.Random
 
 @HiltViewModel
 class StartViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val ioDispatcher: CoroutineDispatcher,
     ) : ViewModel() {
-    private val sharedPreferences: SharedPreferences =
-        context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
     private val _event = MutableSharedFlow<StartViewEvent>()
     private val _viewState = MutableStateFlow(StartViewState())
     val viewState = _viewState.asStateFlow()
     var backgroundSize = IntSize(BackgroundBlocks,BackgroundBlocks*2)
     private var colorFieldNextId = 0
+    private val firebaseRepository = FirebaseRepository()
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    private var entries = listOf<Score>()
+
+    fun getCurrentMaxLevel(): Int {
+        return entries.size + 1
+    }
 
     init {
         listenToEvent()
@@ -58,6 +61,12 @@ class StartViewModel @Inject constructor(
             state.copy(
                 gameField = columns,
             )
+        }
+        viewModelScope.launch {
+            entries = firebaseRepository.getLeaderboard().groupBy { entry -> entry.playerId }[auth.currentUser?.uid]?: listOf()
+        }
+        viewModelScope.launch {
+            _viewState.update { state -> state.copy(playerName = firebaseRepository.getPlayerName()?: "")}
         }
     }
 
@@ -241,11 +250,6 @@ class StartViewModel @Inject constructor(
         return LevelQuest(randomBlock(), Random.nextInt(4, 20), null)
     }
 
-
-    fun getCurrentMaxLevel(): Int {
-        return sharedPreferences.getInt(CurrentLevelString, 1)
-    }
-
     fun fillBackground() {
         _viewState.update { state ->
             val columns = mutableListOf<List<ColorField>>()
@@ -265,6 +269,13 @@ class StartViewModel @Inject constructor(
                 gameField = columns,
             )
         }
+    }
+
+    fun saveName(name: String) {
+        viewModelScope.launch {
+            firebaseRepository.addOrUpdatePlayer(name, auth.currentUser?.uid?:"")
+        }
+
     }
 }
 

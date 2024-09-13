@@ -1,5 +1,6 @@
 package com.games.colormix.screens.levelselection
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -60,6 +62,8 @@ fun LevelSelectionScreen(currentLevel: Int, navigate: (String) -> Unit, getPoint
                 .toList()
         })
     }
+    val simpleDesign = LocalContext.current.getSharedPreferences("app_preferences", Context.MODE_PRIVATE).getBoolean("Design", false)
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -83,7 +87,7 @@ fun LevelSelectionScreen(currentLevel: Int, navigate: (String) -> Unit, getPoint
         }
     ) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Background(fieldSize = width / BackgroundBlocks, backGround = background)
+            Background(fieldSize = width / BackgroundBlocks, backGround = background, simpleDesign = simpleDesign)
             LazyColumn(
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier

@@ -1,5 +1,6 @@
 package com.games.colormix.data
 
+import androidx.compose.ui.graphics.Color
 import com.games.colormix.R
 
 data class ColorField(
@@ -25,14 +26,14 @@ fun pushBlocksDown(list: MutableList<ColorField?>): List<ColorField?> {
     return list
 }
 
-enum class BlockType(val drawId:Int,val special: Boolean){
-    Earth(R.drawable.earth, false),
-    Mercury(R.drawable.merkur, false),
-    Moon(R.drawable.moon, false),
-    Saturn(R.drawable.saturn, false),
-    Uranus(R.drawable.uranus, false),
-    Blocker(R.drawable.alien, true),
-    Box(R.drawable.box, true),
-    FallingBox(R.drawable.boxopen, true),
-    Empty(R.drawable.solar, true)
+enum class BlockType(val drawId:Int,val special: Boolean, val simpleDesign: Color){
+    Earth(R.drawable.earth, false, Color.Red),
+    Mercury(R.drawable.merkur, false, Color.Blue),
+    Moon(R.drawable.moon, false, Color.Cyan),
+    Saturn(R.drawable.saturn, false, Color.Green),
+    Uranus(R.drawable.uranus, false, Color.Yellow),
+    Blocker(R.drawable.alien, true, Color.Transparent),
+    Box(R.drawable.box, true, Color.Transparent),
+    FallingBox(R.drawable.boxopen, true, Color.Transparent),
+    Empty(R.drawable.solar, true, Color.Transparent)
 }

@@ -26,11 +26,12 @@ fun MyText(
     lineHeight: TextUnit = TextUnit.Unspecified,
     textDecoration: TextDecoration? = null,
     fontWeight: FontWeight? = null,
+    color: Color = Color.Black
     ) {
     Text(
         text = text,
         fontFamily = lonelyCoffeeFamily,
-        color = Color.Black,
+        color = color,
         fontSize = fontSize,
         style = style,
         modifier = modifier,

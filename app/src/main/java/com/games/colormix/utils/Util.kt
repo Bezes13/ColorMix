@@ -4,6 +4,8 @@ import android.content.res.Resources
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import java.net.URL
+import java.text.NumberFormat
+import java.util.Locale
 import kotlin.random.Random
 
 fun Float.mapInRange(inMin: Float, inMax: Float, outMin: Float, outMax: Float): Float {
@@ -28,6 +30,11 @@ fun hackClassLoader() {
 }
 
 fun getLevelString(level: Int) = "LEVEL$level"
+
+fun Int.withThousandSeparators(): String {
+    val formatter = NumberFormat.getInstance(Locale.GERMANY)
+    return formatter.format(this)
+}
 
 fun manipulateColor(color: Color, factor: Float): Color {
     val r = (color.red * factor)

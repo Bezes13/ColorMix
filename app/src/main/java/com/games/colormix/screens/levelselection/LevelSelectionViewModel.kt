@@ -1,26 +1,29 @@
 package com.games.colormix.screens.levelselection
 
-import android.content.Context
-import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
-import com.games.colormix.constants.CurrentLevelString
-import com.games.colormix.utils.getLevelString
+import androidx.lifecycle.viewModelScope
+import com.games.colormix.FirebaseRepository
+import com.games.colormix.model.Score
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LevelSelectionViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
-) : ViewModel() {
-    private val sharedPreferences: SharedPreferences =
-        context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
-
+class LevelSelectionViewModel @Inject constructor() : ViewModel() {
+    private val firebaseRepository = FirebaseRepository()
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    private var entries = listOf<Score>()
+    init {
+        viewModelScope.launch {
+            entries = firebaseRepository.getLeaderboard().groupBy { entry -> entry.playerId }[auth.currentUser?.uid]?: listOf()
+        }
+    }
     fun getCurrentMaxLevel(): Int {
-        return sharedPreferences.getInt(CurrentLevelString, 0)
+        return entries.size + 1
     }
 
     fun getCurrentPoints(level: Int): Int {
-        return sharedPreferences.getInt(getLevelString(level), 0)
+        return entries.firstOrNull { it.level == level }?.score?: 0
     }
 }

@@ -56,7 +56,8 @@ dependencies {
 
     // Core AndroidX Libraries
     implementation("androidx.core:core-ktx:1.12.0")
-    implementation("com.google.firebase:firebase-common-ktx:21.0.0") // Kotlin extensions for core Android APIs
+    implementation("com.google.firebase:firebase-common-ktx:21.0.0")
+    implementation("com.google.firebase:firebase-auth-ktx:23.0.0") // Kotlin extensions for core Android APIs
 
 // Lifecycle Libraries
     val lifecycleVersion = "2.7.0"
@@ -91,6 +92,7 @@ dependencies {
 
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+    implementation("androidx.compose.material:material-icons-extended")
 
 // Testing Libraries
     testImplementation("junit:junit:4.13.2") // JUnit 4 for unit testing

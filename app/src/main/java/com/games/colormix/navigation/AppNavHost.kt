@@ -7,8 +7,10 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.games.colormix.screens.leaderboard.LeaderboardScreen
 import com.games.colormix.screens.levelselection.LevelSelectionScreen
 import com.games.colormix.screens.main.MainScreen
+import com.games.colormix.screens.sign.SignInScreen
 import com.games.colormix.screens.start.StartScreen
 
 
@@ -16,7 +18,7 @@ import com.games.colormix.screens.start.StartScreen
 fun AppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    startDestination: String = NavigationItem.Start.route,
+    startDestination: String = NavigationItem.Auth.route,
 ) {
     NavHost(
         modifier = modifier,
@@ -33,6 +35,12 @@ fun AppNavHost(
         }
         composable(NavigationItem.LevelSelection.route) {
             LevelSelectionScreen(navController::navigate)
+        }
+        composable(NavigationItem.Auth.route) {
+            SignInScreen(navController::navigate)
+        }
+        composable(NavigationItem.Leaderboard.route) {
+            LeaderboardScreen(navController::navigate)
         }
     }
 }

@@ -1,17 +1,13 @@
 package com.games.colormix.screens.main
 
-import android.content.Context
-import android.content.SharedPreferences
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.games.colormix.FirebaseRepository
 import com.games.colormix.constants.BOMB_GAIN_MULTI_BLOCK
-import com.games.colormix.constants.CurrentLevelString
 import com.games.colormix.constants.LEVEL_SIZE_X
 import com.games.colormix.constants.LEVEL_SIZE_Y
 import com.games.colormix.constants.RUBIK_GAIN_MULTI_BLOCK
-import com.games.colormix.constants.TutorialString
 import com.games.colormix.data.Animation
 import com.games.colormix.data.BlockType
 import com.games.colormix.data.ColorField
@@ -19,9 +15,7 @@ import com.games.colormix.data.LevelQuest
 import com.games.colormix.data.SpecialBlockPlacement
 import com.games.colormix.data.estimateMoves
 import com.games.colormix.game.LevelLists
-import com.games.colormix.utils.getLevelString
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,26 +27,21 @@ import kotlin.math.max
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val ioDispatcher: CoroutineDispatcher,
-    private val firebaseRepository: FirebaseRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private val _event = MutableSharedFlow<MainViewEvent>()
     private val _viewState = MutableStateFlow(MainViewState())
     val viewState = _viewState.asStateFlow()
-    private val sharedPreferences: SharedPreferences =
-        context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+
     private var levelIndex: Int = savedStateHandle.get<String>("levelIndex")?.toInt() ?: 1
     private var colorFieldNextId = 0
     private val endless = levelIndex == 0
+    private val firebaseRepository = FirebaseRepository()
 
     init {
         listenToEvent()
         fillGameField()
-        viewModelScope.launch {
-        firebaseRepository.addOrUpdatePlayer("Alex", 1)
-        }
     }
 
     fun sendEvent(event: MainViewEvent) {
@@ -175,13 +164,13 @@ class MainViewModel @Inject constructor(
             }
 
             val blocksToDestroy = mutableListOf(pos)
-            if (explode.type == BlockType.Blocker){
+            if (explode.type == BlockType.Blocker) {
                 var blocker = false
                 state.gameField[pos.first].forEachIndexed { index, block ->
-                    if (index > pos.second && block.type == BlockType.Blocker){
+                    if (index > pos.second && block.type == BlockType.Blocker) {
                         blocker = true
                     }
-                    if (!blocker && index > pos.second && block.type == BlockType.Empty){
+                    if (!blocker && index > pos.second && block.type == BlockType.Empty) {
                         blocksToDestroy.add(Pair(pos.first, index))
                     }
                 }
@@ -282,16 +271,11 @@ class MainViewModel @Inject constructor(
     ): Int {
         var newPoints = state.points + blockCount * 50 * blockCount
         if (updatedQuests.all { it.amount <= 0 }) {
-            val editor = sharedPreferences.edit()
-            if (sharedPreferences.getInt(CurrentLevelString, 0) < levelIndex + 1) {
-                editor.putInt(CurrentLevelString, levelIndex + 1)
+            newPoints =
+                state.points + blockCount * 50 * blockCount + state.currentLevel.moves * 1000
+            viewModelScope.launch {
+                firebaseRepository.addOrUpdateScore(newPoints, levelIndex)
             }
-            if (sharedPreferences.getInt(getLevelString(levelIndex), 0) < newPoints) {
-                newPoints =
-                    state.points + blockCount * 50 * blockCount + state.currentLevel.moves * 1000
-                editor.putInt(getLevelString(levelIndex), newPoints)
-            }
-            editor.apply()
         }
         return newPoints
     }
@@ -369,7 +353,8 @@ class MainViewModel @Inject constructor(
             for (i in 0..<list.size - 1) {
                 if (list[i] != null &&
                     list[i]?.type != BlockType.Blocker &&
-                    (list[i + 1] == null ))//|| (list[i + 1]?.type == BlockType.Empty)))
+                    (list[i + 1] == null)
+                )//|| (list[i + 1]?.type == BlockType.Empty)))
                 {
                     anyMove = true
                     list[i + 1] = list[i]
@@ -382,16 +367,6 @@ class MainViewModel @Inject constructor(
 
     private fun updateDialog(dialog: MainViewDialog) {
         _viewState.update { it.copy(dialog = dialog) }
-    }
-
-    fun isTutorialShown(): Boolean {
-        return sharedPreferences.getInt(TutorialString, 0) == 1
-    }
-
-    fun setTutorialShown() {
-        val editor = sharedPreferences.edit()
-        editor.putInt(TutorialString, 1)
-        editor.apply()
     }
 
     private fun isDestroyable(
