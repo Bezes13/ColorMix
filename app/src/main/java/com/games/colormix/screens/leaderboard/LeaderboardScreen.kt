@@ -126,13 +126,7 @@ fun LeaderboardScreen(
                 verticalArrangement = if (isLoading) Arrangement.Center else Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.width(64.dp),
-                        color = MaterialTheme.colorScheme.secondary,
-                        trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                    )
-                } else {
+
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -165,6 +159,13 @@ fun LeaderboardScreen(
 
                         }
                         Spacer(modifier = Modifier.size(Padding.XL))
+                        if (isLoading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.width(64.dp),
+                                color = MaterialTheme.colorScheme.secondary,
+                                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                            )
+                        } else {
                         when (selectedBoard) {
                             0 -> LeaderBoard(leaderboard, stringResource(R.string.points))
                             1 -> LeaderBoard(leaderboardAllLevel, stringResource(R.string.levels))

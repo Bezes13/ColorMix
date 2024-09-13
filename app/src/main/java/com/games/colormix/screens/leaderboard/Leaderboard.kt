@@ -38,7 +38,7 @@ fun LeaderBoard(leaderboard: List<BoardScore>, scoreText: String) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                LeaderBoardText((index+1).toString() +".",0.1f)
+                LeaderBoardText((index+1).toString(),0.1f)
                 LeaderBoardText(text = score.name, 0.8f)
                 LeaderBoardText(text = score.points.withThousandSeparators(), 1f)
             }
