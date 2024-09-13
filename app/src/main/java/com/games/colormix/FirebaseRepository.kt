@@ -19,6 +19,7 @@ class FirebaseRepository {
         try {
             val playerData = Player(playerName, uid)
             playerCollection.document(uid).set(playerData).await()
+            updatePlayerNameByPlayerId(uid, playerName)
         } catch (e: Exception) {
             e.printStackTrace() // Handle error
         }
@@ -89,6 +90,24 @@ class FirebaseRepository {
         } catch (e: Exception) {
             e.printStackTrace() // Handle error
             emptyList()
+        }
+    }
+
+    private suspend fun updatePlayerNameByPlayerId(playerId: String, newName: String) {
+        try {
+            // Query the leaderboard collection to find all entries with the specific playerId
+            val snapshot = leaderboardCollection
+                .whereEqualTo("playerId", playerId)
+                .get()
+                .await()
+            // Loop through all matching documents and update the name field
+            for (document in snapshot.documents) {
+                leaderboardCollection.document(document.id)
+                    .update("name", newName)
+                    .await() // Ensure each update is awaited
+            }
+        } catch (e: Exception) {
+            e.printStackTrace() // Handle error
         }
     }
 }

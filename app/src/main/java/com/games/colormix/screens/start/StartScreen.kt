@@ -96,6 +96,7 @@ fun StartScreen(
     val menuItemSize = headerTextSize / 1.5f
     val sharedPreferences: SharedPreferences = LocalContext.current.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
     var simpleDesign by remember { mutableStateOf(sharedPreferences.getBoolean("Design", false)) }
+
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Background(fieldSize, backGround, simpleDesign)
 
