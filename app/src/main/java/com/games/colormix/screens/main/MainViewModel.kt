@@ -213,9 +213,13 @@ class MainViewModel @Inject constructor(
             val blockCount =
                 blocksToDestroy.filter { pos -> !state.gameField[pos.first][pos.second].type.special }.size
             val updatedQuests = updateQuests(state, blockCount, blocksToDestroy)
-
-            val newPoints = getPointsAndSaveOnLevelDone(state, blockCount, updatedQuests)
             val blocksAcc = state.blocksAcc + blockCount
+            val bombCount = if (blockCount >= BOMB_GAIN_MULTI_BLOCK) state.bombCount + 1 else state.bombCount
+            val rubikCount = if (blocksAcc >= RUBIK_GAIN_MULTI_BLOCK) state.rubikCount + 1 else state.rubikCount
+
+            val newPoints = getPointsAndSaveOnLevelDone(state, blockCount, updatedQuests, bombCount, rubikCount)
+
+
             state.copy(
                 currentLevel = state.currentLevel.copy(
                     moves = if (endless) state.currentLevel.moves + 1 else state.currentLevel.moves - 1,
@@ -229,9 +233,10 @@ class MainViewModel @Inject constructor(
                 gameField = gameBoard,
                 dialog = if (updatedQuests.all { it.amount <= 0 } && !endless) MainViewDialog.LevelComplete(
                     levelIndex.toString(),
-                    state.currentLevel.moves,
-                    state.bombCount,
-                    state.rubikCount
+                    newPoints,
+                    state.currentLevel.moves-1,
+                    bombCount,
+                    rubikCount
                 ) else if (state.currentLevel.moves <= 1 && !endless)
                     MainViewDialog.LevelFailed else if (state.rubikCount == 0 && state.bombCount == 0 && noMovesAvailable(
                         gameBoard
@@ -239,8 +244,8 @@ class MainViewModel @Inject constructor(
                 ) MainViewDialog.NoMovesAvailable else
                     MainViewDialog.None,
                 points = newPoints,
-                bombCount = if (blockCount >= BOMB_GAIN_MULTI_BLOCK) state.bombCount + 1 else state.bombCount,
-                rubikCount = if (blocksAcc >= RUBIK_GAIN_MULTI_BLOCK) state.rubikCount + 1 else state.rubikCount,
+                bombCount = bombCount,
+                rubikCount = rubikCount,
                 blocksAcc = if (blocksAcc >= RUBIK_GAIN_MULTI_BLOCK) blocksAcc - RUBIK_GAIN_MULTI_BLOCK else blocksAcc
             )
         }
@@ -273,13 +278,15 @@ class MainViewModel @Inject constructor(
     private fun getPointsAndSaveOnLevelDone(
         state: MainViewState,
         blockCount: Int,
-        updatedQuests: List<LevelQuest>
+        updatedQuests: List<LevelQuest>,
+        bombCount: Int,
+        rubikCount: Int
     ): Int {
         var newPoints = state.points + blockCount * 50 * blockCount
         if (updatedQuests.all { it.amount <= 0 }) {
-            newPoints += state.currentLevel.moves * ExtraMovePoints +
-                    state.bombCount * ExtraBombPoints +
-                    state.rubikCount * ExtraLaserPoints
+            newPoints += (state.currentLevel.moves-1) * ExtraMovePoints +
+                    bombCount * ExtraBombPoints +
+                    rubikCount * ExtraLaserPoints
             viewModelScope.launch {
                 firebaseRepository.addOrUpdateScore(newPoints, levelIndex)
             }

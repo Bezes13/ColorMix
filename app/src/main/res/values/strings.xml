@@ -24,7 +24,7 @@
     <string name="bomb">Bomb</string>
     <string name="tuturial_bomb">Drag this on Single Planets or Aliens to destroy it.\n</string>
     <string name="tutorial_bomb2">You gain Meteors by destroying 6 or more Planets at the same time.</string>
-    <string name="rubik_s_cube">Rubik\'s Cube</string>
+    <string name="rubik_s_cube">Laser</string>
     <string name="tutorial_rubik">"Drag this on a Planet to destroy all Planets from that kind.\n "</string>
     <string name="tutorial_rubik1">You gain Guns after every 50th destroyed Planet.\n</string>
     <string name="tutorial_rubik2">The Progressbar shows you when you get a new Gun.</string>

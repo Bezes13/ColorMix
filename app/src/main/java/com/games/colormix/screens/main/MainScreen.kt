@@ -107,7 +107,7 @@ fun MainScreenContent(
 ) {
     val width = LocalConfiguration.current.screenWidthDp.dp
     val height = LocalConfiguration.current.screenHeightDp.dp
-    val fieldSize = (width / (LEVEL_SIZE_X + 1))
+    val fieldSize = (width / (LEVEL_SIZE_X + 2))
     val infoCardsHeight = (height / infoCardHeightMultiplier)
     val levelTextSize = with(LocalDensity.current) { fieldSize.toSp() }
     val infoTextSize = levelTextSize / 2
@@ -286,7 +286,7 @@ fun MainScreenContent(
                                     ) { _, item ->
                                         Field(
                                             item,
-                                            if (simpleDesign) fieldSize*0.95f else fieldSize,
+                                            if (simpleDesign) fieldSize else fieldSize,
                                             Pair(cIndex, column.indexOf(item)),
                                             eventListener,
                                             simpleDesign,
@@ -309,6 +309,7 @@ fun MainScreenContent(
 sealed class MainViewDialog {
     data class LevelComplete(
         val info: String,
+        val points: Int,
         val moves: Int,
         val bombCount: Int,
         val rubikCount: Int

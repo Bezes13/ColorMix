@@ -4,7 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -34,7 +33,7 @@ fun FieldDesign(
             elevation = CardDefaults.cardElevation(defaultElevation = Padding.L),
             modifier = Modifier
                 .size(fieldSize)
-                .padding(bottom = Padding.M),
+                ,
         ) {
             val largeRadialGradient = object : ShaderBrush() {
                 override fun createShader(size: Size): Shader {
@@ -58,8 +57,7 @@ fun FieldDesign(
     } else {
         Box(
             modifier = Modifier
-                .size(fieldSize)
-                .padding(bottom = Padding.M),
+                .size(fieldSize),
         ) {
             Image(
                 painter = painterResource(id = item.drawId),

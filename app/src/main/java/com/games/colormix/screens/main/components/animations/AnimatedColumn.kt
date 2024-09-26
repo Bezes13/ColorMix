@@ -12,6 +12,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.runtime.Composable
@@ -22,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
+import com.games.colormix.constants.Padding
 import kotlinx.coroutines.delay
 
 @Stable
@@ -181,7 +183,7 @@ fun <T : Any> LazyAnimatedColumn(
             AnimatedRemovable(
                 key = keyProvider(currentItem.data),
                 state = currentItem.state,
-                modifier = internalLazyModifier,
+                modifier = internalLazyModifier.padding(bottom = Padding.M),
                 enterTransition = enterTransition.transition,
                 exitTransition = exitTransition.transition
             ) {
