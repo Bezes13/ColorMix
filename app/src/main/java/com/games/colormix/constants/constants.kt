@@ -9,6 +9,9 @@ const val RUBIK_GAIN_MULTI_BLOCK = 50
 const val LEVEL_SIZE_X = 8
 const val LEVEL_SIZE_Y = 8
 const val BackgroundBlocks = (LEVEL_SIZE_X + 2)
+const val ExtraMovePoints = 2000
+const val ExtraBombPoints = 1000
+const val ExtraLaserPoints = 2500
 
 // LevelSelection
 const val ItemRowCount = 3

@@ -5,6 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.games.colormix.FirebaseRepository
 import com.games.colormix.constants.BOMB_GAIN_MULTI_BLOCK
+import com.games.colormix.constants.ExtraBombPoints
+import com.games.colormix.constants.ExtraLaserPoints
+import com.games.colormix.constants.ExtraMovePoints
 import com.games.colormix.constants.LEVEL_SIZE_X
 import com.games.colormix.constants.LEVEL_SIZE_Y
 import com.games.colormix.constants.RUBIK_GAIN_MULTI_BLOCK
@@ -225,7 +228,10 @@ class MainViewModel @Inject constructor(
                 ),
                 gameField = gameBoard,
                 dialog = if (updatedQuests.all { it.amount <= 0 } && !endless) MainViewDialog.LevelComplete(
-                    levelIndex.toString()
+                    levelIndex.toString(),
+                    state.currentLevel.moves,
+                    state.bombCount,
+                    state.rubikCount
                 ) else if (state.currentLevel.moves <= 1 && !endless)
                     MainViewDialog.LevelFailed else if (state.rubikCount == 0 && state.bombCount == 0 && noMovesAvailable(
                         gameBoard
@@ -271,8 +277,9 @@ class MainViewModel @Inject constructor(
     ): Int {
         var newPoints = state.points + blockCount * 50 * blockCount
         if (updatedQuests.all { it.amount <= 0 }) {
-            newPoints =
-                state.points + blockCount * 50 * blockCount + state.currentLevel.moves * 1000
+            newPoints += state.currentLevel.moves * ExtraMovePoints +
+                    state.bombCount * ExtraBombPoints +
+                    state.rubikCount * ExtraLaserPoints
             viewModelScope.launch {
                 firebaseRepository.addOrUpdateScore(newPoints, levelIndex)
             }

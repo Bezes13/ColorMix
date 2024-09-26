@@ -126,7 +126,8 @@ fun MainScreenContent(
         is MainViewDialog.LevelComplete -> LevelDoneDialog(
             R.string.next_level,
             R.string.level_complete,
-            stringResource(id = R.string.level_complete_body, currentLevel.level)
+            stringResource(id = R.string.level_complete_body, currentLevel.level),
+            dialog
         ) {
             eventListener(
                 MainViewEvent.NextLevel
@@ -306,7 +307,12 @@ fun MainScreenContent(
 }
 
 sealed class MainViewDialog {
-    data class LevelComplete(val info: String) : MainViewDialog()
+    data class LevelComplete(
+        val info: String,
+        val moves: Int,
+        val bombCount: Int,
+        val rubikCount: Int
+    ) : MainViewDialog()
     data object LevelFailed : MainViewDialog()
     data object QuestTutorial : MainViewDialog()
     data object PowerUpTutorial : MainViewDialog()
