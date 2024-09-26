@@ -44,7 +44,7 @@ fun MyTextField(submitText: String, onClick: (String) -> Unit) {
         OutlinedTextField(
             value = text,
             onValueChange = { text = if (it.length > 7) text else it },
-            label = { MyText("Name") },
+            placeholder = { MyText("Name") },
             colors = TextFieldDefaults.colors()
         )
         ElevatedButton(
